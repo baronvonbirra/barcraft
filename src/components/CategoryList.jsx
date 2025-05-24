@@ -6,8 +6,8 @@ const ListWrapper = styled.div`
   display: flex;
   flex-wrap: wrap; // Allow items to wrap to the next line
   justify-content: center; // Center items horizontally
-  gap: ${({ theme }) => theme.spacing.medium};
-  padding: ${({ theme }) => theme.spacing.medium} 0; // Padding top/bottom
+  gap: ${({ theme }) => (theme.spacing && theme.spacing.medium) || '1rem'};
+  padding: ${({ theme }) => (theme.spacing && theme.spacing.medium) || '1rem'} 0; // Padding top/bottom
 `;
 
 const CategoryList = ({ categories }) => {

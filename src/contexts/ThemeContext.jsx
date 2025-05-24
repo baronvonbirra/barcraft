@@ -1,51 +1,69 @@
 import React, { createContext, useState } from 'react';
 
-// Define a more complete dark theme
+// New Modern Dark Theme
 const darkTheme = {
   mode: 'dark',
   colors: {
-    background: '#121212', // Very dark grey, almost black
-    surface: '#1E1E1E',    // Dark grey for cards, surfaces
-    primary: '#BB86FC',   // Purple accent (Material Design dark theme guideline)
-    secondary: '#03DAC6', // Teal accent
-    text: '#E0E0E0',       // Light grey for text
-    onPrimary: '#000000',  // Text/icon color on primary background
-    onSurface: '#FFFFFF',  // Text/icon color on surface background
-    border: '#2c2c2c',     // Subtle border color
+    background: '#1A1D24',
+    surface: '#282C34',
+    primary: '#3498DB',   // Modern Blue
+    secondary: '#1ABC9C', // Teal
+    text: '#EAEAEA',
+    textOffset: '#A0A0A0', // Lighter gray for less prominent text
+    onPrimary: '#FFFFFF',
+    onSurface: '#EAEAEA', // Text on surface elements
+    border: '#3A3F4B',
   },
   fonts: {
-    main: 'Helvetica Neue, Arial, sans-serif',
-    headings: 'Georgia, serif', // Example for distinct heading font
+    main: "'Inter', sans-serif",
+    headings: "'Poppins', sans-serif",
   },
   spacing: {
+    xs: '4px',
     small: '8px',
     medium: '16px',
     large: '24px',
-  }
+    xl: '32px',
+    xxl: '48px',
+  },
+  shadows: { // Adding a shadow definition
+    small: '0 2px 4px rgba(0,0,0,0.2)',
+    medium: '0 4px 8px rgba(0,0,0,0.3)',
+  },
+  borderRadius: '8px', // Base border radius
 };
 
-// Define a light theme for toggling (optional for now, but good structure)
+// New Modern Light Theme
 const lightTheme = {
   mode: 'light',
   colors: {
-    background: '#FFFFFF',
-    surface: '#F5F5F5',
-    primary: '#6200EE',
-    secondary: '#03DAC6',
-    text: '#000000',
+    background: '#F8F9FA',
+    surface: '#FFFFFF',
+    primary: '#3498DB',   // Consistent Modern Blue
+    secondary: '#1ABC9C', // Consistent Teal
+    text: '#212529',
+    textOffset: '#6C757D', // Darker gray for less prominent text
     onPrimary: '#FFFFFF',
-    onSurface: '#000000',
-    border: '#DDDDDD',
+    onSurface: '#212529', // Text on surface elements
+    border: '#DEE2E6',
   },
   fonts: {
-    main: 'Helvetica Neue, Arial, sans-serif',
-    headings: 'Georgia, serif',
+    main: "'Inter', sans-serif",
+    headings: "'Poppins', sans-serif",
   },
   spacing: {
+    xs: '4px',
     small: '8px',
     medium: '16px',
     large: '24px',
-  }
+    xl: '32px',
+    xxl: '48px',
+  },
+  shadows: {
+    small: '0 2px 4px rgba(0,0,0,0.05)',
+    medium: '0 4px 8px rgba(0,0,0,0.1)',
+  },
+  borderRadius: '8px',
 };
 
 export const ThemeContext = createContext({ theme: darkTheme, toggleTheme: () => {} });

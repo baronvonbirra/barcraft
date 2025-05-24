@@ -5,15 +5,37 @@ import CategoryPage from './CategoryPage';
 import { ThemeProvider } from '../contexts/ThemeContext';
 import cocktailsData from '../data/cocktails.json'; // Using actual data
 
-// Mock Theme for testing
+// Updated Mock Theme for testing, aligned with new ThemeContext
 const mockTheme = {
   mode: 'dark',
   colors: {
-    background: '#121212', surface: '#1E1E1E', primary: '#BB86FC', secondary: '#03DAC6',
-    text: '#E0E0E0', onPrimary: '#000000', onSurface: '#FFFFFF', border: '#2c2c2c',
+    background: '#1A1D24',
+    surface: '#282C34',
+    primary: '#3498DB',
+    secondary: '#1ABC9C',
+    text: '#EAEAEA',
+    textOffset: '#A0A0A0',
+    onPrimary: '#FFFFFF',
+    onSurface: '#EAEAEA',
+    border: '#3A3F4B',
   },
-  fonts: { main: 'Arial', headings: 'Georgia' },
-  spacing: { small: '8px', medium: '16px', large: '24px' },
+  fonts: {
+    main: "'Inter', sans-serif",
+    headings: "'Poppins', sans-serif",
+  },
+  spacing: {
+    xs: '4px',
+    small: '8px',
+    medium: '16px',
+    large: '24px',
+    xl: '32px',
+    xxl: '48px',
+  },
+  shadows: {
+    small: '0 2px 4px rgba(0,0,0,0.2)',
+    medium: '0 4px 8px rgba(0,0,0,0.3)',
+  },
+  borderRadius: '8px',
 };
 
 describe('CategoryPage', () => {
@@ -43,7 +65,8 @@ describe('CategoryPage', () => {
 
     const categoryCocktails = cocktailsData.filter(c => c.categoryId === testCategoryId);
     categoryCocktails.forEach(cocktail => {
-      expect(screen.getByText(cocktail.name)).toBeInTheDocument();
+      // CocktailListItem might have image alt text, so use regex for name matching
+      expect(screen.getByText(new RegExp(cocktail.name, 'i'))).toBeInTheDocument();
     });
   });
 
@@ -52,41 +75,30 @@ describe('CategoryPage', () => {
     
     const categoryCocktails = cocktailsData.filter(c => c.categoryId === testCategoryId);
     categoryCocktails.forEach(cocktail => {
-      const linkElement = screen.getByRole('link', { name: new RegExp(cocktail.name, 'i') });
+      // Use RegExp for link name to accommodate potential icon alt text from CocktailListItem
+      const escapedCocktailName = cocktail.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const linkElement = screen.getByRole('link', { name: new RegExp(escapedCocktailName, 'i') });
       expect(linkElement).toBeInTheDocument();
       expect(linkElement).toHaveAttribute('href', `/cocktails/${cocktail.id}`);
     });
   });
 
-  it('displays a message or empty list if the category has no cocktails', () => {
-    // Mock cocktailsData to be empty for this specific category or filter returns empty
-    const originalCocktails = [...cocktailsData]; // simple backup
-    cocktailsData.splice(0, cocktailsData.length); // Clear the array
-    // Or, more robustly, mock the import:
-    // vi.mock('../data/cocktails.json', () => ({ default: [] }));
-
-
+  it('displays "Category Not Found" for a category ID not in categories.json (simulating no cocktails for it)', () => {
+    // This test uses 'emptycategory' which is not in categoriesData.json
+    // So, the component should render the "Category Not Found" state.
+    // The original test's attempt to clear cocktailsData globally was problematic.
     renderWithProviders(<CategoryPage />, { route: `/category/${categoryWithNoCocktails}`, path: '/category/:categoryId' });
     
-    // Assuming the page title will still render with the category name
-    expect(screen.getByRole('heading', { name: new RegExp(categoryWithNoCocktails, 'i') })).toBeInTheDocument();
-
-    // Check that no cocktail names are rendered (or a specific "no cocktails" message if implemented)
-    // For example, if Mojito was a rum cocktail, it shouldn't be here now.
+    expect(screen.getByRole('heading', { name: /Category Not Found/i })).toBeInTheDocument();
+    expect(screen.getByText(`The category "${categoryWithNoCocktails}" does not exist.`)).toBeInTheDocument();
     expect(screen.queryByText('Mojito')).not.toBeInTheDocument();
-    
-    // If you have a specific message, test for it:
-    // expect(screen.getByText(/No cocktails found in this category/i)).toBeInTheDocument();
-    // For now, we just check that the list is empty by querying for any cocktail item (which might be complex)
-    // or by ensuring known cocktail names are not present.
-
-    // Restore original data if modified in-place for other tests in the same file (if not using vi.mock)
-     cocktailsData.push(...originalCocktails);
   });
 
-  it('displays a message or empty list for a non-existent category', () => {
+  it('displays a "category not found" message for a non-existent category', () => {
     renderWithProviders(<CategoryPage />, { route: `/category/nonexistentcategory`, path: '/category/:categoryId' });
-    expect(screen.getByRole('heading', { name: /NONEXISTENTCATEGORY/i })).toBeInTheDocument(); // Based on current component logic
+    // Assuming CategoryPage shows a specific message for a category ID that doesn't match any in categories.json
+    expect(screen.getByRole('heading', { name: /Category Not Found/i })).toBeInTheDocument();
+    expect(screen.getByText(/The category "nonexistentcategory" does not exist./i)).toBeInTheDocument();
     expect(screen.queryByText('Mojito')).not.toBeInTheDocument(); // No cocktails should be listed
   });
 });
