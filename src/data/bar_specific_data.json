@@ -1,0 +1,12 @@
+{
+  "bar1": {
+    "barName": "The Alchemist's Corner",
+    "curatedMenuName": "Alchemist's Signatures",
+    "curatedCocktailIds": ["mojito", "old-fashioned", "negroni", "moscow-mule"]
+  },
+  "bar2": {
+    "barName": "The Velvet Sip",
+    "curatedMenuName": "Velvet's Classics",
+    "curatedCocktailIds": ["daiquiri", "manhattan", "gin-tonic", "margarita", "shirley-temple"]
+  }
+}
