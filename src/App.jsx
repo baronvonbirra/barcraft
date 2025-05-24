@@ -8,6 +8,7 @@ import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import CategoryPage from './pages/CategoryPage';
 import CocktailPage from './pages/CocktailPage';
+import FavoritesPage from './pages/FavoritesPage'; // Add this import
 
 // Basic App layout styling
 const AppWrapper = styled.div`
@@ -30,6 +31,7 @@ const AppContent = () => {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/category/:categoryId" element={<CategoryPage />} />
+              <Route path="/favorites" element={<FavoritesPage />} /> {/* Add this route */}
               <Route path="/cocktails/:cocktailId" element={<CocktailPage />} />
             </Routes>
           </main>
@@ -39,10 +41,14 @@ const AppContent = () => {
   );
 };
 
+import { BarProvider } from './contexts/BarContext';
+
 function App() {
   return (
     <CustomThemeProvider>
-      <AppContent />
+      <BarProvider>
+        <AppContent />
+      </BarProvider>
     </CustomThemeProvider>
   );
 }

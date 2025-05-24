@@ -1,56 +1,99 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import CocktailList from '../components/CocktailList';
 import cocktailsData from '../data/cocktails.json';
 import categoriesData from '../data/categories.json';
+import CocktailList from '../components/CocktailList';
+import FilterSidebar from '../components/FilterSidebar';
+import { useCocktailFilter } from '../hooks/useCocktailFilter';
+import { useBar } from '../contexts/BarContext';
 
+// Styled components (can be similar to HomePage)
 const PageWrapper = styled.div`
-  padding: ${({ theme }) => (theme.spacing && theme.spacing.medium) || '1rem'} 0;
+  padding: ${({ theme }) => theme.spacing.medium};
 `;
 
-const PageTitle = styled.h2`
-  font-family: ${({ theme }) => (theme.fonts && theme.fonts.headings) || "'Poppins', sans-serif"};
-  color: ${({ theme }) => (theme.colors && theme.colors.secondary) || '#1ABC9C'};
-  font-size: 2.2rem; /* Will be styled by GlobalStyles h2 */
+const CategoryPageWrapper = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing.large};
+`;
+
+const MainContent = styled.div`
+  flex-grow: 1;
+`;
+
+const PageTitle = styled.h1`
+  font-family: ${({ theme }) => theme.fonts.headings};
+  color: ${({ theme }) => theme.colors.primary};
+  margin-bottom: ${({ theme }) => theme.spacing.large};
   text-align: center;
-  margin-bottom: ${({ theme }) => (theme.spacing && theme.spacing.large) || '1.5rem'};
-  /* font-weight: bold; GlobalStyles h2 sets font-weight: 600 */
 `;
 
 const CategoryPage = () => {
   const { categoryId } = useParams();
   
-  const filteredCocktails = cocktailsData.filter(
-    (cocktail) => cocktail.categoryId === categoryId
-  );
+  const {
+    filteredCocktails,
+    baseSpirit, setBaseSpirit, // Use setBaseSpirit to preset category
+    includeIngredients, setIncludeIngredients,
+    excludeIngredients, setExcludeIngredients,
+    flavorProfile, setFlavorProfile,
+    difficulty, setDifficulty,
+    tags, setTags,
+    glassType, setGlassType,
+    resetFilters,
+    isCocktailMakeable
+  } = useCocktailFilter(cocktailsData);
+
+  const { selectedBar } = useBar();
+
+  // Set the initial category filter based on the route parameter
+  useEffect(() => {
+    if (categoryId) {
+      setBaseSpirit(categoryId);
+    }
+    // Optional: could also reset other filters if navigating to a new category page
+    // depends on desired UX. For now, other filters persist.
+  }, [categoryId, setBaseSpirit]);
 
   const currentCategory = categoriesData.find(cat => cat.id === categoryId);
+  const pageTitle = currentCategory ? `${currentCategory.name} Cocktails` : "Category Cocktails";
 
-  if (!currentCategory) {
-    return (
-      <PageWrapper>
-        <PageTitle>Category Not Found</PageTitle>
-        <p>The category "{categoryId}" does not exist.</p>
-      </PageWrapper>
-    );
-  }
-
-  const categoryName = currentCategory.name;
-
-  if (filteredCocktails.length === 0) {
-    return (
-      <PageWrapper>
-        <PageTitle>{categoryName}</PageTitle>
-        <p>No cocktails found in this category yet.</p>
-      </PageWrapper>
-    );
-  }
+  // Prepare props for FilterSidebar
+  const filterHookState = {
+    baseSpirit, includeIngredients, excludeIngredients, flavorProfile, difficulty, tags, glassType,
+  };
+  const filterHookSetters = {
+    setBaseSpirit, setIncludeIngredients, setExcludeIngredients, setFlavorProfile, setDifficulty, setTags, setGlassType,
+  };
+  
+  // Further filter `filteredCocktails` if the `baseSpirit` from the hook doesn't match `categoryId`
+  // This ensures that even if the user changes the category in the sidebar,
+  // this page effectively still respects its primary category context for the title,
+  // but the list reflects the sidebar.
+  // However, useCocktailFilter already handles the baseSpirit filtering.
+  // The useEffect ensures baseSpirit is set. So filteredCocktails should be correct.
 
   return (
     <PageWrapper>
-      <PageTitle>{categoryName}</PageTitle>
-      <CocktailList cocktails={filteredCocktails} />
+      <PageTitle>{pageTitle}</PageTitle>
+      <CategoryPageWrapper>
+        <FilterSidebar
+          allCocktails={cocktailsData} // Pass all for deriving options
+          categories={categoriesData}
+          filters={filterHookState}
+          setters={filterHookSetters}
+          resetFilters={resetFilters}
+          filteredCocktailsForSurprise={filteredCocktails} // For Surprise Me button
+        />
+        <MainContent>
+          <CocktailList
+            cocktails={filteredCocktails}
+            isCocktailMakeable={isCocktailMakeable}
+            selectedBar={selectedBar}
+          />
+        </MainContent>
+      </CategoryPageWrapper>
     </PageWrapper>
   );
 };
