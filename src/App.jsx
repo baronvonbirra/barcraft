@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider } from './contexts/ThemeContext';
+import { ThemeProvider as CustomThemeProvider, ThemeContext } from './contexts/ThemeContext';
+import { ThemeProvider as StyledComponentsThemeProvider } from 'styled-components';
 import styled from 'styled-components';
 import GlobalStyles from './styles/GlobalStyles'; // Import GlobalStyles
 import Navbar from './components/Navbar';
@@ -16,9 +17,11 @@ const AppWrapper = styled.div`
   text-align: center;
 `;
 
-function App() {
+const AppContent = () => {
+  const { theme } = useContext(ThemeContext); // Get the theme object
+
   return (
-    <ThemeProvider>
+    <StyledComponentsThemeProvider theme={theme}>
       <GlobalStyles /> {/* Add GlobalStyles here */}
       <Router>
         <AppWrapper>
@@ -32,7 +35,15 @@ function App() {
           </main>
         </AppWrapper>
       </Router>
-    </ThemeProvider>
+    </StyledComponentsThemeProvider>
+  );
+};
+
+function App() {
+  return (
+    <CustomThemeProvider>
+      <AppContent />
+    </CustomThemeProvider>
   );
 }
 
