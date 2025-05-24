@@ -5,8 +5,8 @@ import CocktailListItem from './CocktailListItem';
 const ListWrapper = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); // Responsive grid
-  gap: ${({ theme }) => theme.spacing.large}; // Slightly larger gap for cocktail cards
-  padding: ${({ theme }) => theme.spacing.medium} 0;
+  gap: ${({ theme }) => (theme.spacing && theme.spacing.large) || '1.5rem'}; // Slightly larger gap for cocktail cards
+  padding: ${({ theme }) => (theme.spacing && theme.spacing.medium) || '1rem'} 0;
 `;
 
 const CocktailList = ({ cocktails }) => {

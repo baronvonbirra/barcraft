@@ -5,15 +5,20 @@ import HomePage from './HomePage';
 import { ThemeProvider } from '../contexts/ThemeContext'; // ThemeProvider is needed for styled-components
 import categoriesData from '../data/categories.json'; // Using actual data for simplicity here
 
-// Mock the ThemeContext if needed, or wrap with actual ThemeProvider
+import cocktailsData from '../data/cocktails.json'; // Import cocktails data
+import PlaceholderImage from '../assets/cocktails/placeholder.png'; // Import placeholder
+
+// Updated Mock Theme for testing, aligned with new ThemeContext
 const mockTheme = {
   mode: 'dark',
   colors: {
-    background: '#121212', surface: '#1E1E1E', primary: '#BB86FC', secondary: '#03DAC6',
-    text: '#E0E0E0', onPrimary: '#000000', onSurface: '#FFFFFF', border: '#2c2c2c',
+    background: '#1A1D24', surface: '#282C34', primary: '#3498DB', secondary: '#1ABC9C',
+    text: '#EAEAEA', textOffset: '#A0A0A0', onPrimary: '#FFFFFF', onSurface: '#EAEAEA', border: '#3A3F4B',
   },
-  fonts: { main: 'Arial', headings: 'Georgia' },
-  spacing: { small: '8px', medium: '16px', large: '24px' },
+  fonts: { main: "'Inter', sans-serif", headings: "'Poppins', sans-serif" },
+  spacing: { xs: '4px', small: '8px', medium: '16px', large: '24px', xl: '32px', xxl: '48px' },
+  shadows: { small: '0 2px 4px rgba(0,0,0,0.2)', medium: '0 4px 8px rgba(0,0,0,0.3)' },
+  borderRadius: '8px',
 };
 
 // Mock categories.json if it were a dynamic import or fetch
@@ -37,7 +42,9 @@ describe('HomePage', () => {
 
   it('renders the main heading', () => {
     renderWithProviders(<HomePage />);
-    expect(screen.getByRole('heading', { name: /Cocktail Categories/i })).toBeInTheDocument();
+    // Check for the new section titles
+    expect(screen.getByRole('heading', { name: /Cocktail of the Week/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Or Browse by Category/i })).toBeInTheDocument();
   });
 
   it('renders a list of categories', () => {
@@ -51,9 +58,50 @@ describe('HomePage', () => {
   it('renders links for categories with correct href attributes', () => {
     renderWithProviders(<HomePage />);
     categoriesData.forEach(category => {
-      const linkElement = screen.getByRole('link', { name: category.name });
+      // Escape special characters in category.name for RegExp
+      const escapedCategoryName = category.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      // Match category name within the link's accessible name, accommodating icon alt text
+      const linkElement = screen.getByRole('link', { name: new RegExp(escapedCategoryName, 'i') });
       expect(linkElement).toBeInTheDocument();
       expect(linkElement).toHaveAttribute('href', `/category/${category.id}`);
+    });
+  });
+
+  describe('Cocktail of the Week Section', () => {
+    const featuredCocktail = cocktailsData[0];
+
+    it('renders the section title', () => {
+      renderWithProviders(<HomePage />);
+      expect(screen.getByRole('heading', { name: /Cocktail of the Week/i })).toBeInTheDocument();
+    });
+
+    it('displays the featured cocktail\'s name', () => {
+      renderWithProviders(<HomePage />);
+      expect(screen.getByRole('heading', { name: new RegExp(featuredCocktail.name, 'i') })).toBeInTheDocument();
+    });
+
+    it('displays the featured cocktail\'s image', () => {
+      renderWithProviders(<HomePage />);
+      const image = screen.getByAltText(new RegExp(featuredCocktail.name, 'i'));
+      expect(image).toBeInTheDocument();
+      if (featuredCocktail.image) {
+        expect(image).toHaveAttribute('src', featuredCocktail.image);
+      } else {
+        expect(image).toHaveAttribute('src', PlaceholderImage);
+      }
+    });
+
+    it('displays the featured cocktail\'s description', () => {
+      renderWithProviders(<HomePage />);
+      // Using a regex to find part of the description, as it might be long
+      expect(screen.getByText(new RegExp(featuredCocktail.description.substring(0, 50), 'i'))).toBeInTheDocument();
+    });
+
+    it('renders a "View Recipe" link pointing to the correct cocktail detail page', () => {
+      renderWithProviders(<HomePage />);
+      const linkElement = screen.getByRole('link', { name: /View Recipe/i });
+      expect(linkElement).toBeInTheDocument();
+      expect(linkElement).toHaveAttribute('href', `/cocktails/${featuredCocktail.id}`);
     });
   });
 });

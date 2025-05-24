@@ -5,7 +5,7 @@ import CocktailDetail from '../components/CocktailDetail';
 import cocktailsData from '../data/cocktails.json';
 
 const PageWrapper = styled.div`
-  padding: ${({ theme }) => theme.spacing.medium} 0;
+  padding: ${({ theme }) => (theme.spacing && theme.spacing.medium) || '16px'} 0;
   // The CocktailDetail component will handle its own internal padding and styling
 `;
 
