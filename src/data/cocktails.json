@@ -1,0 +1,264 @@
+[
+  {
+    "id": "mojito",
+    "categoryId": "rum",
+    "name": "Mojito",
+    "image": "https://images.unsplash.com/photo-1551538850-094990391b5a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    "description": "A vibrant and refreshing Cuban highball, celebrated for its combination of mint, lime, and rum.",
+    "history": "Originating in Havana, Cuba, the Mojito's exact origins are debated, but it gained popularity in the mid-20th century, partly thanks to Ernest Hemingway.",
+    "glass": "Highball glass",
+    "difficulty": "Medium",
+    "tags": ["classic", "cuban", "refreshing", "summer", "minty"],
+    "flavorProfile": ["citrusy", "sweet", "herbal", "refreshing"],
+    "toolsNeeded": ["Muddler", "Jigger", "Bar spoon", "Highball glass"],
+    "ingredients": [
+      { "name": "White Rum", "quantity": "2 oz (60ml)" },
+      { "name": "Lime Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed" },
+      { "name": "Simple Syrup (1:1)", "quantity": "0.75 oz (22ml)", "notes": "adjust to taste" },
+      { "name": "Fresh Mint Leaves", "quantity": "8-10 leaves" },
+      { "name": "Soda Water", "quantity": "Top up", "notes": "chilled" },
+      { "name": "Lime wedge & Mint sprig", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "In a sturdy highball glass, gently muddle the mint leaves with simple syrup. Avoid over-muddling or shredding the mint.",
+      "Add the lime juice and rum to the glass.",
+      "Fill the glass with crushed ice (or cubed ice if preferred).",
+      "Top with soda water.",
+      "Gently stir with a bar spoon to combine all ingredients, pulling the mint upwards through the drink.",
+      "Garnish with a lime wedge and a fresh mint sprig."
+    ]
+  },
+  {
+    "id": "daiquiri",
+    "categoryId": "rum",
+    "name": "Daiquiri",
+    "image": "https://images.unsplash.com/photo-1598679253672-0715c9952361?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    "description": "A quintessential sour cocktail that perfectly balances rum, citrus, and sweetness.",
+    "history": "Named after the town of Daiquirí in Cuba, this classic was supposedly invented by American mining engineer Jennings Cox in the late 1890s.",
+    "glass": "Coupe or Martini glass",
+    "difficulty": "Easy",
+    "tags": ["classic", "cuban", "sour", "simple", "elegant"],
+    "flavorProfile": ["citrusy", "sweet", "tart", "strong"],
+    "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Coupe or Martini glass"],
+    "ingredients": [
+      { "name": "White Rum", "quantity": "2 oz (60ml)" },
+      { "name": "Lime Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed" },
+      { "name": "Simple Syrup (1:1)", "quantity": "0.75 oz (22ml)", "notes": "adjust to taste" },
+      { "name": "Lime wheel or twist", "quantity": "For garnish (optional)" }
+    ],
+    "instructions": [
+      "Add rum, lime juice, and simple syrup to a shaker with ice.",
+      "Shake well until thoroughly chilled (about 15-20 seconds).",
+      "Double strain into a chilled coupe or martini glass.",
+      "Garnish with a lime wheel or twist, if desired."
+    ]
+  },
+  {
+    "id": "old-fashioned",
+    "categoryId": "whiskey",
+    "name": "Old Fashioned",
+    "image": "https://images.unsplash.com/photo-1626201850436-ed3d36705752?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    "description": "A timeless spirit-forward cocktail that showcases the chosen whiskey, balanced by sugar and bitters.",
+    "history": "One of the oldest known cocktails, dating back to the early 19th century. The name refers to the 'old-fashioned' way of making cocktails.",
+    "glass": "Old Fashioned glass (or Rocks glass)",
+    "difficulty": "Easy",
+    "tags": ["classic", "spirit-forward", "strong", "sipping"],
+    "flavorProfile": ["spirituous", "bitter-sweet", "aromatic"],
+    "toolsNeeded": ["Muddler (optional)", "Mixing glass (optional)", "Bar spoon", "Jigger", "Old Fashioned glass"],
+    "ingredients": [
+      { "name": "Bourbon or Rye Whiskey", "quantity": "2 oz (60ml)" },
+      { "name": "Sugar Cube", "quantity": "1", "notes": "or 0.5 tsp granulated sugar, or 0.25 oz simple syrup" },
+      { "name": "Angostura Bitters", "quantity": "2-3 dashes" },
+      { "name": "Water or Soda Water", "quantity": "1 tsp (optional, to help dissolve sugar)" },
+      { "name": "Orange Peel", "quantity": "For garnish" },
+      { "name": "Large Ice Cube or Sphere", "quantity": "1" }
+    ],
+    "instructions": [
+      "Place the sugar cube (or sugar/simple syrup) in an Old Fashioned glass.",
+      "Add bitters (and water/soda if using a sugar cube).",
+      "Muddle the sugar and bitters together until the sugar is dissolved. If using simple syrup, just combine with bitters.",
+      "Add the whiskey and the large ice cube or sphere.",
+      "Stir gently with a bar spoon for about 20-30 seconds to chill and slightly dilute.",
+      "Express the oils from an orange peel over the drink by twisting it, then rub it around the rim of the glass and drop it in."
+    ]
+  },
+  {
+    "id": "manhattan",
+    "categoryId": "whiskey",
+    "name": "Manhattan",
+    "image": "https://via.placeholder.com/300x200.png?text=Manhattan",
+    "description": "A classic and sophisticated cocktail featuring whiskey, sweet vermouth, and bitters.",
+    "history": "The Manhattan is one of the oldest and best-known cocktails, with its origins dating back to the 1870s in New York City, likely at the Manhattan Club.",
+    "glass": "Coupe or Martini glass",
+    "difficulty": "Easy",
+    "tags": ["classic", "spirit-forward", "strong", "elegant", "rye"],
+    "flavorProfile": ["spirituous", "bitter-sweet", "aromatic", "herbaceous"],
+    "toolsNeeded": ["Mixing glass", "Jigger", "Bar spoon", "Strainer", "Coupe or Martini glass"],
+    "ingredients": [
+      { "name": "Rye Whiskey", "quantity": "2 oz (60ml)" },
+      { "name": "Sweet Vermouth", "quantity": "1 oz (30ml)" },
+      { "name": "Angostura Bitters", "quantity": "2 Dashes" },
+      { "name": "Maraschino Cherry", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "Stir ingredients with ice.",
+      "Strain into a chilled coupe or martini glass.",
+      "Garnish with a maraschino cherry."
+    ]
+  },
+  {
+    "id": "gin-tonic",
+    "categoryId": "gin",
+    "name": "Gin and Tonic",
+    "image": "https://images.unsplash.com/photo-1607604007552-c3053e757c4a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    "description": "A quintessential and deceptively simple highball that showcases the botanicals of the gin against the bittersweet tonic.",
+    "history": "The Gin and Tonic was introduced by the army of the British East India Company in India. Quinine in tonic water was a prophylactic against malaria, and gin was added to make it more palatable.",
+    "glass": "Highball glass or Copa de Balon (Balloon glass)",
+    "difficulty": "Easy",
+    "tags": ["classic", "highball", "refreshing", "simple", "botanical"],
+    "flavorProfile": ["bitter-sweet", "botanical", "crisp", "refreshing"],
+    "toolsNeeded": ["Jigger", "Bar spoon (optional)", "Highball or Copa glass"],
+    "ingredients": [
+      { "name": "Gin (London Dry preferred)", "quantity": "2 oz (60ml)" },
+      { "name": "Tonic Water", "quantity": "4-5 oz (120-150ml)", "notes": "good quality, chilled" },
+      { "name": "Lime Wedge or Cucumber Ribbon", "quantity": "For garnish" },
+      { "name": "Ice Cubes", "quantity": "Plenty" }
+    ],
+    "instructions": [
+      "Fill a highball or Copa glass to the top with good quality ice cubes.",
+      "Pour the gin over the ice.",
+      "Slowly pour in the chilled tonic water. Pouring down a bar spoon can help retain carbonation.",
+      "Gently stir once or twice to combine.",
+      "Garnish with a fresh lime wedge (squeeze lightly before dropping in) or a cucumber ribbon."
+    ]
+  },
+  {
+    "id": "negroni",
+    "categoryId": "gin",
+    "name": "Negroni",
+    "image": "https://images.unsplash.com/photo-1551538850-71f6b06f9b81?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    "description": "A perfectly balanced Italian aperitif with bold bitter, sweet, and botanical notes.",
+    "history": "Believed to have been invented in Florence, Italy, around 1919 at Caffè Casoni, after Count Camillo Negroni asked the bartender to strengthen his Americano by replacing soda water with gin.",
+    "glass": "Old Fashioned glass (or Rocks glass)",
+    "difficulty": "Easy",
+    "tags": ["classic", "italian", "aperitif", "bitter", "strong"],
+    "flavorProfile": ["bitter", "sweet", "herbal", "complex"],
+    "toolsNeeded": ["Mixing glass", "Jigger", "Bar spoon", "Strainer", "Old Fashioned glass"],
+    "ingredients": [
+      { "name": "Gin", "quantity": "1 oz (30ml)" },
+      { "name": "Campari", "quantity": "1 oz (30ml)" },
+      { "name": "Sweet Vermouth (Red)", "quantity": "1 oz (30ml)" },
+      { "name": "Orange Peel or Slice", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "Add gin, Campari, and sweet vermouth to a mixing glass filled with ice.",
+      "Stir well with a bar spoon until thoroughly chilled (about 20-30 seconds).",
+      "Strain into a rocks glass filled with a large ice cube or sphere (or serve up in a chilled coupe if preferred, though less traditional).",
+      "Express the oils from an orange peel over the drink, then drop it in or use an orange slice as garnish."
+    ]
+  },
+  {
+    "id": "moscow-mule",
+    "categoryId": "vodka",
+    "name": "Moscow Mule",
+    "image": "https://images.unsplash.com/photo-1586985569789-38899093a801?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    "description": "A zesty and refreshing cocktail known for its signature copper mug presentation.",
+    "history": "The Moscow Mule was reportedly invented in the 1940s in the USA as a marketing collaboration to promote Smirnoff vodka and ginger beer.",
+    "glass": "Copper mug (traditionally) or Highball glass",
+    "difficulty": "Easy",
+    "tags": ["classic", "refreshing", "spicy", "long-drink"],
+    "flavorProfile": ["gingery", "citrusy", "crisp", "effervescent"],
+    "toolsNeeded": ["Jigger", "Bar spoon (optional)", "Copper mug or Highball glass"],
+    "ingredients": [
+      { "name": "Vodka", "quantity": "2 oz (60ml)" },
+      { "name": "Lime Juice", "quantity": "0.5 oz (15ml)", "notes": "freshly squeezed" },
+      { "name": "Ginger Beer", "quantity": "4 oz (120ml)", "notes": "good quality, spicy, chilled" },
+      { "name": "Lime Wedge & Mint Sprig", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "Fill a copper mug or highball glass with plenty of ice.",
+      "Pour in the vodka and lime juice.",
+      "Top with chilled ginger beer.",
+      "Gently stir to combine.",
+      "Garnish with a lime wedge and a mint sprig (optional)."
+    ]
+  },
+  {
+    "id": "margarita",
+    "categoryId": "tequila",
+    "name": "Margarita",
+    "image": "https://images.unsplash.com/photo-1551538850-add905987cbf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    "description": "The iconic tequila sour, perfectly balancing earthy tequila with tart lime and sweet orange liqueur.",
+    "history": "The Margarita's history is shrouded in mystery, with numerous claims to its invention in Mexico or the US between the 1930s and 1940s. Regardless, it's one of the world's most popular cocktails.",
+    "glass": "Margarita glass, Coupe, or Rocks glass",
+    "difficulty": "Easy",
+    "tags": ["classic", "mexican", "sour", "festive", "versatile"],
+    "flavorProfile": ["tart", "citrusy", "earthy-tequila", "sweet"],
+    "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Margarita glass (or other)"],
+    "ingredients": [
+      { "name": "Tequila Blanco (100% Agave)", "quantity": "2 oz (60ml)" },
+      { "name": "Lime Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed" },
+      { "name": "Orange Liqueur (e.g., Cointreau, Triple Sec)", "quantity": "0.75 oz (22ml)" },
+      { "name": "Agave Nectar (optional)", "quantity": "0.25 oz (7ml)", "notes": "adjust to taste if using, especially if Triple Sec is less sweet" },
+      { "name": "Salt", "quantity": "For rim (optional)" },
+      { "name": "Lime Wedge", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "If using a salted rim, run a lime wedge around the outer rim of your chosen glass, then dip the rim into a plate of coarse salt.",
+      "Add tequila, lime juice, orange liqueur, and agave nectar (if using) to a shaker with ice.",
+      "Shake well until thoroughly chilled (about 15-20 seconds).",
+      "Strain into the prepared glass. Can be served over fresh ice in a rocks glass, or 'up' in a coupe or margarita glass.",
+      "Garnish with a lime wedge."
+    ]
+  },
+  {
+    "id": "white-russian",
+    "categoryId": "liqueur",
+    "name": "White Russian",
+    "image": "https://images.unsplash.com/photo-1598870449067-a198c66157bf?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    "description": "A creamy and decadent dessert cocktail with a rich coffee flavor.",
+    "history": "A variation of the Black Russian (vodka and coffee liqueur), the White Russian adds cream and gained significant popularity after being featured in the 1998 film 'The Big Lebowski'.",
+    "glass": "Old Fashioned glass (or Rocks glass)",
+    "difficulty": "Easy",
+    "tags": ["creamy", "dessert-cocktail", "coffee", "classic", "pop-culture"],
+    "flavorProfile": ["coffee", "sweet", "creamy", "rich"],
+    "toolsNeeded": ["Jigger", "Bar spoon (optional)", "Old Fashioned glass"],
+    "ingredients": [
+      { "name": "Vodka", "quantity": "2 oz (60ml)" },
+      { "name": "Coffee Liqueur (e.g., Kahlúa, Tia Maria)", "quantity": "1 oz (30ml)" },
+      { "name": "Heavy Cream or Half-and-Half", "quantity": "1 oz (30ml)", "notes": "milk can be used for a lighter version" }
+    ],
+    "instructions": [
+      "Fill an Old Fashioned glass with ice cubes.",
+      "Add vodka and coffee liqueur to the glass.",
+      "Gently float the heavy cream (or milk/half-and-half) on top by pouring it slowly over the back of a spoon.",
+      "Serve unstirred for a layered look, or stir gently to combine if preferred."
+    ]
+  },
+  {
+    "id": "shirley-temple",
+    "categoryId": "mocktails",
+    "name": "Shirley Temple",
+    "image": "https://images.unsplash.com/photo-1606212951313-1c0b030439f6?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=60",
+    "description": "A classic, sweet, and fizzy non-alcoholic drink, often a childhood favorite.",
+    "history": "Named after the famous child actress Shirley Temple, this drink was supposedly created for her in the 1930s so she could enjoy a 'cocktail' with adults. There are competing claims as to where it was first made.",
+    "glass": "Highball glass or Collins glass",
+    "difficulty": "Easy",
+    "tags": ["non-alcoholic", "sweet", "classic", "kid-friendly", "fizzy"],
+    "flavorProfile": ["sweet", "cherry", "ginger", "citrusy"],
+    "toolsNeeded": ["Jigger (optional)", "Bar spoon (optional)", "Highball glass"],
+    "ingredients": [
+      { "name": "Ginger Ale", "quantity": "6-8 oz (180-240ml)", "notes": "chilled" },
+      { "name": "Grenadine", "quantity": "0.5 - 0.75 oz (15-22ml)", "notes": "adjust to taste" },
+      { "name": "Lime Juice (optional)", "quantity": "0.25 oz (7ml)", "notes": "for a bit of tartness" },
+      { "name": "Maraschino Cherry & Orange Slice", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "Fill a highball or Collins glass with ice.",
+      "Pour in the ginger ale.",
+      "Slowly pour the grenadine over the top, allowing it to sink and create a layered effect (or stir gently if preferred).",
+      "If using, add a splash of lime juice.",
+      "Garnish with a maraschino cherry and an orange slice."
+    ]
+  }
+]
