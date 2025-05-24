@@ -1,0 +1,30 @@
+[
+  {
+    "id": "rum",
+    "name": "Rum-based Cocktails"
+  },
+  {
+    "id": "whiskey",
+    "name": "Whiskey-based Cocktails"
+  },
+  {
+    "id": "gin",
+    "name": "Gin-based Cocktails"
+  },
+  {
+    "id": "vodka",
+    "name": "Vodka-based Cocktails"
+  },
+  {
+    "id": "tequila",
+    "name": "Tequila-based Cocktails"
+  },
+  {
+    "id": "liqueur",
+    "name": "Liqueur-based Cocktails"
+  },
+  {
+    "id": "mocktails",
+    "name": "Mocktails (Non-alcoholic)"
+  }
+]
