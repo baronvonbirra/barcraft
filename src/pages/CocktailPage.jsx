@@ -1,11 +1,12 @@
-import React, { useContext } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useContext, useMemo } from 'react'; // Added useMemo
+import { useParams, Link } from 'react-router-dom'; // Added Link
 import styled from 'styled-components';
 import cocktailsData from '../data/cocktails.json';
-import { useCocktailFilter } from '../hooks/useCocktailFilter';
-import { useBar } from '../contexts/BarContext';
-import { useFavorites } from '../hooks/useFavorites'; // Import useFavorites
+// import { useCocktailFilter } from '../hooks/useCocktailFilter'; // To be removed
+// import { useBar } from '../contexts/BarContext'; // To be removed
+import { useFavorites } from '../hooks/useFavorites';
 import { ThemeContext } from '../contexts/ThemeContext';
+import { getImageUrl } from '../../utils/cocktailImageLoader'; // Added
 import bar1StockData from '../data/bar1_stock.json';
 import bar2StockData from '../data/bar2_stock.json';
 
@@ -13,6 +14,7 @@ import bar2StockData from '../data/bar2_stock.json';
 const PageWrapper = styled.div`
   padding: ${({ theme }) => theme.spacing.medium};
   color: ${({ theme }) => theme.colors.text};
+  animation: fadeInPage 0.5s ease-out forwards;
 `;
 
 const CocktailHeader = styled.div`
@@ -115,13 +117,64 @@ const AvailabilityStatus = styled.div`
   font-weight: bold;
 `;
 
+const FilterLinkTag = styled(Link)`
+  display: inline-block;
+  background-color: ${({ theme }) => theme.colors.surface};
+  color: ${({ theme }) => theme.colors.textOffset};
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.small};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  text-decoration: none;
+  margin-right: ${({ theme }) => theme.spacing.small};
+  margin-bottom: ${({ theme }) => theme.spacing.small}; // For wrapping
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.onPrimary};
+    border-color: ${({ theme }) => theme.colors.primary};
+  }
+`;
+
+// Re-define or import BarAvailabilityIconWrapper and SingleBarIcon
+const BarAvailabilityIconWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing.medium}; /* Increased gap for page view */
+  margin-top: ${({ theme }) => theme.spacing.small};
+  margin-bottom: ${({ theme }) => theme.spacing.large}; /* Increased margin for page view */
+`;
+
+const SingleBarIcon = styled.span`
+  font-size: 1em; /* Larger font size for page view */
+  color: ${({ theme, available }) => available ? theme.colors.secondary : theme.colors.textOffset};
+  border: 1px solid ${({ theme, available }) => available ? theme.colors.secondary : theme.colors.textOffset};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.small};
+  white-space: nowrap;
+  
+  .bar-name {
+    font-weight: bold;
+  }
+  .status {
+    margin-left: ${({ theme }) => theme.spacing.xs};
+  }
+`;
+
+// Helper function to check makeability
+const checkMakeable = (cocktailIngredients, barStockIngredients) => {
+  if (!cocktailIngredients || !barStockIngredients) return false;
+  return cocktailIngredients.every(ing =>
+    barStockIngredients.some(stockIng => stockIng.name === ing.name && stockIng.available)
+  );
+};
 
 const CocktailPage = () => {
   const { cocktailId } = useParams();
   const { theme } = useContext(ThemeContext);
-  const { selectedBar } = useBar();
-  const { isCocktailMakeable, getIngredientAvailability } = useCocktailFilter(cocktailsData);
-  const { favoriteIds, isFavorite, toggleFavorite } = useFavorites(); // Use the hook
+  // selectedBar and related logic (isCocktailMakeable, getIngredientAvailability from useCocktailFilter) are removed
+  // as we now show availability for both bars.
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const cocktail = cocktailsData.find(c => c.id === cocktailId);
 
@@ -130,14 +183,15 @@ const CocktailPage = () => {
   }
 
   const currentIsFavorite = isFavorite(cocktail.id);
-  const currentBarName = selectedBar === 'bar1' ? bar1StockData.barName : selectedBar === 'bar2' ? bar2StockData.barName : null;
-  let overallMakeableStatus = null;
-  let ingredientAvailabilityData = {};
 
-  if (selectedBar === 'bar1' || selectedBar === 'bar2') {
-    overallMakeableStatus = isCocktailMakeable(cocktail.ingredients);
-    ingredientAvailabilityData = getIngredientAvailability(cocktail.ingredients);
-  }
+  const isMakeableBarA = useMemo(() => checkMakeable(cocktail.ingredients, bar1StockData.ingredients), [cocktail.ingredients]);
+  const isMakeableBarB = useMemo(() => checkMakeable(cocktail.ingredients, bar2StockData.ingredients), [cocktail.ingredients]);
+  
+  // Logic for individual ingredient availability (if needed for styling)
+  // This part is tricky without selectedBar. If we want to show which ingredients are missing for EACH bar,
+  // the UI in IngredientListItem would need significant changes.
+  // For now, let's assume IngredientListItem will just list ingredients without per-bar availability.
+  // The overall makeability is shown by the new icons.
 
   return (
     <PageWrapper theme={theme}>
@@ -148,34 +202,37 @@ const CocktailPage = () => {
             isFavorite={currentIsFavorite}
             onClick={() => toggleFavorite(cocktail.id)}
             title={currentIsFavorite ? "Remove from Favorites" : "Add to Favorites"}
-            theme={theme} // Pass theme if needed by styled-component
+            theme={theme}
           >
             {currentIsFavorite ? '♥' : '♡'}
           </FavoriteButtonDetail>
         </CocktailNameWrapper>
-        <CocktailImage src={cocktail.image || '/placeholder.jpg'} alt={cocktail.name} />
+        <CocktailImage src={getImageUrl(cocktail.image)} alt={cocktail.name} />
+        
+        {/* New Bar Availability Icons */}
+        <BarAvailabilityIconWrapper theme={theme}>
+          <SingleBarIcon available={isMakeableBarA} theme={theme}>
+            <span className="bar-name">Bar A:</span>
+            <span className="status">{isMakeableBarA ? 'Available' : 'Unavailable'}</span>
+          </SingleBarIcon>
+          <SingleBarIcon available={isMakeableBarB} theme={theme}>
+            <span className="bar-name">Bar B:</span>
+            <span className="status">{isMakeableBarB ? 'Available' : 'Unavailable'}</span>
+          </SingleBarIcon>
+        </BarAvailabilityIconWrapper>
       </CocktailHeader>
 
-      {currentBarName && (
-        <AvailabilityStatus theme={theme} isMakeable={overallMakeableStatus}>
-          Availability at {currentBarName}: {overallMakeableStatus ? "Makeable" : "Unavailable"}
-        </AvailabilityStatus>
-      )}
+      {/* Old AvailabilityStatus removed */}
 
       <CocktailDetailsGrid>
         <DetailSection theme={theme}>
           <h2>Ingredients</h2>
           <IngredientList>
             {cocktail.ingredients.map((ing, index) => (
-              <IngredientListItem 
-                key={index} 
-                theme={theme}
-                available={(selectedBar === 'bar1' || selectedBar === 'bar2') ? ingredientAvailabilityData[ing.name] : true}
-              >
+              // Simplified IngredientListItem: remove individual availability styling based on selectedBar
+              <IngredientListItem key={index} theme={theme} available={true}> 
                 {ing.quantity} {ing.name} {ing.notes ? `(${ing.notes})` : ''}
-                {(selectedBar === 'bar1' || selectedBar === 'bar2') && !ingredientAvailabilityData[ing.name] && (
-                  <span className="unavailable-note">(Unavailable at {currentBarName})</span>
-                )}
+                {/* Removed unavailable note based on selectedBar */}
               </IngredientListItem>
             ))}
           </IngredientList>
@@ -192,10 +249,33 @@ const CocktailPage = () => {
 
         <DetailSection theme={theme}>
           <h2>Details</h2>
-          <p><strong>Glass:</strong> {cocktail.glass}</p>
+          <p>
+            <strong>Glass:</strong>{' '}
+            <FilterLinkTag to={`/cocktails/filter/glass/${encodeURIComponent(cocktail.glass)}`}>
+              {cocktail.glass}
+            </FilterLinkTag>
+          </p>
           <p><strong>Difficulty:</strong> {cocktail.difficulty}</p>
-          {cocktail.tags && <p><strong>Tags:</strong> {cocktail.tags.join(', ')}</p>}
-          {cocktail.flavorProfile && <p><strong>Flavor Profile:</strong> {cocktail.flavorProfile.join(', ')}</p>}
+          {cocktail.tags && cocktail.tags.length > 0 && (
+            <p>
+              <strong>Tags:</strong>{' '}
+              {cocktail.tags.map(tag => (
+                <FilterLinkTag key={tag} to={`/cocktails/filter/tag/${encodeURIComponent(tag)}`}>
+                  {tag}
+                </FilterLinkTag>
+              ))}
+            </p>
+          )}
+          {cocktail.flavorProfile && cocktail.flavorProfile.length > 0 && (
+            <p>
+              <strong>Flavor Profile:</strong>{' '}
+              {cocktail.flavorProfile.map(flavor => (
+                <FilterLinkTag key={flavor} to={`/cocktails/filter/flavor/${encodeURIComponent(flavor)}`}>
+                  {flavor}
+                </FilterLinkTag>
+              ))}
+            </p>
+          )}
         </DetailSection>
         
         {cocktail.history && (

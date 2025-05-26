@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react'; // Added useState
 import { Link, NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import { ThemeContext as CustomThemeContext } from '../contexts/ThemeContext';
-import BarSelector from './BarSelector';
+// import BarSelector from './BarSelector'; // Removed
 
 const NavWrapper = styled.nav`
   background-color: ${({ theme }) => theme.colors.surface};
@@ -50,10 +50,7 @@ const NavLinkStyled = styled(NavLink)`
 
   &:hover {
     color: ${({ theme }) => theme.colors.primary};
-    /* background-color: rgba(${({ theme }) => theme.colors.primary}, 0.1); // Assuming direct rgba usage */
-    /* For now, direct color value for hover background if theme.fn.rgba is not available */
-    background-color: ${({ theme }) => theme.mode === 'dark' ? 'rgba(176, 141, 87, 0.1)' : 'rgba(52, 152, 219, 0.1)'};
-
+    background-color: rgba(176, 141, 87, 0.1); /* Hardcoded for dark theme primary with 0.1 opacity */
   }
 
   &.active {
@@ -63,32 +60,7 @@ const NavLinkStyled = styled(NavLink)`
   }
 `;
 
-const ToggleButton = styled.button`
-  background-color: transparent;
-  color: ${({ theme }) => theme.colors.primary};
-  border: 1px solid ${({ theme }) => theme.colors.primary};
-  padding: ${({ theme }) => theme.spacing.small} ${({ theme }) => theme.spacing.medium};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  font-family: ${({ theme }) => theme.fonts.main};
-  font-weight: 600;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover, &:focus {
-    background-color: ${({ theme }) => theme.colors.primary};
-    color: ${({ theme }) => theme.colors.onPrimary};
-    box-shadow: ${({ theme }) => theme.shadows.small};
-    outline: 2px solid ${({ theme }) => theme.colors.primary};
-    outline-offset: 2px;
-  }
-
-  @media (max-width: 768px) {
-    // Optionally hide theme toggle or make it smaller on mobile if space is an issue
-    // For now, let's keep it, but ensure it doesn't clash with hamburger
-    margin-left: auto; // Pushes it away from hamburger if hamburger is on the right
-  }
-`;
+// ToggleButton styled component removed.
 
 const HamburgerIcon = styled.button`
   display: none; // Hidden by default
@@ -173,7 +145,8 @@ const RightNavContent = styled.div`
 
 
 const Navbar = () => {
-  const { theme, toggleTheme } = useContext(CustomThemeContext);
+  // Removed toggleTheme from context destructuring
+  const { theme } = useContext(CustomThemeContext); 
   const [isOpen, setIsOpen] = useState(false);
   const mobileMenuId = "mobile-menu"; // Define an ID for ARIA
 
@@ -189,13 +162,13 @@ const Navbar = () => {
         <NavLinkStyled to="/" end onClick={handleLinkClick}>Home</NavLinkStyled>
         <NavLinkStyled to="/categories" onClick={handleLinkClick}>Categories</NavLinkStyled>
         <NavLinkStyled to="/favorites" onClick={handleLinkClick}>My Favorites</NavLinkStyled>
-        <BarSelector />
+        <NavLinkStyled to="/bar/barA" onClick={handleLinkClick}>Bar A</NavLinkStyled>
+        <NavLinkStyled to="/bar/barB" onClick={handleLinkClick}>Bar B</NavLinkStyled>
+        {/* BarSelector removed */}
       </NavLinks>
 
       <RightNavContent>
-        <ToggleButton onClick={toggleTheme}>
-          Switch to {theme.mode === 'dark' ? 'Light' : 'Dark'} Theme
-        </ToggleButton>
+        {/* ToggleButton instance removed */}
         <HamburgerIcon
           isOpen={isOpen}
           onClick={() => setIsOpen(!isOpen)}
@@ -213,9 +186,9 @@ const Navbar = () => {
         <NavLinkStyled to="/" end onClick={handleLinkClick}>Home</NavLinkStyled>
         <NavLinkStyled to="/categories" onClick={handleLinkClick}>Categories</NavLinkStyled>
         <NavLinkStyled to="/favorites" onClick={handleLinkClick}>My Favorites</NavLinkStyled>
-        {/* BarSelector might be too complex for mobile nav, or needs mobile-specific styling */}
-        {/* For now, let's include it and see. It might be better placed elsewhere on mobile. */}
-        <BarSelector /> 
+        <NavLinkStyled to="/bar/barA" onClick={handleLinkClick}>Bar A</NavLinkStyled>
+        <NavLinkStyled to="/bar/barB" onClick={handleLinkClick}>Bar B</NavLinkStyled>
+        {/* BarSelector removed from MobileMenu */}
       </MobileMenu>
     </NavWrapper>
   );
