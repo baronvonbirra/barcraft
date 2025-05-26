@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 // import PlaceholderImage from '../assets/cocktails/placeholder.png'; // Removed
 import { getImageUrl } from '../utils/cocktailImageLoader.js'; // Corrected path
 import { useFavorites } from '../hooks/useFavorites'; // Import useFavorites
-import bar1StockData from '../../data/bar1_stock.json'; // Added
-import bar2StockData from '../../data/bar2_stock.json'; // Added
+import bar1StockData from '../data/bar1_stock.json'; // Added
+import bar2StockData from '../data/bar2_stock.json'; // Added
 
 // Styled components (ensure they exist or are defined if not already)
 const ListItemWrapper = styled.div`
