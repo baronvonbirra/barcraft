@@ -162,8 +162,8 @@ const Navbar = () => {
         <NavLinkStyled to="/" end onClick={handleLinkClick}>Home</NavLinkStyled>
         <NavLinkStyled to="/categories" onClick={handleLinkClick}>Categories</NavLinkStyled>
         <NavLinkStyled to="/favorites" onClick={handleLinkClick}>My Favorites</NavLinkStyled>
-        <NavLinkStyled to="/bar/barA" onClick={handleLinkClick}>Bar A</NavLinkStyled>
-        <NavLinkStyled to="/bar/barB" onClick={handleLinkClick}>Bar B</NavLinkStyled>
+        <NavLinkStyled to="/bar/barA" onClick={handleLinkClick}>Level One</NavLinkStyled>
+        <NavLinkStyled to="/bar/barB" onClick={handleLinkClick}>The Glitch</NavLinkStyled>
         {/* BarSelector removed */}
       </NavLinks>
 
@@ -186,8 +186,8 @@ const Navbar = () => {
         <NavLinkStyled to="/" end onClick={handleLinkClick}>Home</NavLinkStyled>
         <NavLinkStyled to="/categories" onClick={handleLinkClick}>Categories</NavLinkStyled>
         <NavLinkStyled to="/favorites" onClick={handleLinkClick}>My Favorites</NavLinkStyled>
-        <NavLinkStyled to="/bar/barA" onClick={handleLinkClick}>Bar A</NavLinkStyled>
-        <NavLinkStyled to="/bar/barB" onClick={handleLinkClick}>Bar B</NavLinkStyled>
+        <NavLinkStyled to="/bar/barA" onClick={handleLinkClick}>Level One</NavLinkStyled>
+        <NavLinkStyled to="/bar/barB" onClick={handleLinkClick}>The Glitch</NavLinkStyled>
         {/* BarSelector removed from MobileMenu */}
       </MobileMenu>
     </NavWrapper>

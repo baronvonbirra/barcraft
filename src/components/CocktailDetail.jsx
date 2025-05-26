@@ -148,6 +148,16 @@ const CocktailDetail = ({ cocktail }) => {
     `${ing.name}: ${ing.quantity}${ing.notes ? ` (${ing.notes})` : ''}`
   );
 
+  // Determine the glass display value
+  let glassDisplayValue = '';
+  if (cocktail.glass) {
+    if (Array.isArray(cocktail.glass)) {
+      glassDisplayValue = cocktail.glass.join(', ');
+    } else {
+      glassDisplayValue = cocktail.glass;
+    }
+  }
+
   return (
     <DetailWrapper>
       <CocktailName>{cocktail.name}</CocktailName>
@@ -161,7 +171,7 @@ const CocktailDetail = ({ cocktail }) => {
       )}
 
       <InfoGrid>
-        {cocktail.glass && <InfoItem label="Glass:" value={cocktail.glass} />}
+        {cocktail.glass && <InfoItem label="Glass:" value={glassDisplayValue} />}
         {cocktail.difficulty && <InfoItem label="Difficulty:" value={cocktail.difficulty} />}
       </InfoGrid>
 
