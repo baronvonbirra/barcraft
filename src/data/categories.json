@@ -17,12 +17,12 @@
   {
     "id": "vodka",
     "name": "Vodka",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/vodka-category.png"
   },
   {
     "id": "tequila",
     "name": "Tequila",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/tequila-category.png"
   },
   {
     "id": "mezcal",
@@ -32,7 +32,7 @@
   {
     "id": "brandy-cognac",
     "name": "Brandy & Cognac",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/brandy-cognac-category.png"
   },
   {
     "id": "pisco",
@@ -47,7 +47,7 @@
   {
     "id": "sparkling-wine",
     "name": "Sparkling Wine",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/sparkling-wine-category.png"
   },
   {
     "id": "mocktails",

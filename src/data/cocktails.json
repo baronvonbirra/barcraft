@@ -2,7 +2,7 @@
   {
     "id": "mojito",
     "baseSpiritCategory": "rum",
-    "thematicCategories": ["classic", "tropical", "seasonal", "sours"],
+    "thematicCategories": ["classic", "tropical", "seasonal", "sours", "refreshing"],
     "name": "Mojito",
     "image": "src/assets/cocktails/mojito.jpg",
     "description": "A vibrant and refreshing Cuban highball, celebrated for its combination of mint, lime, and rum.",
@@ -32,7 +32,7 @@
   {
     "id": "daiquiri",
     "baseSpiritCategory": "rum",
-    "thematicCategories": ["classic", "sours", "tropical"],
+    "thematicCategories": ["classic", "sours", "tropical", "refreshing"],
     "name": "Daiquiri",
     "image": "src/assets/cocktails/daiquiri.jpg",
     "description": "A quintessential sour cocktail that perfectly balances rum, citrus, and sweetness.",
@@ -53,6 +53,83 @@
       "Shake well until thoroughly chilled (about 15-20 seconds).",
       "Double strain into a chilled coupe or martini glass.",
       "Garnish with a lime wheel or twist, if desired."
+    ]
+  },
+  {
+    "id": "pina-colada",
+    "baseSpiritCategory": "rum",
+    "thematicCategories": ["tropical", "creamy-dessert", "seasonal"],
+    "name": "Piña Colada",
+    "image": "src/assets/cocktails/pina-colada.jpg",
+    "description": "A sweet, creamy, and tropical cocktail featuring rum, coconut cream, and pineapple juice.",
+    "history": "The exact origin of the Piña Colada is debated, with several bartenders in Puerto Rico claiming its invention in the mid-20th century.",
+    "glass": ["Hurricane glass", "Poco Grande glass"],
+    "difficulty": "Medium",
+    "tags": ["tropical", "creamy", "sweet", "summer", "fruity"],
+    "flavorProfile": ["coconut", "pineapple", "sweet", "creamy"],
+    "toolsNeeded": ["Blender (for blended)", "Shaker (for shaken)", "Jigger", "Hurricane glass"],
+    "ingredients": [
+      { "name": "White Rum", "quantity": "2 oz (60ml)" },
+      { "name": "Coconut Cream", "quantity": "1 oz (30ml)" },
+      { "name": "Pineapple Juice", "quantity": "2 oz (60ml)" },
+      { "name": "Pineapple Wedge & Cherry", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "For a blended Piña Colada: Combine all ingredients with 1 cup of ice in a blender. Blend until smooth. Pour into a chilled hurricane or poco grande glass.",
+      "For a shaken Piña Colada: Add rum, coconut cream, and pineapple juice to a shaker with ice. Shake well until thoroughly chilled. Strain into a chilled glass filled with fresh ice.",
+      "Garnish with a pineapple wedge and a maraschino cherry."
+    ]
+  },
+  {
+    "id": "dark-n-stormy",
+    "baseSpiritCategory": "rum",
+    "thematicCategories": ["classic", "refreshing", "spicy"],
+    "name": "Dark 'n' Stormy",
+    "image": "src/assets/cocktails/dark-n-stormy.jpg",
+    "description": "A simple and refreshing highball with dark rum layered over spicy ginger beer.",
+    "history": "The Dark 'n' Stormy is the national drink of Bermuda and is legally protected, requiring Gosling's Black Seal rum and ginger beer.",
+    "glass": "Highball glass",
+    "difficulty": "Easy",
+    "tags": ["classic", "bermuda", "rum", "ginger", "refreshing", "spicy"],
+    "flavorProfile": ["spicy", "sweet", "dark-rum", "effervescent"],
+    "toolsNeeded": ["Jigger", "Highball glass"],
+    "ingredients": [
+      { "name": "Gosling's Black Seal Rum", "quantity": "2 oz (60ml)" },
+      { "name": "Ginger Beer", "quantity": "4-5 oz (120-150ml)", "notes": "chilled, good quality" },
+      { "name": "Lime Wedge", "quantity": "For garnish (optional)" }
+    ],
+    "instructions": [
+      "Fill a highball glass with ice.",
+      "Pour in the ginger beer.",
+      "Slowly float the dark rum on top by pouring it gently over the back of a spoon to create a layered effect.",
+      "Garnish with a lime wedge, if desired. Serve unstirred."
+    ]
+  },
+  {
+    "id": "hemingway-daiquiri",
+    "baseSpiritCategory": "rum",
+    "thematicCategories": ["classic", "sours", "tropical"],
+    "name": "Hemingway Daiquiri",
+    "image": "src/assets/cocktails/hemingway-daiquiri.jpg",
+    "description": "A sophisticated twist on the classic Daiquiri, with grapefruit and maraschino liqueur.",
+    "history": "Created for Ernest Hemingway at El Floridita in Havana, Cuba, this version removes the sugar and adds grapefruit juice and maraschino liqueur.",
+    "glass": ["Coupe", "Martini glass"],
+    "difficulty": "Medium",
+    "tags": ["classic", "cuban", "sour", "grapefruit", "maraschino"],
+    "flavorProfile": ["tart", "citrusy", "fruity", "rum"],
+    "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Coupe or Martini glass"],
+    "ingredients": [
+      { "name": "White Rum", "quantity": "2 oz (60ml)" },
+      { "name": "Grapefruit Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed" },
+      { "name": "Lime Juice", "quantity": "0.5 oz (15ml)", "notes": "freshly squeezed" },
+      { "name": "Maraschino Liqueur", "quantity": "0.25 oz (7.5ml)" },
+      { "name": "Lime Wheel", "quantity": "For garnish (optional)" }
+    ],
+    "instructions": [
+      "Add rum, grapefruit juice, lime juice, and maraschino liqueur to a shaker with ice.",
+      "Shake well until thoroughly chilled (about 15-20 seconds).",
+      "Double strain into a chilled coupe or martini glass.",
+      "Garnish with a lime wheel, if desired."
     ]
   },
   {
@@ -111,9 +188,120 @@
     ]
   },
   {
+    "id": "whiskey-sour",
+    "baseSpiritCategory": "whiskey",
+    "thematicCategories": ["classic", "sours"],
+    "name": "Whiskey Sour",
+    "image": "src/assets/cocktails/whiskey-sour.jpg",
+    "description": "A classic sour cocktail that perfectly balances whiskey's robustness with fresh lemon tartness and sweetness.",
+    "history": "The Whiskey Sour recipe dates back to the 1860s, though sailors in the British Navy were drinking similar concoctions much earlier to combat scurvy.",
+    "glass": ["Rocks glass", "Coupe"],
+    "difficulty": "Medium",
+    "tags": ["classic", "sour", "refreshing", "versatile"],
+    "flavorProfile": ["tart", "sweet", "spirituous", "citrusy"],
+    "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Rocks glass or Coupe"],
+    "ingredients": [
+      { "name": "Bourbon or Rye Whiskey", "quantity": "2 oz (60ml)" },
+      { "name": "Lemon Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed" },
+      { "name": "Simple Syrup (1:1)", "quantity": "0.75 oz (22ml)", "notes": "adjust to taste" },
+      { "name": "Egg White", "quantity": "0.5 oz (15ml) or 1 small egg white", "notes": "optional, for texture and foam" },
+      { "name": "Cherry & Orange slice", "quantity": "For garnish (optional)" }
+    ],
+    "instructions": [
+      "If using egg white, combine whiskey, lemon juice, simple syrup, and egg white in a shaker. Dry shake (without ice) vigorously for about 15 seconds to emulsify.",
+      "Add ice to the shaker and shake again until well-chilled (about 15-20 seconds).",
+      "If not using egg white, combine whiskey, lemon juice, and simple syrup in a shaker with ice and shake well.",
+      "Strain into a chilled coupe or a rocks glass filled with fresh ice.",
+      "Garnish with a cherry and an orange slice, if desired. A dash of Angostura bitters on top of the foam is also a nice touch if using egg white."
+    ]
+  },
+  {
+    "id": "penicillin",
+    "baseSpiritCategory": "whiskey",
+    "thematicCategories": ["modern", "spicy", "smoky", "sours"],
+    "name": "Penicillin",
+    "image": "src/assets/cocktails/penicillin.jpg",
+    "description": "A modern classic that combines the soothing warmth of ginger and honey with the smoky kick of Scotch.",
+    "history": "Created by bartender Sam Ross at Milk & Honey in New York City in the mid-2000s, this cocktail quickly became a staple in the craft cocktail world.",
+    "glass": "Rocks glass",
+    "difficulty": "Medium",
+    "tags": ["modern-classic", "scotch", "ginger", "honey", "smoky", "spicy"],
+    "flavorProfile": ["smoky", "spicy", "sweet-tart", "ginger", "honey"],
+    "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Rocks glass"],
+    "ingredients": [
+      { "name": "Blended Scotch Whisky (unpeated)", "quantity": "2 oz (60ml)" },
+      { "name": "Fresh Lemon Juice", "quantity": "1 oz (30ml)" },
+      { "name": "Honey-Ginger Syrup", "quantity": "0.5 oz (15ml)", "notes": "Equal parts honey and ginger juice (from fresh ginger, juiced or muddled and strained)" },
+      { "name": "Islay Scotch Whisky (peated)", "quantity": "0.25 oz (7.5ml)", "notes": "for float" },
+      { "name": "Candied Ginger", "quantity": "For garnish (optional)" }
+    ],
+    "instructions": [
+      "Combine blended Scotch, lemon juice, and honey-ginger syrup in a shaker with ice.",
+      "Shake until well-chilled (about 15 seconds).",
+      "Strain into a rocks glass filled with fresh ice.",
+      "Float the peated Islay Scotch on top by slowly pouring it over the back of a bar spoon.",
+      "Garnish with candied ginger."
+    ]
+  },
+  {
+    "id": "boulevardier",
+    "baseSpiritCategory": "whiskey",
+    "thematicCategories": ["classic", "spirit-forward", "aperitif"],
+    "name": "Boulevardier",
+    "image": "src/assets/cocktails/boulevardier.jpg",
+    "description": "A whiskey-based variation of the Negroni, offering a richer, bolder flavor profile.",
+    "history": "First appearing in Harry MacElhone's 1927 book 'Barflies and Cocktails', it was named for Erskine Gwynne, an American writer and socialite who founded 'The Boulevardier' magazine in Paris.",
+    "glass": ["Old Fashioned glass", "Coupe"],
+    "difficulty": "Easy",
+    "tags": ["classic", "spirit-forward", "bourbon", "campari", "bitter-sweet"],
+    "flavorProfile": ["spirituous", "bitter-sweet", "aromatic", "complex"],
+    "toolsNeeded": ["Mixing glass", "Jigger", "Bar spoon", "Strainer", "Old Fashioned glass or Coupe"],
+    "ingredients": [
+      { "name": "Bourbon or Rye Whiskey", "quantity": "1.5 oz (45ml)" },
+      { "name": "Campari", "quantity": "1 oz (30ml)" },
+      { "name": "Sweet Vermouth (Red)", "quantity": "1 oz (30ml)" },
+      { "name": "Orange Twist", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "Add whiskey, Campari, and sweet vermouth to a mixing glass filled with ice.",
+      "Stir well until thoroughly chilled (about 20-30 seconds).",
+      "Strain into an Old Fashioned glass over a large ice cube or sphere, or into a chilled coupe.",
+      "Express the oils from an orange twist over the drink, then drop it in."
+    ]
+  },
+  {
+    "id": "mint-julep",
+    "baseSpiritCategory": "whiskey",
+    "thematicCategories": ["classic", "seasonal", "refreshing"],
+    "name": "Mint Julep",
+    "image": "src/assets/cocktails/mint-julep.jpg",
+    "description": "A classic American cocktail, iconic for its strong bourbon base, fresh mint, and icy presentation.",
+    "history": "Long associated with the American South and the Kentucky Derby, the Mint Julep's origins date back to the 18th century as a medicinal tonic.",
+    "glass": "Julep cup (traditionally)",
+    "difficulty": "Medium",
+    "tags": ["classic", "bourbon", "mint", "summer", "refreshing", "horse-racing"],
+    "flavorProfile": ["spirituous", "minty", "sweet", "refreshing"],
+    "toolsNeeded": ["Muddler", "Jigger", "Bar spoon", "Julep cup or Rocks glass"],
+    "ingredients": [
+      { "name": "Bourbon", "quantity": "2 oz (60ml)" },
+      { "name": "Fresh Mint Leaves", "quantity": "8-10 leaves" },
+      { "name": "Simple Syrup (1:1)", "quantity": "0.5 oz (15ml)", "notes": "adjust to taste" },
+      { "name": "Crushed Ice", "quantity": "Plenty" },
+      { "name": "Mint Sprig", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "In a chilled julep cup or rocks glass, gently muddle the mint leaves with the simple syrup. Be careful not to tear the mint too much, just release its oils.",
+      "Add the bourbon.",
+      "Fill the glass with crushed ice, packing it in tightly.",
+      "Stir with a bar spoon until the outside of the glass is frosted.",
+      "Top with more crushed ice to form a mound.",
+      "Garnish generously with a large fresh mint sprig, placed directly where you'll smell it as you drink."
+    ]
+  },
+  {
     "id": "gin-tonic",
     "baseSpiritCategory": "gin",
-    "thematicCategories": ["classic", "low-abv-light", "aperitif"],
+    "thematicCategories": ["classic", "low-abv-light", "aperitif", "refreshing"],
     "name": "Gin and Tonic",
     "image": "src/assets/cocktails/gintonic.jpg",
     "description": "A quintessential and deceptively simple highball that showcases the botanicals of the gin against the bittersweet tonic.",
@@ -164,9 +352,36 @@
     ]
   },
   {
+    "id": "aviation",
+    "baseSpiritCategory": "gin",
+    "thematicCategories": ["classic", "floral", "sours"],
+    "name": "Aviation",
+    "image": "src/assets/cocktails/aviation.jpg",
+    "description": "A classic pre-prohibition cocktail known for its beautiful lavender-blue hue and floral notes.",
+    "history": "The Aviation was created by Hugo Ensslin, a bartender at the Hotel Wallick in New York, in the early 20th century. Its distinctive color comes from crème de violette.",
+    "glass": "Coupe glass",
+    "difficulty": "Medium",
+    "tags": ["classic", "floral", "tart", "gin", "elegant"],
+    "flavorProfile": ["floral", "citrusy", "tart", "sweet"],
+    "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Coupe glass"],
+    "ingredients": [
+      { "name": "Gin", "quantity": "2 oz (60ml)" },
+      { "name": "Maraschino Liqueur", "quantity": "0.5 oz (15ml)" },
+      { "name": "Crème de Violette", "quantity": "0.25 oz (7.5ml)" },
+      { "name": "Lemon Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed" },
+      { "name": "Lemon Twist or Cherry", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "Add gin, maraschino liqueur, crème de violette, and lemon juice to a shaker with ice.",
+      "Shake well until thoroughly chilled (about 15-20 seconds).",
+      "Strain into a chilled coupe glass.",
+      "Garnish with a lemon twist or a maraschino cherry."
+    ]
+  },
+  {
     "id": "moscow-mule",
     "baseSpiritCategory": "vodka",
-    "thematicCategories": ["classic", "low-abv-light"],
+    "thematicCategories": ["classic", "low-abv-light", "refreshing"],
     "name": "Moscow Mule",
     "image": "src/assets/cocktails/moscow-mule-cocktail.png",
     "description": "A zesty and refreshing cocktail known for its signature copper mug presentation.",
@@ -191,11 +406,66 @@
     ]
   },
   {
+    "id": "cosmopolitan",
+    "baseSpiritCategory": "vodka",
+    "thematicCategories": ["modern", "fruity", "sours"],
+    "name": "Cosmopolitan",
+    "image": "src/assets/cocktails/cosmopolitan.jpg",
+    "description": "A stylish and fruity cocktail, an icon of the late 20th-century cocktail renaissance.",
+    "history": "The modern Cosmopolitan gained massive popularity in the 1990s, largely due to its appearance in 'Sex and the City'. Its exact origin is debated, with several bartenders claiming its creation in the 1970s or 80s.",
+    "glass": ["Martini glass", "Coupe"],
+    "difficulty": "Medium",
+    "tags": ["modern-classic", "fruity", "tart", "elegant", "pink"],
+    "flavorProfile": ["tart-sweet", "cranberry", "citrusy", "smooth"],
+    "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Martini or Coupe glass"],
+    "ingredients": [
+      { "name": "Citron Vodka (or regular Vodka)", "quantity": "1.5 oz (45ml)" },
+      { "name": "Cointreau (or Triple Sec)", "quantity": "0.75 oz (22ml)" },
+      { "name": "Lime Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed" },
+      { "name": "Cranberry Juice Cocktail", "quantity": "0.5 oz (15ml)", "notes": "a splash for color and slight sweetness" },
+      { "name": "Lemon or Lime Twist, or Orange Peel", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "Chill your martini or coupe glass.",
+      "Add all ingredients (vodka, Cointreau, lime juice, cranberry juice) to a shaker with ice.",
+      "Shake well until thoroughly chilled (about 15-20 seconds).",
+      "Double strain into the chilled glass.",
+      "Garnish with a flamed orange peel for flair, or a simple lemon/lime twist."
+    ]
+  },
+  {
+    "id": "espresso-martini",
+    "baseSpiritCategory": "vodka",
+    "thematicCategories": ["modern", "creamy-dessert", "digestif"],
+    "name": "Espresso Martini",
+    "image": "src/assets/cocktails/espresso-martini.jpg",
+    "description": "A stimulating and rich coffee-flavored cocktail, perfect as a pick-me-up or dessert drink.",
+    "history": "Created by bartender Dick Bradsell in London in the 1980s, reportedly for a model who asked for a drink that would 'wake me up and then f*** me up'.",
+    "glass": "Martini glass",
+    "difficulty": "Medium",
+    "tags": ["modern-classic", "coffee", "creamy", "strong", "dessert"],
+    "flavorProfile": ["coffee", "sweet", "bitter", "rich"],
+    "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Martini glass"],
+    "ingredients": [
+      { "name": "Vodka", "quantity": "1.5 oz (45ml)" },
+      { "name": "Coffee Liqueur (e.g., Kahlúa)", "quantity": "1 oz (30ml)" },
+      { "name": "Freshly Brewed Espresso", "quantity": "1 oz (30ml)", "notes": "chilled" },
+      { "name": "Simple Syrup (1:1)", "quantity": "0.5 oz (15ml)", "notes": "adjust to taste" },
+      { "name": "Coffee Beans", "quantity": "3, for garnish" }
+    ],
+    "instructions": [
+      "Add vodka, coffee liqueur, chilled espresso, and simple syrup to a shaker with ice.",
+      "Shake vigorously for 15-20 seconds to create a good foam.",
+      "Double strain into a chilled martini glass.",
+      "Garnish with three coffee beans floating on the foam."
+    ]
+  },
+  {
     "id": "margarita",
     "baseSpiritCategory": "tequila",
-    "thematicCategories": ["classic", "sours"],
+    "thematicCategories": ["classic", "sours", "tropical", "refreshing"],
     "name": "Margarita",
-    "image": "src/assets/cocktails/placeholder.png",
+    "image": "src/assets/cocktails/margarita.jpg",
     "description": "The iconic tequila sour, perfectly balancing earthy tequila with tart lime and sweet orange liqueur.",
     "history": "The Margarita's history is shrouded in mystery, with numerous claims to its invention in Mexico or the US between the 1930s and 1940s. Regardless, it's one of the world's most popular cocktails.",
     "glass": ["Margarita glass", "Coupe", "Rocks glass"],
@@ -220,14 +490,44 @@
     ]
   },
   {
+    "id": "paloma",
+    "baseSpiritCategory": "tequila",
+    "thematicCategories": ["classic", "low-abv-light", "refreshing"],
+    "name": "Paloma",
+    "image": "src/assets/cocktails/paloma.jpg",
+    "description": "A refreshing and popular Mexican highball featuring tequila and grapefruit soda.",
+    "history": "The Paloma (Spanish for 'dove') is thought to be more popular in Mexico than the Margarita. Its exact origin is unclear, but it likely became popular with the availability of grapefruit sodas.",
+    "glass": "Highball glass",
+    "difficulty": "Easy",
+    "tags": ["mexican", "highball", "refreshing", "simple", "grapefruit"],
+    "flavorProfile": ["bitter-sweet", "citrusy", "grapefruit", "effervescent"],
+    "toolsNeeded": ["Jigger", "Bar spoon (optional)", "Highball glass"],
+    "ingredients": [
+      { "name": "Tequila Blanco (100% Agave)", "quantity": "2 oz (60ml)" },
+      { "name": "Lime Juice", "quantity": "0.5 oz (15ml)", "notes": "freshly squeezed" },
+      { "name": "Grapefruit Soda (e.g., Jarritos, Squirt, Fever-Tree Sparkling Pink Grapefruit)", "quantity": "4 oz (120ml) or to top", "notes": "chilled" },
+      { "name": "Salt", "quantity": "Pinch (optional, in the drink or for rim)" },
+      { "name": "Lime Wedge or Grapefruit Slice", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "If desired, salt the rim of a highball glass.",
+      "Fill the glass with ice.",
+      "Add tequila and lime juice.",
+      "Add a pinch of salt directly into the drink if not using a salted rim and if desired.",
+      "Top slowly with grapefruit soda.",
+      "Gently stir to combine.",
+      "Garnish with a lime wedge or a thin slice of grapefruit."
+    ]
+  },
+  {
     "id": "white-russian",
     "baseSpiritCategory": "liqueur",
     "thematicCategories": ["classic", "creamy-dessert", "digestif"],
     "name": "White Russian",
-    "image": "src/assets/cocktails/placeholder.png",
+    "image": "src/assets/cocktails/white-russian.jpg",
     "description": "A creamy and decadent dessert cocktail with a rich coffee flavor.",
     "history": "A variation of the Black Russian (vodka and coffee liqueur), the White Russian adds cream and gained significant popularity after being featured in the 1998 film 'The Big Lebowski'.",
-    "glass": "Old Fashioned glass (or Rocks glass)",
+    "glass": ["Old Fashioned glass", "Rocks glass"],
     "difficulty": "Easy",
     "tags": ["creamy", "dessert-cocktail", "coffee", "classic", "pop-culture"],
     "flavorProfile": ["coffee", "sweet", "creamy", "rich"],
@@ -245,11 +545,69 @@
     ]
   },
   {
+    "id": "amaretto-sour",
+    "baseSpiritCategory": "liqueur",
+    "thematicCategories": ["classic", "sours"],
+    "name": "Amaretto Sour",
+    "image": "src/assets/cocktails/amaretto-sour.jpg",
+    "description": "A sweet and sour cocktail showcasing the almond flavor of Amaretto, often with a rich, foamy top.",
+    "history": "The Amaretto Sour became popular in the United States during the 1970s. Modern versions often balance the sweetness with more lemon and sometimes bourbon.",
+    "glass": ["Rocks glass", "Coupe"],
+    "difficulty": "Medium",
+    "tags": ["sour", "sweet", "nutty", "classic-ish"],
+    "flavorProfile": ["almond", "sweet-tart", "citrusy", "smooth"],
+    "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Rocks glass or Coupe"],
+    "ingredients": [
+      { "name": "Amaretto Liqueur", "quantity": "1.5 oz (45ml)" },
+      { "name": "Lemon Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed, can adjust from 0.75oz to 1oz based on preference" },
+      { "name": "Egg White", "quantity": "0.5 oz (15ml) or 1 small egg white", "notes": "optional, for foam" },
+      { "name": "Simple Syrup (1:1) (optional)", "quantity": "0.25 oz (7ml)", "notes": "if Amaretto is not very sweet or if you prefer a sweeter drink" },
+      { "name": "Bourbon (optional)", "quantity": "0.5 oz (15ml)", "notes": "adds depth, making it a Morganthaler Amaretto Sour" },
+      { "name": "Cherry & Lemon Slice", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "If using egg white, combine Amaretto, lemon juice, optional simple syrup, optional bourbon, and egg white in a shaker. Dry shake vigorously for 15 seconds.",
+      "Add ice to the shaker and shake again until well-chilled (about 15-20 seconds).",
+      "If not using egg white, combine liquid ingredients in a shaker with ice and shake well.",
+      "Strain into a rocks glass filled with fresh ice or into a chilled coupe.",
+      "Garnish with a cherry and a lemon slice. A dash of Angostura bitters on the foam is also a nice touch."
+    ]
+  },
+  {
+    "id": "lemon-drop-martini",
+    "baseSpiritCategory": "liqueur",
+    "thematicCategories": ["modern", "sours", "fruity"],
+    "name": "Lemon Drop Martini",
+    "image": "src/assets/cocktails/lemon-drop-martini.jpg",
+    "description": "A sweet and tart vodka-based martini with bright lemon flavor, often served with a sugar rim.",
+    "history": "The Lemon Drop Martini became popular in the 1970s in San Francisco, evolving from a classic sour into a more dessert-like cocktail.",
+    "glass": "Martini glass",
+    "difficulty": "Easy",
+    "tags": ["modern-classic", "sweet-tart", "lemon", "vodka", "dessert"],
+    "flavorProfile": ["sweet-tart", "citrusy", "lemon"],
+    "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Martini glass"],
+    "ingredients": [
+      { "name": "Citron Vodka", "quantity": "1.5 oz (45ml)" },
+      { "name": "Lemon Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed" },
+      { "name": "Triple Sec or Cointreau", "quantity": "0.5 oz (15ml)" },
+      { "name": "Simple Syrup (1:1)", "quantity": "0.5 oz (15ml)", "notes": "adjust to taste" },
+      { "name": "Sugar", "quantity": "For rim (optional)" },
+      { "name": "Lemon Twist", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "If desired, prepare a sugar rim on your martini glass by moistening the rim with a lemon wedge and dipping it into sugar.",
+      "Add all liquid ingredients to a shaker with ice.",
+      "Shake well until thoroughly chilled (about 15-20 seconds).",
+      "Strain into the prepared martini glass.",
+      "Garnish with a lemon twist."
+    ]
+  },
+  {
     "id": "shirley-temple",
     "baseSpiritCategory": "mocktails",
-    "thematicCategories": ["classic", "low-abv-light"],
+    "thematicCategories": ["classic", "low-abv-light", "refreshing"],
     "name": "Shirley Temple",
-    "image": "src/assets/cocktails/placeholder.png",
+    "image": "src/assets/cocktails/shirley-temple.jpg",
     "description": "A classic, sweet, and fizzy non-alcoholic drink, often a childhood favorite.",
     "history": "Named after the famous child actress Shirley Temple, this drink was supposedly created for her in the 1930s so she could enjoy a 'cocktail' with adults. There are competing claims as to where it was first made.",
     "glass": ["Highball glass", "Collins glass"],
@@ -269,6 +627,310 @@
       "Slowly pour the grenadine over the top, allowing it to sink and create a layered effect (or stir gently if preferred).",
       "If using, add a splash of lime juice.",
       "Garnish with a maraschino cherry and an orange slice."
+    ]
+  },
+  {
+    "id": "virgin-mojito",
+    "baseSpiritCategory": "mocktails",
+    "thematicCategories": ["classic", "tropical", "seasonal", "refreshing"],
+    "name": "Virgin Mojito",
+    "image": "src/assets/cocktails/virgin-mojito.jpg",
+    "description": "All the refreshing flavors of a Mojito—mint, lime, and sweetness—without the alcohol.",
+    "history": "A non-alcoholic adaptation of the classic Cuban Mojito, perfect for all ages and occasions.",
+    "glass": "Highball glass",
+    "difficulty": "Easy",
+    "tags": ["non-alcoholic", "refreshing", "summer", "minty", "citrusy"],
+    "flavorProfile": ["citrusy", "sweet", "herbal", "refreshing"],
+    "toolsNeeded": ["Muddler", "Jigger", "Bar spoon", "Highball glass"],
+    "ingredients": [
+      { "name": "Lime Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed" },
+      { "name": "Simple Syrup (1:1)", "quantity": "0.75 oz (22ml)", "notes": "adjust to taste" },
+      { "name": "Fresh Mint Leaves", "quantity": "8-10 leaves" },
+      { "name": "Soda Water or Sparkling Water", "quantity": "Top up", "notes": "chilled" },
+      { "name": "Lime wedge & Mint sprig", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "In a sturdy highball glass, gently muddle the mint leaves with simple syrup and lime juice.",
+      "Fill the glass with crushed ice or cubed ice.",
+      "Top with soda water or sparkling water.",
+      "Gently stir to combine all ingredients, pulling the mint upwards.",
+      "Garnish with a lime wedge and a fresh mint sprig."
+    ]
+  },
+  {
+    "id": "mezcal-mule",
+    "baseSpiritCategory": "mezcal",
+    "thematicCategories": ["modern", "spicy", "refreshing"],
+    "name": "Mezcal Mule",
+    "image": "src/assets/cocktails/mezcal-mule.jpg",
+    "description": "A smoky and refreshing twist on the classic Moscow Mule, replacing vodka with mezcal.",
+    "history": "A modern variation of the Moscow Mule, leveraging the growing popularity of mezcal and its distinctive smoky flavor.",
+    "glass": ["Copper mug (traditionally)", "Highball glass"],
+    "difficulty": "Easy",
+    "tags": ["modern", "smoky", "spicy", "refreshing", "mezcal"],
+    "flavorProfile": ["smoky", "gingery", "citrusy", "effervescent"],
+    "toolsNeeded": ["Jigger", "Bar spoon (optional)", "Copper mug or Highball glass"],
+    "ingredients": [
+      { "name": "Mezcal", "quantity": "2 oz (60ml)" },
+      { "name": "Lime Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed" },
+      { "name": "Ginger Beer", "quantity": "4 oz (120ml)", "notes": "good quality, spicy, chilled" },
+      { "name": "Lime Wedge", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "Fill a copper mug or highball glass with plenty of ice.",
+      "Pour in the mezcal and lime juice.",
+      "Top with chilled ginger beer.",
+      "Gently stir to combine.",
+      "Garnish with a lime wedge."
+    ]
+  },
+  {
+    "id": "oaxaca-old-fashioned",
+    "baseSpiritCategory": "mezcal",
+    "thematicCategories": ["modern", "spirit-forward", "experimental"],
+    "name": "Oaxaca Old Fashioned",
+    "image": "src/assets/cocktails/oaxaca-old-fashioned.jpg",
+    "description": "A smoky and complex take on the Old Fashioned, combining tequila and mezcal with agave nectar and bitters.",
+    "history": "Created by Phil Ward at Death & Co. in New York City in 2007, it's considered a modern classic in the craft cocktail scene.",
+    "glass": ["Old Fashioned glass", "Rocks glass"],
+    "difficulty": "Medium",
+    "tags": ["modern-classic", "smoky", "spirit-forward", "tequila", "mezcal"],
+    "flavorProfile": ["smoky", "sweet", "bitter", "agave", "complex"],
+    "toolsNeeded": ["Mixing glass", "Jigger", "Bar spoon", "Strainer", "Old Fashioned glass"],
+    "ingredients": [
+      { "name": "Reposado Tequila", "quantity": "1.5 oz (45ml)" },
+      { "name": "Mezcal", "quantity": "0.5 oz (15ml)" },
+      { "name": "Agave Nectar (1:1 with water)", "quantity": "0.25 oz (7.5ml)" },
+      { "name": "Angostura Bitters", "quantity": "1 dash" },
+      { "name": "Orange Bitters", "quantity": "1 dash" },
+      { "name": "Orange Peel", "quantity": "For garnish" },
+      { "name": "Large Ice Cube or Sphere", "quantity": "1" }
+    ],
+    "instructions": [
+      "Add reposado tequila, mezcal, agave nectar, Angostura bitters, and orange bitters to a mixing glass filled with ice.",
+      "Stir well until thoroughly chilled (about 20-30 seconds).",
+      "Strain into an Old Fashioned glass over a large ice cube or sphere.",
+      "Express the oils from an orange peel over the drink by twisting it, then drop it in."
+    ]
+  },
+  {
+    "id": "sidecar",
+    "baseSpiritCategory": "brandy-cognac",
+    "thematicCategories": ["classic", "sours"],
+    "name": "Sidecar",
+    "image": "src/assets/cocktails/sidecar.jpg",
+    "description": "A sophisticated and tart cocktail, closely related to the Margarita and traditional Sours, highlighting Cognac.",
+    "history": "Believed to have been created in either Paris or London around the end of World War I, its name possibly refers to the motorcycle sidecar.",
+    "glass": "Coupe glass",
+    "difficulty": "Medium",
+    "tags": ["classic", "sour", "elegant", "cognac", "french"],
+    "flavorProfile": ["tart", "citrusy", "brandy", "sweet-dry"],
+    "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Coupe glass"],
+    "ingredients": [
+      { "name": "Cognac", "quantity": "2 oz (60ml)" },
+      { "name": "Cointreau (or Triple Sec)", "quantity": "0.75 oz (22ml)" },
+      { "name": "Lemon Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed" },
+      { "name": "Sugar Rim", "quantity": "Optional" },
+      { "name": "Orange Twist", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "If desired, prepare a sugar rim on your coupe glass by moistening the rim with a lemon wedge and dipping it into sugar.",
+      "Add cognac, Cointreau, and lemon juice to a shaker with ice.",
+      "Shake well until thoroughly chilled (about 15-20 seconds).",
+      "Strain into the prepared coupe glass.",
+      "Garnish with an orange twist."
+    ]
+  },
+  {
+    "id": "pisco-sour",
+    "baseSpiritCategory": "pisco",
+    "thematicCategories": ["classic", "sours"],
+    "name": "Pisco Sour",
+    "image": "src/assets/cocktails/pisco-sour.jpg",
+    "description": "A vibrant and frothy South American sour cocktail with a unique grape brandy base.",
+    "history": "The Pisco Sour is the national drink of Peru and Chile, with both countries claiming its origin. The Peruvian version is generally credited to American bartender Victor Vaughen Morris in Lima in the early 20th century.",
+    "glass": ["Coupe glass", "Old Fashioned glass"],
+    "difficulty": "Medium",
+    "tags": ["classic", "peruvian", "chilean", "sour", "frothy"],
+    "flavorProfile": ["citrusy", "tart", "sweet", "grape-spirit", "aromatic"],
+    "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Coupe or Old Fashioned glass"],
+    "ingredients": [
+      { "name": "Peruvian Pisco", "quantity": "2 oz (60ml)" },
+      { "name": "Lime Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed" },
+      { "name": "Simple Syrup (1:1)", "quantity": "0.75 oz (22ml)", "notes": "adjust to taste" },
+      { "name": "Egg White", "quantity": "0.5 oz (15ml) or 1 small egg white" },
+      { "name": "Angostura Bitters", "quantity": "3 dashes, for garnish" }
+    ],
+    "instructions": [
+      "Add pisco, lime juice, simple syrup, and egg white to a shaker. Dry shake (without ice) vigorously for about 15-20 seconds to emulsify.",
+      "Add ice to the shaker and shake again until well-chilled (about 15-20 seconds).",
+      "Double strain into a chilled coupe or Old Fashioned glass.",
+      "Dash three drops of Angostura bitters on top of the foam in a decorative pattern."
+    ]
+  },
+  {
+    "id": "chilcano",
+    "baseSpiritCategory": "pisco",
+    "thematicCategories": ["modern", "refreshing", "low-abv-light"],
+    "name": "Chilcano",
+    "image": "src/assets/cocktails/chilcano.jpg",
+    "description": "A simple and refreshing Peruvian highball with pisco, ginger ale, and lime.",
+    "history": "The Chilcano is a popular and traditional drink in Peru, often seen as a simpler alternative to the Pisco Sour. Its origins are linked to Italian immigrants and their use of ginger ale in the early 20th century.",
+    "glass": "Highball glass",
+    "difficulty": "Easy",
+    "tags": ["peruvian", "highball", "refreshing", "simple", "ginger"],
+    "flavorProfile": ["gingery", "citrusy", "grape-spirit", "effervescent"],
+    "toolsNeeded": ["Jigger", "Bar spoon (optional)", "Highball glass"],
+    "ingredients": [
+      { "name": "Peruvian Pisco", "quantity": "2 oz (60ml)" },
+      { "name": "Lime Juice", "quantity": "0.5 oz (15ml)", "notes": "freshly squeezed" },
+      { "name": "Ginger Ale", "quantity": "4-6 oz (120-180ml)", "notes": "to top, chilled" },
+      { "name": "Angostura Bitters", "quantity": "2-3 dashes (optional)" },
+      { "name": "Lime Wedge", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "Fill a highball glass with ice.",
+      "Add pisco and lime juice.",
+      "Top with chilled ginger ale.",
+      "Add 2-3 dashes of Angostura bitters on top (optional).",
+      "Gently stir to combine.",
+      "Garnish with a lime wedge."
+    ]
+  },
+  {
+    "id": "bellini",
+    "baseSpiritCategory": "sparkling-wine",
+    "thematicCategories": ["classic", "fruity", "brunch"],
+    "name": "Bellini",
+    "image": "src/assets/cocktails/bellini.jpg",
+    "description": "A simple yet elegant Italian cocktail made with Prosecco and peach puree.",
+    "history": "Invented by Giuseppe Cipriani, founder of Harry's Bar in Venice, Italy, in the late 1930s or early 1940s. Named for its pink color, which reminded Cipriani of a painting by Venetian artist Giovanni Bellini.",
+    "glass": "Champagne flute",
+    "difficulty": "Easy",
+    "tags": ["classic", "italian", "fruity", "brunch", "effervescent"],
+    "flavorProfile": ["sweet", "fruity", "peach", "sparkling"],
+    "toolsNeeded": ["Champagne flute"],
+    "ingredients": [
+      { "name": "Fresh Peach Puree", "quantity": "2 oz (60ml)", "notes": "from ripe, peeled peaches" },
+      { "name": "Prosecco", "quantity": "4 oz (120ml)", "notes": "chilled, dry or extra dry" }
+    ],
+    "instructions": [
+      "Pour fresh peach puree into a chilled champagne flute.",
+      "Slowly top with chilled Prosecco.",
+      "Stir gently to combine. Do not over-stir to preserve bubbles.",
+      "No garnish typically needed, but a thin peach slice can be added."
+    ]
+  },
+  {
+    "id": "french-75",
+    "baseSpiritCategory": "sparkling-wine",
+    "thematicCategories": ["classic", "sours", "refreshing"],
+    "name": "French 75",
+    "image": "src/assets/cocktails/french-75.jpg",
+    "description": "A refreshing and effervescent cocktail, combining gin, lemon, sugar, and Champagne.",
+    "history": "Created during World War I, this drink was said to have such a kick it felt like being shelled by a French 75mm field gun. Its origins are linked to the New York Bar in Paris.",
+    "glass": "Champagne flute",
+    "difficulty": "Medium",
+    "tags": ["classic", "gin", "champagne", "refreshing", "elegant"],
+    "flavorProfile": ["citrusy", "tart", "sweet", "effervescent", "gin-botanical"],
+    "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Champagne flute"],
+    "ingredients": [
+      { "name": "Gin", "quantity": "1 oz (30ml)" },
+      { "name": "Lemon Juice", "quantity": "0.5 oz (15ml)", "notes": "freshly squeezed" },
+      { "name": "Simple Syrup (1:1)", "quantity": "0.5 oz (15ml)" },
+      { "name": "Champagne or Dry Sparkling Wine", "quantity": "2 oz (60ml)", "notes": "to top, chilled" },
+      { "name": "Lemon Twist", "quantity": "For garnish" }
+    ],
+    "instructions": [
+      "Add gin, lemon juice, and simple syrup to a shaker with ice.",
+      "Shake well until thoroughly chilled (about 10-15 seconds).",
+      "Strain into a chilled champagne flute.",
+      "Top with chilled Champagne or sparkling wine.",
+      "Garnish with a lemon twist."
+    ]
+  },
+  {
+    "id": "rebujito",
+    "baseSpiritCategory": "sparkling-wine",
+    "thematicCategories": ["andalusian-inspired", "low-abv-light", "refreshing"],
+    "name": "Rebujito",
+    "image": "src/assets/cocktails/rebujito.jpg",
+    "description": "A light, refreshing, and traditional Spanish cocktail from Andalusia, perfect for a warm day.",
+    "history": "A popular drink from Andalusia, Spain, especially common at the Seville Fair (Feria de Abril). It's a simple mix of Fino or Manzanilla sherry and lemonade/soda.",
+    "glass": "Highball glass",
+    "difficulty": "Easy",
+    "tags": ["spanish", "andalusian", "refreshing", "low-abv", "sherry", "summer"],
+    "flavorProfile": ["dry", "savory", "citrusy", "refreshing", "effervescent"],
+    "toolsNeeded": ["Jigger (optional)", "Bar spoon (optional)", "Highball glass"],
+    "ingredients": [
+      { "name": "Fino or Manzanilla Sherry", "quantity": "2 oz (60ml)" },
+      { "name": "Lemon-Lime Soda (e.g., Sprite, 7UP) or Soda Water with Lemon Slice", "quantity": "4-6 oz (120-180ml)", "notes": "chilled" },
+      { "name": "Mint Sprig", "quantity": "For garnish (optional)" }
+    ],
+    "instructions": [
+      "Fill a highball glass with plenty of ice.",
+      "Pour in the Fino or Manzanilla sherry.",
+      "Top with chilled lemon-lime soda or soda water.",
+      "Gently stir to combine.",
+      "Garnish with a mint sprig and a lemon slice."
+    ]
+  },
+  {
+    "id": "aperol-spritz",
+    "baseSpiritCategory": "sparkling-wine",
+    "thematicCategories": ["classic", "aperitif", "refreshing"],
+    "name": "Aperol Spritz",
+    "image": "src/assets/cocktails/aperol-spritz.jpg",
+    "description": "A popular Italian aperitif, known for its vibrant orange color and bittersweet, refreshing taste.",
+    "history": "Originating in Italy, the Aperol Spritz gained significant international popularity in the early 21st century as a refreshing, low-alcohol option.",
+    "glass": "Wine glass (large, stemmed)",
+    "difficulty": "Easy",
+    "tags": ["italian", "aperitif", "refreshing", "bitter-sweet", "effervescent", "summer"],
+    "flavorProfile": ["bitter-sweet", "citrusy", "herbaceous", "effervescent"],
+    "toolsNeeded": ["Jigger (optional)", "Bar spoon (optional)", "Large wine glass"],
+    "ingredients": [
+      { "name": "Prosecco", "quantity": "3 oz (90ml)", "notes": "chilled" },
+      { "name": "Aperol", "quantity": "2 oz (60ml)" },
+      { "name": "Soda Water", "quantity": "1 oz (30ml)", "notes": "chilled" },
+      { "name": "Orange Slice", "quantity": "For garnish" },
+      { "name": "Ice Cubes", "quantity": "Plenty" }
+    ],
+    "instructions": [
+      "Fill a large wine glass with plenty of ice cubes.",
+      "Pour in the Prosecco.",
+      "Add the Aperol.",
+      "Top with a splash of soda water.",
+      "Gently stir to combine.",
+      "Garnish with an orange slice."
+    ]
+  },
+  {
+    "id": "campari-spritz",
+    "baseSpiritCategory": "sparkling-wine",
+    "thematicCategories": ["classic", "aperitif", "spirit-forward"],
+    "name": "Campari Spritz",
+    "image": "src/assets/cocktails/campari-spritz.jpg",
+    "description": "A more bitter and intense version of the classic Italian spritz, featuring Campari.",
+    "history": "A variation on the popular Italian spritz formula, using the bolder, more intensely bitter Campari.",
+    "glass": "Wine glass (large, stemmed)",
+    "difficulty": "Easy",
+    "tags": ["italian", "aperitif", "bitter", "effervescent", "stronger-bitter"],
+    "flavorProfile": ["bitter", "citrusy", "herbaceous", "effervescent"],
+    "toolsNeeded": ["Jigger (optional)", "Bar spoon (optional)", "Large wine glass"],
+    "ingredients": [
+      { "name": "Prosecco", "quantity": "3 oz (90ml)", "notes": "chilled" },
+      { "name": "Campari", "quantity": "2 oz (60ml)" },
+      { "name": "Soda Water", "quantity": "1 oz (30ml)", "notes": "chilled" },
+      { "name": "Orange Slice", "quantity": "For garnish" },
+      { "name": "Ice Cubes", "quantity": "Plenty" }
+    ],
+    "instructions": [
+      "Fill a large wine glass with plenty of ice cubes.",
+      "Pour in the Prosecco.",
+      "Add the Campari.",
+      "Top with a splash of soda water.",
+      "Gently stir to combine.",
+      "Garnish with an orange slice."
     ]
   }
 ]

@@ -18,11 +18,11 @@ for (const pathInAssets in allImageModules) {
 export const getImageUrl = (imagePathFromJson) => {
   if (!imagePathFromJson || typeof imagePathFromJson !== 'string') {
     // Attempt to return a generic placeholder if available, otherwise a more noticeable missing image string
-    return images['placeholder.png'] || 'default_placeholder_image.png'; 
+    return images['placeholder.jpg'] || 'default_placeholder_image.png'; 
   }
   const fileName = imagePathFromJson.substring(imagePathFromJson.lastIndexOf('/') + 1);
   // Fallback to a generic placeholder if specific image not found or if placeholder itself is missing
-  return images[fileName] || images['placeholder.png'] || 'specific_image_not_found_placeholder.png';
+  return images[fileName] || images['placeholder.jpg'] || 'specific_image_not_found_placeholder.png';
 };
 
 export default images; // Optionally export the full map if needed elsewhere
