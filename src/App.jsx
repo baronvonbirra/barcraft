@@ -7,11 +7,13 @@ import GlobalStyles from './styles/GlobalStyles'; // Import GlobalStyles
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import CategoryPage from './pages/CategoryPage';
+import CategoriesOverviewPage from './pages/CategoriesOverviewPage'; // Import the CategoriesOverviewPage component
 import CocktailPage from './pages/CocktailPage';
 import FavoritesPage from './pages/FavoritesPage'; // Add this import
 import BarSpecificPage from './pages/BarSpecificPage'; // Added
 import FilteredCocktailListPage from './pages/FilteredCocktailListPage'; // Added
 import BackToTopButton from './components/BackToTopButton'; // Added
+import ScrollToTop from './components/ScrollToTop'; // Import ScrollToTop
 
 // Basic App layout styling
 const AppWrapper = styled.div`
@@ -28,11 +30,13 @@ const AppContent = () => {
     <StyledComponentsThemeProvider theme={theme}>
       <GlobalStyles /> {/* Add GlobalStyles here */}
       <Router basename="barcraft">
+        <ScrollToTop /> {/* Add the component here */}
         <AppWrapper>
           <Navbar />
           <main> {/* Added a main tag for semantic HTML and content separation */}
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/categories" element={<CategoriesOverviewPage />} /> {/* Add the route for CategoriesOverviewPage */}
               <Route path="/category/:categoryId" element={<CategoryPage />} />
               <Route path="/favorites" element={<FavoritesPage />} /> {/* Add this route */}
               <Route path="/cocktails/:cocktailId" element={<CocktailPage />} />
