@@ -7,6 +7,16 @@ const ListWrapper = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: ${({ theme }) => (theme.spacing && theme.spacing.large) || '1.5rem'};
   padding: ${({ theme }) => (theme.spacing && theme.spacing.medium) || '1rem'} 0;
+
+  @media (max-width: 600px) { // Small mobile screens
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); // Allow cards to be a bit smaller
+    gap: ${({ theme }) => (theme.spacing && theme.spacing.medium) || '1rem'};
+  }
+
+  @media (max-width: 320px) { // Very small mobile screens
+    grid-template-columns: 1fr; // Single column
+    gap: ${({ theme }) => (theme.spacing && theme.spacing.medium) || '1rem'};
+  }
 `;
 
 // Accept isCocktailMakeable function and selectedBar string as props

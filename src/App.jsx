@@ -9,6 +9,9 @@ import HomePage from './pages/HomePage';
 import CategoryPage from './pages/CategoryPage';
 import CocktailPage from './pages/CocktailPage';
 import FavoritesPage from './pages/FavoritesPage'; // Add this import
+import BarSpecificPage from './pages/BarSpecificPage'; // Added
+import FilteredCocktailListPage from './pages/FilteredCocktailListPage'; // Added
+import BackToTopButton from './components/BackToTopButton'; // Added
 
 // Basic App layout styling
 const AppWrapper = styled.div`
@@ -33,10 +36,13 @@ const AppContent = () => {
               <Route path="/category/:categoryId" element={<CategoryPage />} />
               <Route path="/favorites" element={<FavoritesPage />} /> {/* Add this route */}
               <Route path="/cocktails/:cocktailId" element={<CocktailPage />} />
+              <Route path="/bar/:barId" element={<BarSpecificPage />} /> {/* Added */}
+              <Route path="/cocktails/filter/:filterType/:filterValue" element={<FilteredCocktailListPage />} /> {/* Added */}
             </Routes>
           </main>
         </AppWrapper>
       </Router>
+      <BackToTopButton /> {/* Added BackToTopButton here */}
     </StyledComponentsThemeProvider>
   );
 };

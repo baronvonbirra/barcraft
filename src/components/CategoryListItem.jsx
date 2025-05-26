@@ -1,53 +1,82 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import RumIcon from '../assets/categories/rum-category.png';
-import WhiskeyIcon from '../assets/categories/whiskey-category.png';
+import { getImageUrl } from '../utils/cocktailImageLoader.js'; // Corrected path
+
+// Removed direct icon imports:
+// import GinIcon from '../assets/categories/gin-category.png';
+// import RumIcon from '../assets/categories/rum-category.png';
+// import WhiskeyIcon from '../assets/categories/whiskey-category.png';
+// import PlaceholderIcon from '../assets/cocktails/placeholder.png';
 
 const ItemWrapper = styled(Link)`
-  display: flex; // Changed to flex for icon and text alignment
-  align-items: center; // Vertically center content
-  background-color: ${({ theme }) => (theme.colors && theme.colors.surface) || '#282C34'}; /* Updated fallback */
-  color: ${({ theme }) => (theme.colors && theme.colors.text) || '#EAEAEA'}; /* Updated fallback */
-  padding: ${({ theme }) => (theme.spacing && theme.spacing.medium) || '1rem'} ${({ theme }) => (theme.spacing && theme.spacing.large) || '1.5rem'};
-  border-radius: ${({ theme }) => theme.borderRadius || '8px'};
+  display: flex;
+  flex-direction: column; // Stack image and text vertically
+  align-items: center; // Center content horizontally
+  justify-content: center; // Center content vertically
+  background-color: ${({ theme }) => theme.colors.surface};
+  color: ${({ theme }) => theme.colors.text};
+  padding: ${({ theme }) => theme.spacing.medium};
+  border-radius: ${({ theme }) => theme.borderRadius};
   text-decoration: none;
-  font-size: 1.2rem; /* This could be theme.fontSizes.medium if defined */
-  font-weight: 500; // Medium weight for category names
-  text-align: left; // Align text to the left now that icon is present
-  border: 1px solid ${({ theme }) => (theme.colors && theme.colors.border) || '#dddddd'};
-  transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  min-width: 200px; 
+  text-align: center;
+  box-shadow: ${({ theme }) => theme.shadows.medium};
+  transition: all 0.3s ease;
+  height: 100%; // For consistent card heights in a grid
 
-  &:hover {
-    background-color: ${({ theme }) => (theme.colors && theme.colors.primary) || '#3498DB'}; /* Updated fallback */
-    color: ${({ theme }) => (theme.colors && theme.colors.onPrimary) || '#FFFFFF'}; /* Updated fallback */
-    transform: translateY(-3px); 
-    box-shadow: ${({ theme }) => (theme.shadows && theme.shadows.medium) || '0 4px 8px rgba(0,0,0,0.3)'};
+  &:hover, &:focus { /* Added :focus state */
+    transform: translateY(-5px);
+    box-shadow: ${({ theme }) => theme.shadows.large};
+    background-color: ${({ theme }) => theme.colors.primary}; // Change background on hover
+    color: ${({ theme }) => theme.colors.onPrimary}; // Change text color on hover
+    outline: 2px solid ${({ theme }) => theme.colors.secondary}; // Added outline for focus
+    outline-offset: 2px;
+  }
+
+  &:hover img, &:focus img { /* Added :focus state for img if needed */
+    // filter: brightness(0) invert(1); // Example for making a dark icon white
   }
 `;
 
-const CategoryName = styled.div`
-  margin-left: ${({ theme }) => (theme.spacing && theme.spacing.medium) || '1rem'}; // Add space between icon and text
+const CategoryName = styled.h3`
+  font-family: ${({ theme }) => theme.fonts.headings};
+  /* color is inherited from ItemWrapper, changes on hover */
+  font-size: 1.1rem; // Slightly smaller than cocktail name
+  font-weight: 600;
+  margin-top: ${({ theme }) => theme.spacing.medium};
+  margin-bottom: 0; // No bottom margin if it's the last element
+
+  @media (max-width: 600px) {
+    font-size: 1rem;
+    margin-top: ${({ theme }) => theme.spacing.small};
+  }
 `;
 
 const Icon = styled.img`
-  width: 40px; // Set a fixed width for the icon
-  height: 40px; // Set a fixed height for the icon
+  width: 80px; // Larger icon for category cards
+  height: 80px;
   object-fit: contain; // Ensure the icon scales nicely
+  border-radius: ${({ theme }) => theme.borderRadius}; // Optional: if icons have backgrounds
+  margin-bottom: ${({ theme }) => theme.spacing.small}; // Space between icon and name
+
+  @media (max-width: 600px) {
+    width: 60px;
+    height: 60px;
+  }
 `;
 
 const CategoryListItem = ({ category }) => {
-  let iconSrc = null;
-  if (category.name === 'Rum-based Cocktails') {
-    iconSrc = RumIcon;
-  } else if (category.name === 'Whiskey-based Cocktails') {
-    iconSrc = WhiskeyIcon;
-  }
+  // The logic for iconMap is removed as getImageUrl will handle path resolution
+  // based on the category.image string from the JSON.
+  // The category.image field in categories.json should now directly reference
+  // the image file name, e.g., "rum-category.png" or the full path like "src/assets/categories/rum-category.png".
+  // getImageUrl will extract the filename and find it.
+
+  const imageSrc = getImageUrl(category.image); // Use the utility
 
   return (
     <ItemWrapper to={`/category/${category.id}`}>
-      {iconSrc && <Icon src={iconSrc} alt={`${category.name} icon`} />}
+      <Icon src={imageSrc} alt={`${category.name} icon`} />
       <CategoryName>{category.name}</CategoryName>
     </ItemWrapper>
   );

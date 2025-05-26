@@ -11,6 +11,7 @@ import { useBar } from '../contexts/BarContext';
 // Styled components (can be similar to HomePage)
 const PageWrapper = styled.div`
   padding: ${({ theme }) => theme.spacing.medium};
+  animation: fadeInPage 0.5s ease-out forwards;
 `;
 
 const CategoryPageWrapper = styled.div`

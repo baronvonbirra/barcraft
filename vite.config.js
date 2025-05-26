@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/barcraft/', // Added this line
   plugins: [react()],
   test: {
     globals: true, // Optional: to use Vitest globals like describe, it, expect without importing them

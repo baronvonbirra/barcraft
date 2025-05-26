@@ -4,52 +4,20 @@ import React, { createContext, useState } from 'react';
 const darkTheme = {
   mode: 'dark',
   colors: {
-    background: '#1A1D24',
-    surface: '#282C34',
-    primary: '#3498DB',   // Modern Blue
-    secondary: '#1ABC9C', // Teal
-    text: '#EAEAEA',
-    textOffset: '#A0A0A0', // Lighter gray for less prominent text
-    onPrimary: '#FFFFFF',
+    background: '#1A1A1A', // Deep Charcoal
+    surface: '#2C2C2C', // Slightly Lighter Charcoal/Dark Grey for cards, modals
+    primary: '#B08D57',   // Muted Gold
+    secondary: '#0A4D68', // Deep Sapphire Blue
+    text: '#EAEAEA', // Off-White
+    textOffset: '#A0A0A0', // Light Grey for secondary text/captions
+    onPrimary: '#111111', // Text on primary accent color (updated for contrast)
+    onSecondary: '#FFFFFF', // Text on secondary accent color
     onSurface: '#EAEAEA', // Text on surface elements
-    border: '#3A3F4B',
+    border: '#444444', // Subtle dark grey border
   },
   fonts: {
     main: "'Inter', sans-serif",
-    headings: "'Poppins', sans-serif",
-  },
-  spacing: {
-    xs: '4px',
-    small: '8px',
-    medium: '16px',
-    large: '24px',
-    xl: '32px',
-    xxl: '48px',
-  },
-  shadows: { // Adding a shadow definition
-    small: '0 2px 4px rgba(0,0,0,0.2)',
-    medium: '0 4px 8px rgba(0,0,0,0.3)',
-  },
-  borderRadius: '8px', // Base border radius
-};
-
-// New Modern Light Theme
-const lightTheme = {
-  mode: 'light',
-  colors: {
-    background: '#F8F9FA',
-    surface: '#FFFFFF',
-    primary: '#3498DB',   // Consistent Modern Blue
-    secondary: '#1ABC9C', // Consistent Teal
-    text: '#212529',
-    textOffset: '#6C757D', // Darker gray for less prominent text
-    onPrimary: '#FFFFFF',
-    onSurface: '#212529', // Text on surface elements
-    border: '#DEE2E6',
-  },
-  fonts: {
-    main: "'Inter', sans-serif",
-    headings: "'Poppins', sans-serif",
+    headings: "'Playfair Display', serif", // Sophisticated Serif
   },
   spacing: {
     xs: '4px',
@@ -60,23 +28,24 @@ const lightTheme = {
     xxl: '48px',
   },
   shadows: {
-    small: '0 2px 4px rgba(0,0,0,0.05)',
-    medium: '0 4px 8px rgba(0,0,0,0.1)',
+    small: '0 2px 5px rgba(0,0,0,0.3)', // Slightly more pronounced for dark theme
+    medium: '0 5px 10px rgba(0,0,0,0.4)', // Slightly more pronounced for dark theme
   },
-  borderRadius: '8px',
+  borderRadius: '6px', // A slightly more refined radius
 };
 
-export const ThemeContext = createContext({ theme: darkTheme, toggleTheme: () => {} });
+// Light theme object removed.
+
+// Updated ThemeContext to only provide the theme, no toggleTheme function.
+// The default value for toggleTheme can be a no-op function or undefined if consumers handle it.
+// For simplicity, as we are removing toggleTheme, we can remove it from the default context value.
+export const ThemeContext = createContext({ theme: darkTheme });
 
 export const ThemeProvider = ({ children }) => {
-  const [currentTheme, setCurrentTheme] = useState(darkTheme);
-
-  const toggleTheme = () => {
-    setCurrentTheme((prevTheme) => (prevTheme.mode === 'dark' ? lightTheme : darkTheme));
-  };
-
+  // State and toggleTheme function are removed as we only have one theme.
   return (
-    <ThemeContext.Provider value={{ theme: currentTheme, toggleTheme }}>
+    // Provide darkTheme directly.
+    <ThemeContext.Provider value={{ theme: darkTheme }}>
       {children}
     </ThemeContext.Provider>
   );
