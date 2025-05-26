@@ -11,6 +11,7 @@ export const useCocktailFilter = (allCocktails) => {
   const [flavorProfile, setFlavorProfile] = useState([]);
   const [difficulty, setDifficulty] = useState('');
   const [tags, setTags] = useState([]);
+  const [thematic, setThematic] = useState([]); // Added thematic state
   const [glassType, setGlassType] = useState('');
 
   const { selectedBar, viewingCuratedMenu } = useBar();
@@ -74,13 +75,19 @@ export const useCocktailFilter = (allCocktails) => {
     let cocktails = [...allCocktails];
 
     // Apply standard filters
-    if (baseSpirit) cocktails = cocktails.filter(c => c.categoryId?.toLowerCase() === baseSpirit.toLowerCase());
+    if (baseSpirit) cocktails = cocktails.filter(c => c.baseSpiritCategory?.toLowerCase() === baseSpirit.toLowerCase());
     if (difficulty) cocktails = cocktails.filter(c => c.difficulty?.toLowerCase() === difficulty.toLowerCase());
     if (glassType) cocktails = cocktails.filter(c => c.glass?.toLowerCase().includes(glassType.toLowerCase()));
     if (includeIngredients.length > 0) cocktails = cocktails.filter(c => includeIngredients.every(selIng => c.ingredients.some(ingObj => ingObj.name.toLowerCase().includes(selIng.toLowerCase()))));
     if (excludeIngredients.length > 0) cocktails = cocktails.filter(c => !excludeIngredients.some(selIng => c.ingredients.some(ingObj => ingObj.name.toLowerCase().includes(selIng.toLowerCase()))));
     if (flavorProfile.length > 0) cocktails = cocktails.filter(c => flavorProfile.every(selFlavor => c.flavorProfile?.some(fp => fp.toLowerCase().includes(selFlavor.toLowerCase()))));
     if (tags.length > 0) cocktails = cocktails.filter(c => tags.every(selTag => c.tags?.some(tag => tag.toLowerCase().includes(selTag.toLowerCase()))));
+    // Added thematic categories filter
+    if (thematic.length > 0) {
+      cocktails = cocktails.filter(c =>
+        c.thematicCategories && c.thematicCategories.some(ct => thematic.includes(ct))
+      );
+    }
 
     // Apply bar-specific filtering (which cocktails are *listed*)
     if (viewingCuratedMenu) {
@@ -98,8 +105,8 @@ export const useCocktailFilter = (allCocktails) => {
     return cocktails;
   }, [
     allCocktails, baseSpirit, includeIngredients, excludeIngredients,
-    flavorProfile, difficulty, tags, glassType,
-    selectedBar, viewingCuratedMenu, isCocktailMakeable // Add isCocktailMakeable
+    flavorProfile, difficulty, tags, glassType, thematic, // Added thematic to dependency array
+    selectedBar, viewingCuratedMenu, isCocktailMakeable
   ]);
 
   const resetFilters = () => {
@@ -109,6 +116,7 @@ export const useCocktailFilter = (allCocktails) => {
     setFlavorProfile([]);
     setDifficulty('');
     setTags([]);
+    setThematic([]); // Added thematic reset
     setGlassType('');
   };
 
@@ -120,6 +128,7 @@ export const useCocktailFilter = (allCocktails) => {
     flavorProfile, setFlavorProfile,
     difficulty, setDifficulty,
     tags, setTags,
+    thematic, setThematic, // Added thematic and setThematic
     glassType, setGlassType,
     resetFilters,
     getIngredientAvailability, // Export this new function

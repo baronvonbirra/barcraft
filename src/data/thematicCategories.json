@@ -1,0 +1,62 @@
+[
+  {
+    "id": "classic",
+    "name": "Classic",
+    "image": "src/assets/cocktails/placeholder.png"
+  },
+  {
+    "id": "modern",
+    "name": "Modern",
+    "image": "src/assets/cocktails/placeholder.png"
+  },
+  {
+    "id": "tropical",
+    "name": "Tropical",
+    "image": "src/assets/cocktails/placeholder.png"
+  },
+  {
+    "id": "seasonal",
+    "name": "Seasonal",
+    "image": "src/assets/cocktails/placeholder.png"
+  },
+  {
+    "id": "experimental",
+    "name": "Experimental",
+    "image": "src/assets/cocktails/placeholder.png"
+  },
+  {
+    "id": "aperitif",
+    "name": "Aperitif",
+    "image": "src/assets/cocktails/placeholder.png"
+  },
+  {
+    "id": "digestif",
+    "name": "Digestif",
+    "image": "src/assets/cocktails/placeholder.png"
+  },
+  {
+    "id": "low-abv-light",
+    "name": "Low ABV / Light",
+    "image": "src/assets/cocktails/placeholder.png"
+  },
+  {
+    "id": "spirit-forward",
+    "name": "Spirit-Forward",
+    "image": "src/assets/cocktails/placeholder.png"
+  },
+  {
+    "id": "sours",
+    "name": "Sours",
+    "image": "src/assets/cocktails/placeholder.png"
+  },
+  {
+    "id": "creamy-dessert",
+    "name": "Creamy / Dessert",
+    "image": "src/assets/cocktails/placeholder.png"
+  },
+  {
+    "id": "andalusian-inspired",
+    "name": "Andalusian Inspired",
+    "image": "src/assets/cocktails/placeholder.png"
+  }
+]

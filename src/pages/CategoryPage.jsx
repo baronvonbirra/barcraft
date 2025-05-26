@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import cocktailsData from '../data/cocktails.json';
 import categoriesData from '../data/categories.json';
+import thematicCategoriesData from '../data/thematicCategories.json'; // Added import
 import CocktailList from '../components/CocktailList';
 import FilterSidebar from '../components/FilterSidebar';
 import { useCocktailFilter } from '../hooks/useCocktailFilter';
@@ -35,7 +36,8 @@ const CategoryPage = () => {
   
   const {
     filteredCocktails,
-    baseSpirit, setBaseSpirit, // Use setBaseSpirit to preset category
+    baseSpirit, setBaseSpirit,
+    thematic, setThematic, // Add these
     includeIngredients, setIncludeIngredients,
     excludeIngredients, setExcludeIngredients,
     flavorProfile, setFlavorProfile,
@@ -51,21 +53,41 @@ const CategoryPage = () => {
   // Set the initial category filter based on the route parameter
   useEffect(() => {
     if (categoryId) {
-      setBaseSpirit(categoryId);
+      const isSpiritCategory = categoriesData.some(cat => cat.id === categoryId);
+      if (isSpiritCategory) {
+        setBaseSpirit(categoryId);
+        setThematic([]); // Clear thematic filter
+      } else {
+        const isThematicCategory = thematicCategoriesData.some(theme => theme.id === categoryId);
+        if (isThematicCategory) {
+          setThematic([categoryId]);
+          setBaseSpirit(''); // Clear spirit filter
+        } else {
+          // Optional: handle case where categoryId is neither, e.g., reset both or show error
+          setBaseSpirit('');
+          setThematic([]);
+        }
+      }
     }
-    // Optional: could also reset other filters if navigating to a new category page
-    // depends on desired UX. For now, other filters persist.
-  }, [categoryId, setBaseSpirit]);
+  }, [categoryId, setBaseSpirit, setThematic]);
 
-  const currentCategory = categoriesData.find(cat => cat.id === categoryId);
-  const pageTitle = currentCategory ? `${currentCategory.name} Cocktails` : "Category Cocktails";
+  let pageTitle = "Category Cocktails"; // Default title
+  let currentCategoryDetails = categoriesData.find(cat => cat.id === categoryId);
+  if (currentCategoryDetails) {
+    pageTitle = `${currentCategoryDetails.name} Cocktails`;
+  } else {
+    currentCategoryDetails = thematicCategoriesData.find(theme => theme.id === categoryId);
+    if (currentCategoryDetails) {
+      pageTitle = `${currentCategoryDetails.name} Cocktails`;
+    }
+  }
 
   // Prepare props for FilterSidebar
   const filterHookState = {
-    baseSpirit, includeIngredients, excludeIngredients, flavorProfile, difficulty, tags, glassType,
+    baseSpirit, includeIngredients, excludeIngredients, flavorProfile, difficulty, tags, glassType, thematic, // Add thematic
   };
   const filterHookSetters = {
-    setBaseSpirit, setIncludeIngredients, setExcludeIngredients, setFlavorProfile, setDifficulty, setTags, setGlassType,
+    setBaseSpirit, setIncludeIngredients, setExcludeIngredients, setFlavorProfile, setDifficulty, setTags, setGlassType, setThematic, // Add setThematic
   };
   
   // Further filter `filteredCocktails` if the `baseSpirit` from the hook doesn't match `categoryId`
@@ -82,6 +104,7 @@ const CategoryPage = () => {
         <FilterSidebar
           allCocktails={cocktailsData} // Pass all for deriving options
           categories={categoriesData}
+          thematicCategories={thematicCategoriesData} // Add this prop
           filters={filterHookState}
           setters={filterHookSetters}
           resetFilters={resetFilters}
