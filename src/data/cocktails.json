@@ -1,7 +1,8 @@
 [
   {
     "id": "mojito",
-    "categoryId": "rum",
+    "baseSpiritCategory": "rum",
+    "thematicCategories": ["classic", "tropical", "seasonal", "sours"],
     "name": "Mojito",
     "image": "src/assets/cocktails/mojito.jpg",
     "description": "A vibrant and refreshing Cuban highball, celebrated for its combination of mint, lime, and rum.",
@@ -30,7 +31,8 @@
   },
   {
     "id": "daiquiri",
-    "categoryId": "rum",
+    "baseSpiritCategory": "rum",
+    "thematicCategories": ["classic", "sours", "tropical"],
     "name": "Daiquiri",
     "image": "src/assets/cocktails/daiquiri.jpg",
     "description": "A quintessential sour cocktail that perfectly balances rum, citrus, and sweetness.",
@@ -55,7 +57,8 @@
   },
   {
     "id": "old-fashioned",
-    "categoryId": "whiskey",
+    "baseSpiritCategory": "whiskey",
+    "thematicCategories": ["classic", "spirit-forward", "digestif"],
     "name": "Old Fashioned",
     "image": "src/assets/cocktails/old-fashioned-cocktail.png",
     "description": "A timeless spirit-forward cocktail that showcases the chosen whiskey, balanced by sugar and bitters.",
@@ -84,7 +87,8 @@
   },
   {
     "id": "manhattan",
-    "categoryId": "whiskey",
+    "baseSpiritCategory": "whiskey",
+    "thematicCategories": ["classic", "spirit-forward", "digestif"],
     "name": "Manhattan",
     "image": "src/assets/cocktails/manhattan.jpg",
     "description": "A classic and sophisticated cocktail featuring whiskey, sweet vermouth, and bitters.",
@@ -108,7 +112,8 @@
   },
   {
     "id": "gin-tonic",
-    "categoryId": "gin",
+    "baseSpiritCategory": "gin",
+    "thematicCategories": ["classic", "low-abv-light", "aperitif"],
     "name": "Gin and Tonic",
     "image": "src/assets/cocktails/gintonic.jpg",
     "description": "A quintessential and deceptively simple highball that showcases the botanicals of the gin against the bittersweet tonic.",
@@ -134,7 +139,8 @@
   },
   {
     "id": "negroni",
-    "categoryId": "gin",
+    "baseSpiritCategory": "gin",
+    "thematicCategories": ["classic", "spirit-forward", "aperitif"],
     "name": "Negroni",
     "image": "src/assets/cocktails/negroni.jpg",
     "description": "A perfectly balanced Italian aperitif with bold bitter, sweet, and botanical notes.",
@@ -159,7 +165,8 @@
   },
   {
     "id": "moscow-mule",
-    "categoryId": "vodka",
+    "baseSpiritCategory": "vodka",
+    "thematicCategories": ["classic", "low-abv-light"],
     "name": "Moscow Mule",
     "image": "src/assets/cocktails/moscow-mule-cocktail.png",
     "description": "A zesty and refreshing cocktail known for its signature copper mug presentation.",
@@ -185,7 +192,8 @@
   },
   {
     "id": "margarita",
-    "categoryId": "tequila",
+    "baseSpiritCategory": "tequila",
+    "thematicCategories": ["classic", "sours"],
     "name": "Margarita",
     "image": "src/assets/cocktails/placeholder.png",
     "description": "The iconic tequila sour, perfectly balancing earthy tequila with tart lime and sweet orange liqueur.",
@@ -213,7 +221,8 @@
   },
   {
     "id": "white-russian",
-    "categoryId": "liqueur",
+    "baseSpiritCategory": "liqueur",
+    "thematicCategories": ["classic", "creamy-dessert", "digestif"],
     "name": "White Russian",
     "image": "src/assets/cocktails/placeholder.png",
     "description": "A creamy and decadent dessert cocktail with a rich coffee flavor.",
@@ -237,7 +246,8 @@
   },
   {
     "id": "shirley-temple",
-    "categoryId": "mocktails",
+    "baseSpiritCategory": "mocktails",
+    "thematicCategories": ["classic", "low-abv-light"],
     "name": "Shirley Temple",
     "image": "src/assets/cocktails/placeholder.png",
     "description": "A classic, sweet, and fizzy non-alcoholic drink, often a childhood favorite.",

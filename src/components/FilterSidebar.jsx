@@ -149,6 +149,7 @@ const getUniqueValues = (items, key, subKey = null) => {
 const FilterSidebar = ({
   allCocktails, // from cocktails.json
   categories, // from categories.json
+  thematicCategories, // New prop for thematic categories
   filters, // { baseSpirit, includeIngredients, ... } from useCocktailFilter
   setters, // { setBaseSpirit, setIncludeIngredients, ... } from useCocktailFilter
   resetFilters, // from useCocktailFilter
@@ -284,6 +285,30 @@ const FilterSidebar = ({
           ))}
         </div>
       </FilterSection>
+
+      {/* New Thematic Categories Filter Section START */}
+      <FilterSection>
+        <label>Thematic Categories:</label>
+        {/* Ensure thematicCategories prop is checked for existence before mapping */}
+        {thematicCategories && thematicCategories.length > 0 && (
+          <div className="checkbox-group">
+            {thematicCategories.map(theme => (
+              <div key={theme.id} className="checkbox-item">
+                <input
+                  type="checkbox"
+                  id={`theme-${theme.id}`}
+                  value={theme.id}
+                  // Assuming filters.thematic exists and is an array
+                  checked={filters.thematic && filters.thematic.includes(theme.id)}
+                  onChange={() => handleMultiSelectChange(setters.setThematic, filters.thematic || [], theme.id)}
+                />
+                <label htmlFor={`theme-${theme.id}`}>{theme.name}</label>
+              </div>
+            ))}
+          </div>
+        )}
+      </FilterSection>
+      {/* New Thematic Categories Filter Section END */}
 
       <FilterSection>
         <label htmlFor="glassType">Glass Type:</label>

@@ -8,6 +8,7 @@ import cocktailsData from '../data/cocktails.json'; // Still needed for Cocktail
 // import CocktailList from '../components/CocktailList'; // Removed
 // import FilterSidebar from '../components/FilterSidebar'; // Removed
 import categoriesData from '../data/categories.json'; // Still needed for CategoryList
+import thematicCategoriesData from '../data/thematicCategories.json'; // Added for thematic categories
 import CategoryList from '../components/CategoryList'; // Added
 import { getImageUrl } from '../utils/cocktailImageLoader.js'; // Corrected path with .js
 
@@ -150,8 +151,12 @@ const HomePage = () => {
         
         <MainContent>
           {/* Heading for categories */}
-          <SectionHeading>Browse by Category</SectionHeading>
+          <SectionHeading>Browse by Spirit</SectionHeading>
           <CategoryList categories={categoriesData} />
+
+          {/* Heading for thematic categories */}
+          <SectionHeading>Explore by Theme</SectionHeading>
+          <CategoryList categories={thematicCategoriesData} />
           {/* CocktailList removed */}
         </MainContent>
       </HomePageWrapper>
