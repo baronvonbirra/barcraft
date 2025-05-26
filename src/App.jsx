@@ -27,7 +27,7 @@ const AppContent = () => {
   return (
     <StyledComponentsThemeProvider theme={theme}>
       <GlobalStyles /> {/* Add GlobalStyles here */}
-      <Router>
+      <Router basename="barcraft">
         <AppWrapper>
           <Navbar />
           <main> {/* Added a main tag for semantic HTML and content separation */}
