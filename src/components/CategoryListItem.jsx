@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { getImageUrl } from '../../utils/cocktailImageLoader'; // Added
+import { getImageUrl } from '../utils/cocktailImageLoader.js'; // Corrected path
 
 // Removed direct icon imports:
 // import GinIcon from '../assets/categories/gin-category.png';

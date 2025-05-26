@@ -9,7 +9,7 @@ import cocktailsData from '../data/cocktails.json'; // Still needed for Cocktail
 // import FilterSidebar from '../components/FilterSidebar'; // Removed
 import categoriesData from '../data/categories.json'; // Still needed for CategoryList
 import CategoryList from '../components/CategoryList'; // Added
-import { getImageUrl } from '../utils/cocktailImageLoader';
+import { getImageUrl } from '../utils/cocktailImageLoader.js'; // Corrected path with .js
 
 // Styled components for HomePage
 const PageWrapper = styled.div`

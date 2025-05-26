@@ -6,7 +6,7 @@ import cocktailsData from '../data/cocktails.json';
 // import { useBar } from '../contexts/BarContext'; // To be removed
 import { useFavorites } from '../hooks/useFavorites';
 import { ThemeContext } from '../contexts/ThemeContext';
-import { getImageUrl } from '../../utils/cocktailImageLoader'; // Added
+import { getImageUrl } from '../utils/cocktailImageLoader.js'; // Corrected path
 import bar1StockData from '../data/bar1_stock.json';
 import bar2StockData from '../data/bar2_stock.json';
 
