@@ -1,19 +1,21 @@
 // In HomePage.jsx (example, actual file might differ slightly)
-import React, { useState } from 'react';
+import React from 'react'; // Removed useState
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import cocktailsData from '../data/cocktails.json'; // Full list of cocktails
-import { useCocktailFilter } from '../hooks/useCocktailFilter'; // The main filter hook
-import { useBar } from '../contexts/BarContext'; // To get selectedBar
-import CocktailList from '../components/CocktailList';
-import FilterSidebar from '../components/FilterSidebar'; // Assuming FilterSidebar is ready to be used
-import categoriesData from '../data/categories.json'; // For FilterSidebar
-import mojitoImage from '../assets/cocktails/mojito.jpg'; // Import the image
+import cocktailsData from '../data/cocktails.json'; // Still needed for CocktailOfTheWeek
+// import { useCocktailFilter } from '../hooks/useCocktailFilter'; // Removed
+// import { useBar } from '../contexts/BarContext'; // Removed
+// import CocktailList from '../components/CocktailList'; // Removed
+// import FilterSidebar from '../components/FilterSidebar'; // Removed
+import categoriesData from '../data/categories.json'; // Still needed for CategoryList
+import CategoryList from '../components/CategoryList'; // Added
+import { getImageUrl } from '../utils/cocktailImageLoader';
 
 // Styled components for HomePage
 const PageWrapper = styled.div`
   padding: ${({ theme }) => (theme.spacing && theme.spacing.medium) || '1rem'} 0;
   gap: ${({ theme }) => (theme.spacing && theme.spacing.large) || '1.5rem'};
+  animation: fadeInPage 0.5s ease-out forwards;
 `;
 
 const CocktailOfTheWeekWrapper = styled.section`
@@ -91,9 +93,8 @@ const FilterToggleButton = styled.button`
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: none;
-  margin: 0 auto ${({ theme }) => theme.spacing.large} auto; // Center button
-  display: block; // To allow margin auto to work
-  width: fit-content;
+  /* margin, display, width properties are specific to FilterToggleButton, removed here */
+  /* This component (ViewRecipeButton) is kept for CocktailOfTheWeek */
 
   &:hover, &:focus {
     background-color: ${({ theme }) => theme.colors.secondary}; // Example: darken primary or use secondary
@@ -103,6 +104,8 @@ const FilterToggleButton = styled.button`
     outline-offset: 2px;
   }
 `;
+
+// FilterToggleButton styled component removed.
 
 const HomePageWrapper = styled.div`
   display: flex;
@@ -123,32 +126,13 @@ const SectionHeading = styled.h2`
 
 
 const HomePage = () => {
-  const [showFilters, setShowFilters] = useState(false);
-  const filterSidebarId = "filter-sidebar"; // Define an ID for ARIA
+  // Removed showFilters state and filterSidebarId
+  // Removed useCocktailFilter hook and related state (filteredCocktails, setters, etc.)
+  // Removed useBar hook and selectedBar
 
-  const cocktailOfTheWeek = cocktailsData.find(c => c.id === "mojito");
+  const cocktailOfTheWeek = cocktailsData.find(c => c.id === "mojito"); // This logic remains
 
-  const {
-    filteredCocktails,
-    baseSpirit, setBaseSpirit,
-    includeIngredients, setIncludeIngredients,
-    excludeIngredients, setExcludeIngredients,
-    flavorProfile, setFlavorProfile,
-    difficulty, setDifficulty,
-    tags, setTags,
-    glassType, setGlassType,
-    resetFilters,
-    isCocktailMakeable
-  } = useCocktailFilter(cocktailsData);
-
-  const { selectedBar } = useBar();
-
-  const filterHookState = {
-    baseSpirit, includeIngredients, excludeIngredients, flavorProfile, difficulty, tags, glassType,
-  };
-  const filterHookSetters = {
-    setBaseSpirit, setIncludeIngredients, setExcludeIngredients, setFlavorProfile, setDifficulty, setTags, setGlassType,
-  };
+  // No filterHookState or filterHookSetters needed anymore
 
   return (
     <PageWrapper>
@@ -156,41 +140,19 @@ const HomePage = () => {
         {cocktailOfTheWeek && (
           <CocktailOfTheWeekWrapper>
             <CocktailName>{cocktailOfTheWeek.name} - Cocktail of the Week!</CocktailName>
-            {/* Alt text is already cocktailOfTheWeek.name, which is good and descriptive */}
-            <CocktailImage src={mojitoImage} alt={cocktailOfTheWeek.name} />
+            <CocktailImage src={getImageUrl(cocktailOfTheWeek.image)} alt={cocktailOfTheWeek.name} />
             <CocktailDescription>{cocktailOfTheWeek.description}</CocktailDescription>
             <ViewRecipeButton to={`/cocktails/${cocktailOfTheWeek.id}`}>View Recipe</ViewRecipeButton>
           </CocktailOfTheWeekWrapper>
         )}
 
-        <FilterToggleButton
-          onClick={() => setShowFilters(!showFilters)}
-          aria-expanded={showFilters}
-          aria-controls={filterSidebarId}
-          aria-label={showFilters ? "Hide filters panel" : "Show filters panel"}
-        >
-          {showFilters ? 'Hide Filters' : 'Show Filters'}
-        </FilterToggleButton>
-
-        {showFilters && (
-          <FilterSidebar
-            id={filterSidebarId} // Pass the ID to FilterSidebar
-            allCocktails={cocktailsData}
-            categories={categoriesData}
-            filters={filterHookState}
-            setters={filterHookSetters}
-            filteredCocktailsForSurprise={filteredCocktails}
-            resetFilters={resetFilters}
-          />
-        )}
+        {/* FilterToggleButton and FilterSidebar removed */}
         
         <MainContent>
-          <SectionHeading>Browse Cocktails</SectionHeading>
-          <CocktailList
-            cocktails={filteredCocktails}
-            isCocktailMakeable={isCocktailMakeable}
-            selectedBar={selectedBar}
-          />
+          {/* Heading for categories */}
+          <SectionHeading>Browse by Category</SectionHeading>
+          <CategoryList categories={categoriesData} />
+          {/* CocktailList removed */}
         </MainContent>
       </HomePageWrapper>
     </PageWrapper>

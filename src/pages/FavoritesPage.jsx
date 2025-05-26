@@ -9,6 +9,7 @@ import { useBar } from '../contexts/BarContext'; // For availability
 const PageWrapper = styled.div`
   padding: ${({ theme }) => theme.spacing.medium};
   text-align: center; // Center title and messages
+  animation: fadeInPage 0.5s ease-out forwards;
 `;
 
 const PageTitle = styled.h1`

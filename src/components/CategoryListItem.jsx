@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-// Using provided category images, plus a placeholder logic
-import GinIcon from '../assets/categories/gin-category.png';
-import RumIcon from '../assets/categories/rum-category.png';
-import WhiskeyIcon from '../assets/categories/whiskey-category.png';
-import PlaceholderIcon from '../assets/cocktails/placeholder.png'; // Using cocktail placeholder for other categories
+import { getImageUrl } from '../../utils/cocktailImageLoader'; // Added
+
+// Removed direct icon imports:
+// import GinIcon from '../assets/categories/gin-category.png';
+// import RumIcon from '../assets/categories/rum-category.png';
+// import WhiskeyIcon from '../assets/categories/whiskey-category.png';
+// import PlaceholderIcon from '../assets/cocktails/placeholder.png';
 
 const ItemWrapper = styled(Link)`
   display: flex;
@@ -64,21 +66,17 @@ const Icon = styled.img`
 `;
 
 const CategoryListItem = ({ category }) => {
-  // Map category IDs to specific icons
-  const iconMap = {
-    rum: RumIcon,
-    whiskey: WhiskeyIcon,
-    gin: GinIcon,
-    // Add other category IDs and their icons here
-    // e.g., vodka: VodkaIcon,
-  };
+  // The logic for iconMap is removed as getImageUrl will handle path resolution
+  // based on the category.image string from the JSON.
+  // The category.image field in categories.json should now directly reference
+  // the image file name, e.g., "rum-category.png" or the full path like "src/assets/categories/rum-category.png".
+  // getImageUrl will extract the filename and find it.
 
-  // Use the mapped icon or a placeholder
-  const iconSrc = iconMap[category.id] || category.image || PlaceholderIcon; // Use provided image or placeholder
+  const imageSrc = getImageUrl(category.image); // Use the utility
 
   return (
     <ItemWrapper to={`/category/${category.id}`}>
-      <Icon src={iconSrc} alt={`${category.name} icon`} />
+      <Icon src={imageSrc} alt={`${category.name} icon`} />
       <CategoryName>{category.name}</CategoryName>
     </ItemWrapper>
   );

@@ -1,8 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import PlaceholderImage from '../assets/cocktails/placeholder.png';
+// import PlaceholderImage from '../assets/cocktails/placeholder.png'; // Removed
+import { getImageUrl } from '../../utils/cocktailImageLoader'; // Added
 import { useFavorites } from '../hooks/useFavorites'; // Import useFavorites
+import bar1StockData from '../../data/bar1_stock.json'; // Added
+import bar2StockData from '../../data/bar2_stock.json'; // Added
 
 // Styled components (ensure they exist or are defined if not already)
 const ListItemWrapper = styled.div`
@@ -98,6 +101,25 @@ const AvailabilityIndicator = styled.div`
   z-index: 1;
 `;
 
+// New styled components for Bar Availability Icons
+const BarAvailabilityIconWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing.small};
+  margin-top: ${({ theme }) => theme.spacing.xs};
+  margin-bottom: ${({ theme }) => theme.spacing.small};
+`;
+
+const SingleBarIcon = styled.span`
+  font-size: 0.8em;
+  margin-left: ${({ theme }) => theme.spacing.xs};
+  color: ${({ theme, available }) => available ? theme.colors.secondary : theme.colors.textOffset};
+  border: 1px solid ${({ theme, available }) => available ? theme.colors.secondary : theme.colors.textOffset};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  padding: 2px 4px;
+  white-space: nowrap;
+`;
+
 const FavoriteButton = styled.button`
   position: absolute;
   top: ${({ theme }) => theme.spacing.small};
@@ -122,14 +144,24 @@ const FavoriteButton = styled.button`
   }
 `;
 
+// Helper function to check makeability
+const checkMakeable = (cocktailIngredients, barStockIngredients) => {
+  if (!cocktailIngredients || !barStockIngredients) return false;
+  return cocktailIngredients.every(ing =>
+    barStockIngredients.some(stockIng => stockIng.name === ing.name && stockIng.available)
+  );
+};
 
-const CocktailListItem = ({ cocktail, isMakeable, selectedBar }) => {
+const CocktailListItem = ({ cocktail }) => { // Removed isMakeable and selectedBar from props
   const { isFavorite, toggleFavorite } = useFavorites(); // Use the hook
 
   if (!cocktail) return null;
 
-  const imageSrc = cocktail.image || PlaceholderImage;
+  const imageSrc = getImageUrl(cocktail.image); // New way
   const currentIsFavorite = isFavorite(cocktail.id);
+
+  const isMakeableBarA = checkMakeable(cocktail.ingredients, bar1StockData.ingredients);
+  const isMakeableBarB = checkMakeable(cocktail.ingredients, bar2StockData.ingredients);
 
   const handleFavoriteClick = (e) => {
     e.preventDefault(); // Prevent link navigation if heart is on top of link area
@@ -148,13 +180,15 @@ const CocktailListItem = ({ cocktail, isMakeable, selectedBar }) => {
       >
         {currentIsFavorite ? '♥' : '♡'}
       </FavoriteButton>
-      {(selectedBar === 'bar1' || selectedBar === 'bar2') && (
-        <AvailabilityIndicator isMakeable={isMakeable} title={isMakeable ? 'Available' : 'Unavailable'} />
-      )}
+      {/* Old AvailabilityIndicator removed */}
       <Link to={`/cocktails/${cocktail.id}`} style={{ textDecoration: 'none' }}>
         <CocktailImage src={imageSrc} alt={cocktail.name} />
         <CocktailName>{cocktail.name}</CocktailName>
       </Link>
+      <BarAvailabilityIconWrapper>
+        <SingleBarIcon available={isMakeableBarA}>Bar A</SingleBarIcon>
+        <SingleBarIcon available={isMakeableBarB}>Bar B</SingleBarIcon>
+      </BarAvailabilityIconWrapper>
       <ViewLink to={`/cocktails/${cocktail.id}`}>View Recipe</ViewLink>
     </ListItemWrapper>
   );
