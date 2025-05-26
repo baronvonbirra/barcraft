@@ -18,12 +18,12 @@ const SidebarWrapper = styled.aside`
   display: flex;
   flex-direction: column;
   gap: ${props => props.theme.spacing.medium};
-  color: ${props => props.theme.colors.text}; // Ensure text is visible in dark theme
+  color: ${props => props.theme.colors.text};
   height: 100vh; // Example: make it full height
   overflow-y: auto;
 
   h3 {
-    color: ${props => props.theme.colors.secondary};
+    color: ${props => props.theme.colors.primary}; // Changed to primary
     margin-bottom: ${props => props.theme.spacing.small};
   }
 
@@ -32,35 +32,51 @@ const SidebarWrapper = styled.aside`
     margin-bottom: ${props => props.theme.spacing.xs};
     font-size: 0.9rem;
     color: ${props => props.theme.colors.textOffset};
+    font-family: ${({ theme }) => theme.fonts.main};
   }
 
-  select, input[type="text"] {
+  select, input[type="text"], .checkbox-group {
     width: 100%;
     padding: ${props => props.theme.spacing.small};
     border-radius: ${props => props.theme.borderRadius};
     border: 1px solid ${props => props.theme.colors.border};
-    background-color: ${props => props.theme.colors.background}; // Darker input background
+    background-color: ${props => props.theme.colors.background};
     color: ${props => props.theme.colors.text};
-    margin-bottom: ${props => props.theme.spacing.small};
+    font-family: ${({ theme }) => theme.fonts.main};
+    margin-bottom: ${props => props.theme.spacing.medium}; /* Consistent margin */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+    &:focus {
+      border-color: ${props => props.theme.colors.primary};
+      box-shadow: 0 0 0 2px rgba(${props => props.theme.colors.primary}, 0.2); // Simulating theme.fn.rgba
+      outline: none;
+    }
   }
   
-  // Basic styling for multi-select checkboxes if we use them
   .checkbox-group {
     max-height: 150px;
     overflow-y: auto;
-    border: 1px solid ${props => props.theme.colors.border};
-    padding: ${props => props.theme.spacing.small};
-    border-radius: ${props => props.theme.borderRadius};
-    background-color: ${props => props.theme.colors.background};
+    /* background-color: ${props => props.theme.colors.background}; // Already set above */
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: ${props => props.theme.spacing.xs};
+  }
+
+  .checkbox-item input[type="checkbox"] {
+    margin-right: ${props => props.theme.spacing.small};
+    width: auto; /* Override width: 100% for checkbox itself */
+    margin-bottom: 0; /* Override general input margin */
+    accent-color: ${props => props.theme.colors.primary}; /* Style the checkmark color */
   }
 
   .checkbox-item label {
-    font-size: 0.85rem;
+    font-size: 0.9rem; /* Updated from 0.85rem for better readability */
     color: ${props => props.theme.colors.text};
-    margin-bottom: 0;
-  }
-   .checkbox-item input {
-    margin-right: ${props => props.theme.spacing.small};
+    margin-bottom: 0; /* Labels inside checkbox items don't need bottom margin */
+    font-weight: normal; /* Ensure it's not bold if there's any global bolding */
   }
 `;
 
@@ -69,26 +85,42 @@ const FilterSection = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: ${props => props.theme.colors.primary};
-  color: ${props => props.theme.colors.onPrimary};
-  border: none;
-  padding: ${props => props.theme.spacing.small} ${props => props.theme.spacing.medium};
-  border-radius: ${props => props.theme.borderRadius};
+  /* Generic Button styles - can be extracted to a common Button.jsx later */
+  font-family: ${({ theme }) => theme.fonts.main};
+  padding: ${({ theme }) => theme.spacing.small} ${({ theme }) => theme.spacing.medium};
+  border-radius: ${({ theme }) => theme.borderRadius};
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  transition: all 0.3s ease;
   width: 100%;
-  margin-top: ${props => props.theme.spacing.small};
+  margin-top: ${({ theme }) => theme.spacing.small};
+  font-weight: 600;
+  text-transform: uppercase; // Optional, for more "designed" feel
 
-  &:hover {
-    background-color: ${props => props.theme.colors.secondary};
+  /* Primary button style (used by SurpriseMeButton if it were styled here) */
+  &.primary {
+    background-color: ${({ theme }) => theme.colors.primary};
+    color: ${({ theme }) => theme.colors.onPrimary};
+    border: 1px solid transparent;
+    &:hover, &:focus {
+      background-color: ${({ theme }) => theme.colors.secondary};
+      color: ${({ theme }) => theme.colors.onSecondary};
+      box-shadow: ${({ theme }) => theme.shadows.small};
+      outline: 2px solid ${({ theme }) => theme.colors.secondary};
+      outline-offset: 2px;
+    }
   }
 
+  /* Ghost button style for Reset Filters */
   &.reset {
-    background-color: ${props => props.theme.colors.surface};
-    color: ${props => props.theme.colors.text};
-    border: 1px solid ${props => props.theme.colors.border};
-    &:hover {
-      background-color: ${props => props.theme.colors.background};
+    background-color: transparent;
+    color: ${({ theme }) => theme.colors.primary};
+    border: 1px solid ${({ theme }) => theme.colors.primary};
+    &:hover, &:focus {
+      background-color: ${({ theme }) => theme.colors.primary};
+      color: ${({ theme }) => theme.colors.onPrimary};
+      box-shadow: ${({ theme }) => theme.shadows.small};
+      outline: 2px solid ${({ theme }) => theme.colors.primary};
+      outline-offset: 2px;
     }
   }
 `;
@@ -120,7 +152,8 @@ const FilterSidebar = ({
   filters, // { baseSpirit, includeIngredients, ... } from useCocktailFilter
   setters, // { setBaseSpirit, setIncludeIngredients, ... } from useCocktailFilter
   resetFilters, // from useCocktailFilter
-  filteredCocktailsForSurprise // Pass the filtered list for the button
+  filteredCocktailsForSurprise, // Pass the filtered list for the button
+  id // Destructure the id prop
 }) => {
 
   const uniqueIngredients = useMemo(() => getUniqueValues(allCocktails, 'ingredients', 'name'), [allCocktails]);
@@ -149,7 +182,7 @@ const FilterSidebar = ({
 
 
   return (
-    <SidebarWrapper>
+    <SidebarWrapper id={id}> {/* Apply the id to the SidebarWrapper */}
       <h3>Filter Cocktails</h3>
 
       <FilterSection>

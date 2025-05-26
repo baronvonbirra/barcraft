@@ -1,30 +1,37 @@
 [
   {
     "id": "rum",
-    "name": "Rum-based Cocktails"
+    "name": "Rum-based Cocktails",
+    "image": "src/assets/categories/rum-category.png"
   },
   {
     "id": "whiskey",
-    "name": "Whiskey-based Cocktails"
+    "name": "Whiskey-based Cocktails",
+    "image": "src/assets/categories/whiskey-category.png"
   },
   {
     "id": "gin",
-    "name": "Gin-based Cocktails"
+    "name": "Gin-based Cocktails",
+    "image": "src/assets/categories/gin-category.png"
   },
   {
     "id": "vodka",
-    "name": "Vodka-based Cocktails"
+    "name": "Vodka-based Cocktails",
+    "image": "src/assets/cocktails/placeholder.png"
   },
   {
     "id": "tequila",
-    "name": "Tequila-based Cocktails"
+    "name": "Tequila-based Cocktails",
+    "image": "src/assets/cocktails/placeholder.png"
   },
   {
     "id": "liqueur",
-    "name": "Liqueur-based Cocktails"
+    "name": "Liqueur-based Cocktails",
+    "image": "src/assets/cocktails/placeholder.png"
   },
   {
     "id": "mocktails",
-    "name": "Mocktails (Non-alcoholic)"
+    "name": "Mocktails (Non-alcoholic)",
+    "image": "src/assets/cocktails/placeholder.png"
   }
 ]
