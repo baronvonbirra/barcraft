@@ -58,7 +58,10 @@ const CocktailImage = styled.img`
   height: auto;
   object-fit: cover;
   border-radius: ${({ theme }) => theme.borderRadius};
-  margin-bottom: ${({ theme }) => theme.spacing.medium};
+  display: block; /* Added */
+  margin-left: auto; /* Added */
+  margin-right: auto; /* Added */
+  margin-bottom: ${({ theme }) => theme.spacing.medium}; /* Preserved */
   border: 1px solid ${({ theme }) => theme.colors.border};
 `;
 
@@ -251,9 +254,22 @@ const CocktailPage = () => {
           <h2>Details</h2>
           <p>
             <strong>Glass:</strong>{' '}
-            <FilterLinkTag to={`/cocktails/filter/glass/${encodeURIComponent(cocktail.glass)}`}>
-              {cocktail.glass}
-            </FilterLinkTag>
+            {cocktail.glass && typeof cocktail.glass === 'string' ? (
+              cocktail.glass.split(', ').map(glassName => (
+                <FilterLinkTag 
+                  key={glassName.trim()} 
+                  to={`/cocktails/filter/glass/${encodeURIComponent(glassName.trim())}`}
+                >
+                  {glassName.trim()}
+                </FilterLinkTag>
+              ))
+            ) : cocktail.glass ? ( 
+              <FilterLinkTag to={`/cocktails/filter/glass/${encodeURIComponent(cocktail.glass)}`}>
+                {cocktail.glass}
+              </FilterLinkTag>
+            ) : (
+              'N/A' 
+            )}
           </p>
           <p><strong>Difficulty:</strong> {cocktail.difficulty}</p>
           {cocktail.tags && cocktail.tags.length > 0 && (

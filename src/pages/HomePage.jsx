@@ -10,6 +10,7 @@ import cocktailsData from '../data/cocktails.json'; // Still needed for Cocktail
 import categoriesData from '../data/categories.json'; // Still needed for CategoryList
 import thematicCategoriesData from '../data/thematicCategories.json'; // Added for thematic categories
 import CategoryList from '../components/CategoryList'; // Added
+import SurpriseMeButton from '../components/SurpriseMeButton'; // Added
 import { getImageUrl } from '../utils/cocktailImageLoader.js'; // Corrected path with .js
 
 // Styled components for HomePage
@@ -115,6 +116,13 @@ const HomePageWrapper = styled.div`
   padding: 0 ${({ theme }) => theme.spacing.medium};
 `;
 
+const SurpriseButtonWrapper = styled.div`
+  margin: ${({ theme }) => theme.spacing.large} auto; // For vertical spacing and horizontal centering
+  padding: 0 ${({ theme }) => theme.spacing.medium}; // Horizontal padding for narrower screens
+  max-width: 400px; // Constrain the button's effective width on wider screens
+  width: 100%; // Ensure it's responsive
+`;
+
 const MainContent = styled.div`
   flex-grow: 1; // Takes remaining space if HomePageWrapper was flex row
 `;
@@ -147,7 +155,9 @@ const HomePage = () => {
           </CocktailOfTheWeekWrapper>
         )}
 
-        {/* FilterToggleButton and FilterSidebar removed */}
+        <SurpriseButtonWrapper>
+          <SurpriseMeButton filteredCocktails={cocktailsData} />
+        </SurpriseButtonWrapper>
         
         <MainContent>
           {/* Heading for categories */}
