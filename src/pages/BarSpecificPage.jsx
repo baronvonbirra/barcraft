@@ -32,6 +32,19 @@ const BarFiltersWrapper = styled.div`
   color: ${({ theme }) => theme.colors.textOffset};
 `;
 
+const CuratedSectionWrapper = styled.section`
+  margin-bottom: ${({ theme }) => theme.spacing.large};
+  padding: ${({ theme }) => theme.spacing.medium};
+  background-color: ${({ theme }) => theme.colors.background}; // Or a slightly different background
+  border-radius: ${({ theme }) => theme.borderRadius};
+`;
+
+const CuratedSectionHeader = styled.h2`
+  color: ${({ theme }) => theme.colors.secondary}; // Or primary
+  text-align: center;
+  margin-bottom: ${({ theme }) => theme.spacing.medium};
+`;
+
 // Styled Components for Empty State (copied from FilteredCocktailListPage)
 const EmptyStateWrapper = styled.div`
   text-align: center;
@@ -65,7 +78,7 @@ const EmptyStateSuggestion = styled.p`
 
 const BarSpecificPage = () => {
   const { barId } = useParams(); // 'barA' or 'barB'
-  const { theme } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext); // ensure theme is available
   // const { selectBar } = useBar(); // Optional: set context if other components rely on it
 
   // useEffect(() => {
@@ -79,28 +92,46 @@ const BarSpecificPage = () => {
     return { name: 'Unknown Bar', stock: [], internalId: null };
   }, [barId]);
 
+  const currentBarSpecifics = useMemo(() => {
+    if (barId === 'barA') return barSpecificData.bar1;
+    if (barId === 'barB') return barSpecificData.bar2;
+    return { curatedMenuName: '', curatedCocktailIds: [] };
+  }, [barId]);
+
+  const curatedCocktailsList = useMemo(() => {
+    if (!currentBarSpecifics.curatedCocktailIds || currentBarSpecifics.curatedCocktailIds.length === 0) {
+      return [];
+    }
+    return cocktailsData.filter(cocktail => 
+      currentBarSpecifics.curatedCocktailIds.includes(cocktail.id)
+    );
+  }, [currentBarSpecifics.curatedCocktailIds]);
+
+  // Create a memoized set of available stock for efficient lookup
+  const stockSet = useMemo(() => {
+    if (!currentBarData.stock || currentBarData.stock.length === 0) {
+      return new Set();
+    }
+    return new Set(currentBarData.stock.map(ing => ing.toLowerCase()));
+  }, [currentBarData.stock]);
+
   // Filter cocktailsData to only include those makeable with currentBarData.stock
   const availableCocktails = useMemo(() => {
-    if (!currentBarData.stock || currentBarData.stock.length === 0) {
+    if (stockSet.size === 0) {
       return [];
     }
     return cocktailsData.filter(cocktail => {
-      return cocktail.ingredients.every(ing => 
-        currentBarData.stock.some(stockIng => stockIng.name === ing.name && stockIng.available)
-      );
+      return cocktail.ingredients.every(ing => stockSet.has(ing.name.toLowerCase()));
     });
-  }, [currentBarData.stock]);
+  }, [stockSet]);
   
   // This function will be passed to CocktailList -> CocktailListItem
   // to determine if a specific cocktail is makeable based on the current bar's stock.
-  // This is a simplified version for this page, not using the full useCocktailFilter hook.
   const isCocktailMakeableAtCurrentBar = (cocktailIngredients) => {
-    if (!currentBarData.stock || currentBarData.stock.length === 0) {
+    if (stockSet.size === 0) {
         return false;
     }
-    return cocktailIngredients.every(ing =>
-        currentBarData.stock.some(stockIng => stockIng.name === ing.name && stockIng.available)
-    );
+    return cocktailIngredients.every(ing => stockSet.has(ing.name.toLowerCase()));
   };
 
 
@@ -115,6 +146,20 @@ const BarSpecificPage = () => {
         {/* to work with only 'availableCocktails' and reflect 'currentBarData.stock' */}
       </BarFiltersWrapper>
 
+      {/* Curated Cocktails Section */}
+      {curatedCocktailsList.length > 0 && (
+        <CuratedSectionWrapper theme={theme}>
+          <CuratedSectionHeader theme={theme}>{currentBarSpecifics.curatedMenuName}</CuratedSectionHeader>
+          <CocktailList 
+            cocktails={curatedCocktailsList} 
+            selectedBar={currentBarData.internalId} 
+            isCocktailMakeable={isCocktailMakeableAtCurrentBar} 
+          />
+        </CuratedSectionWrapper>
+      )}
+
+      {/* Available Cocktails Section (renamed for clarity, or add a header) */}
+      {/* You might want to add a header here too, e.g., "All Makeable Cocktails" */}
       {availableCocktails.length > 0 ? (
         <CocktailList 
           cocktails={availableCocktails} 
