@@ -67,13 +67,23 @@ const FilteredCocktailListPage = () => {
   const filteredCocktails = useMemo(() => {
     return cocktailsData.filter(cocktail => {
       if (!filterType || !decodedFilterValue) return false;
+      
+      const lowerDecodedFilterValue = decodedFilterValue.toLowerCase();
+
       switch (filterType) {
         case 'tag':
-          return cocktail.tags && cocktail.tags.includes(decodedFilterValue);
+          return cocktail.tags && cocktail.tags.some(t => t.toLowerCase() === lowerDecodedFilterValue);
         case 'flavor':
-          return cocktail.flavorProfile && cocktail.flavorProfile.includes(decodedFilterValue);
+          return cocktail.flavorProfile && cocktail.flavorProfile.some(fp => fp.toLowerCase() === lowerDecodedFilterValue);
         case 'glass':
-          return cocktail.glass === decodedFilterValue;
+          if (Array.isArray(cocktail.glass)) {
+            return cocktail.glass.some(g => g.toLowerCase() === lowerDecodedFilterValue);
+          } else if (typeof cocktail.glass === 'string') {
+            return cocktail.glass.toLowerCase() === lowerDecodedFilterValue;
+          }
+          return false;
+        case 'difficulty':
+          return cocktail.difficulty?.toLowerCase() === lowerDecodedFilterValue;
         default:
           return false;
       }

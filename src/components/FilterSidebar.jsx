@@ -56,7 +56,8 @@ const SidebarWrapper = styled.aside`
   .checkbox-group {
     max-height: 150px;
     overflow-y: auto;
-    /* background-color: ${props => props.theme.colors.background}; // Already set above */
+    position: relative; // Add this
+    /* background-color is inherited or already set, ensure it's not transparent */
   }
 
   .checkbox-item {
@@ -82,6 +83,25 @@ const SidebarWrapper = styled.aside`
 
 const FilterSection = styled.div`
   margin-bottom: ${props => props.theme.spacing.medium};
+`;
+
+const StickySearchInput = styled.input`
+  position: sticky;
+  top: 0;
+  background-color: ${({ theme }) => theme.colors.surface || '#fff'}; // Match checkbox-group or sidebar bg
+  z-index: 10; // Ensure it's above checkbox items
+  width: calc(100% - 2 * ${({ theme }) => theme.spacing.small}); // Adjust width to account for parent padding
+  padding: ${({ theme }) => theme.spacing.small}; // Keep consistent padding
+  margin: 0 auto ${({ theme }) => theme.spacing.small} auto; // Center and provide bottom margin
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  display: block; // Ensure it takes up its own line
+
+  &:focus {
+    border-color: ${props => props.theme.colors.primary};
+    box-shadow: 0 0 0 2px rgba(${props => props.theme.colors.primaryRGB || '0,123,255'}, 0.2);
+    outline: none;
+  }
 `;
 
 const Button = styled.button`
@@ -203,17 +223,15 @@ const FilterSidebar = ({
       </FilterSection>
 
       <FilterSection>
-        <label htmlFor="includeIngredientSearch">Search Ingredients to Include:</label>
-        <input
-          type="text"
-          id="includeIngredientSearch"
-          placeholder="Type to search..."
-          value={includeIngredientSearchTerm}
-          onChange={(e) => setIncludeIngredientSearchTerm(e.target.value)}
-          // style prop removed, will rely on global input styling in SidebarWrapper
-        />
-        <label>Include Ingredients:</label> {/* This label might be redundant now or could be rephrased */}
+        <label htmlFor="includeIngredients">Include Ingredients:</label> {/* This label is for the whole group */}
         <div className="checkbox-group">
+          <StickySearchInput
+            type="text"
+            id="includeIngredientSearch" // Keep ID for potential label association if needed
+            placeholder="Search to include..."
+            value={includeIngredientSearchTerm}
+            onChange={(e) => setIncludeIngredientSearchTerm(e.target.value)}
+          />
           {uniqueIngredients
             .filter(ing => ing.toLowerCase().includes(includeIngredientSearchTerm.toLowerCase()))
             .map(ing => (
@@ -232,17 +250,15 @@ const FilterSidebar = ({
       </FilterSection>
 
       <FilterSection>
-        <label htmlFor="excludeIngredientSearch">Search Ingredients to Exclude:</label>
-        <input
-          type="text"
-          id="excludeIngredientSearch"
-          placeholder="Type to search..."
-          value={excludeIngredientSearchTerm}
-          onChange={(e) => setExcludeIngredientSearchTerm(e.target.value)}
-          // style prop removed, will rely on global input styling in SidebarWrapper
-        />
-        <label>Exclude Ingredients:</label> {/* This label might be redundant now or could be rephrased */}
+        <label htmlFor="excludeIngredients">Exclude Ingredients:</label>
          <div className="checkbox-group">
+          <StickySearchInput
+            type="text"
+            id="excludeIngredientSearch"
+            placeholder="Search to exclude..."
+            value={excludeIngredientSearchTerm}
+            onChange={(e) => setExcludeIngredientSearchTerm(e.target.value)}
+          />
           {uniqueIngredients
             .filter(ing => ing.toLowerCase().includes(excludeIngredientSearchTerm.toLowerCase()))
             .map(ing => (
