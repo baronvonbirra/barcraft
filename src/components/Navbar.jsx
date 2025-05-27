@@ -160,7 +160,7 @@ const Navbar = () => {
       
       <NavLinks>
         <NavLinkStyled to="/" end onClick={handleLinkClick}>Home</NavLinkStyled>
-        <NavLinkStyled to="/categories" onClick={handleLinkClick}>Categories</NavLinkStyled>
+        <NavLinkStyled to="/categories" onClick={handleLinkClick}>Cocktails</NavLinkStyled>
         <NavLinkStyled to="/favorites" onClick={handleLinkClick}>My Favorites</NavLinkStyled>
         <NavLinkStyled to="/bar/barA" onClick={handleLinkClick}>Level One</NavLinkStyled>
         <NavLinkStyled to="/bar/barB" onClick={handleLinkClick}>The Glitch</NavLinkStyled>
@@ -184,7 +184,7 @@ const Navbar = () => {
 
       <MobileMenu isOpen={isOpen} id={mobileMenuId}>
         <NavLinkStyled to="/" end onClick={handleLinkClick}>Home</NavLinkStyled>
-        <NavLinkStyled to="/categories" onClick={handleLinkClick}>Categories</NavLinkStyled>
+        <NavLinkStyled to="/categories" onClick={handleLinkClick}>Cocktails</NavLinkStyled>
         <NavLinkStyled to="/favorites" onClick={handleLinkClick}>My Favorites</NavLinkStyled>
         <NavLinkStyled to="/bar/barA" onClick={handleLinkClick}>Level One</NavLinkStyled>
         <NavLinkStyled to="/bar/barB" onClick={handleLinkClick}>The Glitch</NavLinkStyled>

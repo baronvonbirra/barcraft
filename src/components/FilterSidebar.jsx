@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react'; // Ensure useState is imported
 import styled from 'styled-components';
 // We will pass down cocktailsData and categoriesData as props later.
 // For now, let's assume they are available or mocked if needed for development.
@@ -19,8 +19,8 @@ const SidebarWrapper = styled.aside`
   flex-direction: column;
   gap: ${props => props.theme.spacing.medium};
   color: ${props => props.theme.colors.text};
-  height: 100vh; // Example: make it full height
-  overflow-y: auto;
+  /* height: 100vh; removed */
+  /* overflow-y: auto; removed */
 
   h3 {
     color: ${props => props.theme.colors.primary}; // Changed to primary
@@ -56,7 +56,8 @@ const SidebarWrapper = styled.aside`
   .checkbox-group {
     max-height: 150px;
     overflow-y: auto;
-    /* background-color: ${props => props.theme.colors.background}; // Already set above */
+    position: relative; // Add this
+    /* background-color is inherited or already set, ensure it's not transparent */
   }
 
   .checkbox-item {
@@ -82,6 +83,25 @@ const SidebarWrapper = styled.aside`
 
 const FilterSection = styled.div`
   margin-bottom: ${props => props.theme.spacing.medium};
+`;
+
+const StickySearchInput = styled.input`
+  position: sticky;
+  top: 0;
+  background-color: ${({ theme }) => theme.colors.surface || '#fff'}; // Match checkbox-group or sidebar bg
+  z-index: 10; // Ensure it's above checkbox items
+  width: calc(100% - 2 * ${({ theme }) => theme.spacing.small}); // Adjust width to account for parent padding
+  padding: ${({ theme }) => theme.spacing.small}; // Keep consistent padding
+  margin: 0 auto ${({ theme }) => theme.spacing.small} auto; // Center and provide bottom margin
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  display: block; // Ensure it takes up its own line
+
+  &:focus {
+    border-color: ${props => props.theme.colors.primary};
+    box-shadow: 0 0 0 2px rgba(${props => props.theme.colors.primaryRGB || '0,123,255'}, 0.2);
+    outline: none;
+  }
 `;
 
 const Button = styled.button`
@@ -156,6 +176,8 @@ const FilterSidebar = ({
   filteredCocktailsForSurprise, // Pass the filtered list for the button
   id // Destructure the id prop
 }) => {
+  const [includeIngredientSearchTerm, setIncludeIngredientSearchTerm] = useState('');
+  const [excludeIngredientSearchTerm, setExcludeIngredientSearchTerm] = useState('');
 
   const uniqueIngredients = useMemo(() => getUniqueValues(allCocktails, 'ingredients', 'name'), [allCocktails]);
   const uniqueFlavorProfiles = useMemo(() => getUniqueValues(allCocktails, 'flavorProfile'), [allCocktails]);
@@ -201,9 +223,18 @@ const FilterSidebar = ({
       </FilterSection>
 
       <FilterSection>
-        <label>Include Ingredients:</label>
+        <label htmlFor="includeIngredients">Include Ingredients:</label> {/* This label is for the whole group */}
         <div className="checkbox-group">
-          {uniqueIngredients.map(ing => (
+          <StickySearchInput
+            type="text"
+            id="includeIngredientSearch" // Keep ID for potential label association if needed
+            placeholder="Search to include..."
+            value={includeIngredientSearchTerm}
+            onChange={(e) => setIncludeIngredientSearchTerm(e.target.value)}
+          />
+          {uniqueIngredients
+            .filter(ing => ing.toLowerCase().includes(includeIngredientSearchTerm.toLowerCase()))
+            .map(ing => (
             <div key={ing} className="checkbox-item">
               <input
                 type="checkbox"
@@ -219,9 +250,18 @@ const FilterSidebar = ({
       </FilterSection>
 
       <FilterSection>
-        <label>Exclude Ingredients:</label>
+        <label htmlFor="excludeIngredients">Exclude Ingredients:</label>
          <div className="checkbox-group">
-          {uniqueIngredients.map(ing => (
+          <StickySearchInput
+            type="text"
+            id="excludeIngredientSearch"
+            placeholder="Search to exclude..."
+            value={excludeIngredientSearchTerm}
+            onChange={(e) => setExcludeIngredientSearchTerm(e.target.value)}
+          />
+          {uniqueIngredients
+            .filter(ing => ing.toLowerCase().includes(excludeIngredientSearchTerm.toLowerCase()))
+            .map(ing => (
             <div key={ing} className="checkbox-item">
               <input
                 type="checkbox"
