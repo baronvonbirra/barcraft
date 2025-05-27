@@ -144,9 +144,14 @@ const CocktailDetail = ({ cocktail }) => {
   // Ensure ingredients are displayed correctly, assuming they are objects
   // This part depends on how you want to display ingredients.
   // For simplicity, joining name and quantity.
-  const ingredientsList = cocktail.ingredients.map((ing, index) => 
-    `${ing.name}: ${ing.quantity}${ing.notes ? ` (${ing.notes})` : ''}`
-  );
+  // Updated to include "(optional)" for non-essential ingredients
+  const ingredientsList = cocktail.ingredients.map((ing, index) => {
+    let displayText = `${ing.name}: ${ing.quantity}${ing.notes ? ` (${ing.notes})` : ''}`;
+    if (ing.isEssential === false) { // Check for explicitly false
+      displayText += " (optional)";
+    }
+    return displayText;
+  });
 
   // Determine the glass display value
   let glassDisplayValue = '';

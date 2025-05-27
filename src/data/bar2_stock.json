@@ -1,20 +1,19 @@
 {
-  "barName": "The Velvet Sip",
   "ingredientsAvailable": [
-    "White Rum",
-    "Lime Juice",
-    "Simple Syrup",
-    "Gin",
-    "Tonic Water",
-    "Rye Whiskey",
-    "Sweet Vermouth",
-    "Angostura Bitters",
-    "Maraschino Cherry",
-    "Tequila Blanco (100% Agave)",
-    "Orange Liqueur",
-    "Coffee Liqueur (e.g., Kahlúa, Tia Maria)",
-    "Heavy Cream or Half-and-Half",
-    "Ginger Ale",
-    "Grenadine"
+    "white_rum",
+    "lime_juice",
+    "simple_syrup",
+    "gin",
+    "tonic_water",
+    "rye_whiskey",
+    "sweet_vermouth_red",
+    "angostura_bitters",
+    "maraschino_cherry",
+    "tequila_blanco",
+    "orange_liqueur",
+    "coffee_liqueur",
+    "heavy_cream",
+    "ginger_ale",
+    "grenadine"
   ]
 }
