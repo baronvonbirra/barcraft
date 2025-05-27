@@ -6,6 +6,7 @@ import { getImageUrl } from '../utils/cocktailImageLoader.js'; // Corrected path
 import { useFavorites } from '../hooks/useFavorites'; // Import useFavorites
 import bar1StockData from '../data/bar1_stock.json'; // Added
 import bar2StockData from '../data/bar2_stock.json'; // Added
+import barSpecificData from '../data/bar_specific_data.json'; // Added for bar names
 
 // Styled components (ensure they exist or are defined if not already)
 const ListItemWrapper = styled.div`
@@ -199,8 +200,8 @@ const CocktailListItem = ({ cocktail }) => { // Removed isMakeable and selectedB
         <CocktailName>{cocktail.name}</CocktailName>
       </Link>
       <BarAvailabilityIconWrapper>
-        <SingleBarIcon available={isMakeableBarA}>Bar A</SingleBarIcon>
-        <SingleBarIcon available={isMakeableBarB}>Bar B</SingleBarIcon>
+        <SingleBarIcon available={isMakeableBarA}>{barSpecificData.bar1.barName}</SingleBarIcon>
+        <SingleBarIcon available={isMakeableBarB}>{barSpecificData.bar2.barName}</SingleBarIcon>
       </BarAvailabilityIconWrapper>
       <ViewLink to={`/cocktails/${cocktail.id}`}>View Recipe</ViewLink>
     </ListItemWrapper>

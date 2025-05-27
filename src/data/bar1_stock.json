@@ -1,19 +1,19 @@
 {
   "ingredientsAvailable": [
-    "White Rum",
-    "Dark Rum",
-    "Lime Juice",
-    "Simple Syrup",
-    "Mint Leaves",
-    "Bourbon Whiskey",
-    "Angostura Bitters",
-    "Sugar Cube",
-    "Gin",
-    "Tonic Water",
-    "Campari",
-    "Sweet Vermouth (Red)",
-    "Vodka",
-    "Ginger Beer",
-    "Orange Liqueur"
+    "white_rum",
+    "dark_rum",
+    "lime_juice",
+    "simple_syrup",
+    "mint_leaves",
+    "bourbon_whiskey",
+    "angostura_bitters",
+    "sugar",
+    "gin",
+    "tonic_water",
+    "campari",
+    "sweet_vermouth_red",
+    "vodka",
+    "ginger_beer",
+    "orange_liqueur"
   ]
 }

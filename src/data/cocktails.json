@@ -13,12 +13,12 @@
     "flavorProfile": ["citrusy", "sweet", "herbal", "refreshing"],
     "toolsNeeded": ["Muddler", "Jigger", "Bar spoon", "Highball glass"],
     "ingredients": [
-      { "name": "White Rum", "quantity": "2 oz (60ml)" },
-      { "name": "Lime Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed" },
-      { "name": "Simple Syrup (1:1)", "quantity": "0.75 oz (22ml)", "notes": "adjust to taste" },
-      { "name": "Fresh Mint Leaves", "quantity": "8-10 leaves" },
-      { "name": "Soda Water", "quantity": "Top up", "notes": "chilled" },
-      { "name": "Lime wedge & Mint sprig", "quantity": "For garnish" }
+      { "id": "white_rum", "name": "White Rum", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "lime_juice", "name": "Lime Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed", "isEssential": true },
+      { "id": "simple_syrup", "name": "Simple Syrup (1:1)", "quantity": "0.75 oz (22ml)", "notes": "adjust to taste", "isEssential": true },
+      { "id": "mint_leaves", "name": "Fresh Mint Leaves", "quantity": "8-10 leaves", "isEssential": true },
+      { "id": "soda_water", "name": "Soda Water", "quantity": "Top up", "notes": "chilled", "isEssential": true },
+      { "id": "lime_mint_garnish", "name": "Lime wedge & Mint sprig", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "In a sturdy highball glass, gently muddle the mint leaves with simple syrup. Avoid over-muddling or shredding the mint.",
@@ -43,10 +43,10 @@
     "flavorProfile": ["citrusy", "sweet", "tart", "strong"],
     "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Coupe or Martini glass"],
     "ingredients": [
-      { "name": "White Rum", "quantity": "2 oz (60ml)" },
-      { "name": "Lime Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed" },
-      { "name": "Simple Syrup (1:1)", "quantity": "0.75 oz (22ml)", "notes": "adjust to taste" },
-      { "name": "Lime wheel or twist", "quantity": "For garnish (optional)" }
+      { "id": "white_rum", "name": "White Rum", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "lime_juice", "name": "Lime Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed", "isEssential": true },
+      { "id": "simple_syrup", "name": "Simple Syrup (1:1)", "quantity": "0.75 oz (22ml)", "notes": "adjust to taste", "isEssential": true },
+      { "id": "lime_wheel_garnish", "name": "Lime wheel or twist", "quantity": "For garnish (optional)", "isEssential": false }
     ],
     "instructions": [
       "Add rum, lime juice, and simple syrup to a shaker with ice.",
@@ -69,10 +69,11 @@
     "flavorProfile": ["coconut", "pineapple", "sweet", "creamy"],
     "toolsNeeded": ["Blender (for blended)", "Shaker (for shaken)", "Jigger", "Hurricane glass"],
     "ingredients": [
-      { "name": "White Rum", "quantity": "2 oz (60ml)" },
-      { "name": "Coconut Cream", "quantity": "1 oz (30ml)" },
-      { "name": "Pineapple Juice", "quantity": "2 oz (60ml)" },
-      { "name": "Pineapple Wedge & Cherry", "quantity": "For garnish" }
+      { "id": "white_rum", "name": "White Rum", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "coconut_cream", "name": "Coconut Cream", "quantity": "1 oz (30ml)", "isEssential": true },
+      { "id": "pineapple_juice", "name": "Pineapple Juice", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "lime_juice", "name": "Lime Juice", "quantity": "0.5 oz (15ml)", "notes": "freshly squeezed, for balance", "isEssential": true },
+      { "id": "pineapple_cherry_garnish", "name": "Pineapple Wedge & Cherry", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "For a blended Piña Colada: Combine all ingredients with 1 cup of ice in a blender. Blend until smooth. Pour into a chilled hurricane or poco grande glass.",
@@ -94,9 +95,9 @@
     "flavorProfile": ["spicy", "sweet", "dark-rum", "effervescent"],
     "toolsNeeded": ["Jigger", "Highball glass"],
     "ingredients": [
-      { "name": "Gosling's Black Seal Rum", "quantity": "2 oz (60ml)" },
-      { "name": "Ginger Beer", "quantity": "4-5 oz (120-150ml)", "notes": "chilled, good quality" },
-      { "name": "Lime Wedge", "quantity": "For garnish (optional)" }
+      { "id": "dark_rum", "name": "Gosling's Black Seal Rum", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "ginger_beer", "name": "Ginger Beer", "quantity": "4-5 oz (120-150ml)", "notes": "chilled, good quality", "isEssential": true },
+      { "id": "lime_wedge_garnish", "name": "Lime Wedge", "quantity": "For garnish (optional)", "isEssential": false }
     ],
     "instructions": [
       "Fill a highball glass with ice.",
@@ -119,11 +120,11 @@
     "flavorProfile": ["tart", "citrusy", "fruity", "rum"],
     "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Coupe or Martini glass"],
     "ingredients": [
-      { "name": "White Rum", "quantity": "2 oz (60ml)" },
-      { "name": "Grapefruit Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed" },
-      { "name": "Lime Juice", "quantity": "0.5 oz (15ml)", "notes": "freshly squeezed" },
-      { "name": "Maraschino Liqueur", "quantity": "0.25 oz (7.5ml)" },
-      { "name": "Lime Wheel", "quantity": "For garnish (optional)" }
+      { "id": "white_rum", "name": "White Rum", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "grapefruit_juice", "name": "Grapefruit Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed", "isEssential": true },
+      { "id": "lime_juice", "name": "Lime Juice", "quantity": "0.5 oz (15ml)", "notes": "freshly squeezed", "isEssential": true },
+      { "id": "maraschino_liqueur", "name": "Maraschino Liqueur", "quantity": "0.25 oz (7.5ml)", "isEssential": true },
+      { "id": "lime_wheel_garnish", "name": "Lime Wheel", "quantity": "For garnish (optional)", "isEssential": false }
     ],
     "instructions": [
       "Add rum, grapefruit juice, lime juice, and maraschino liqueur to a shaker with ice.",
@@ -146,12 +147,12 @@
     "flavorProfile": ["spirituous", "bitter-sweet", "aromatic"],
     "toolsNeeded": ["Muddler (optional)", "Mixing glass (optional)", "Bar spoon", "Jigger", "Old Fashioned glass"],
     "ingredients": [
-      { "name": "Bourbon or Rye Whiskey", "quantity": "2 oz (60ml)" },
-      { "name": "Sugar Cube", "quantity": "1", "notes": "or 0.5 tsp granulated sugar, or 0.25 oz simple syrup" },
-      { "name": "Angostura Bitters", "quantity": "2-3 dashes" },
-      { "name": "Water or Soda Water", "quantity": "1 tsp (optional, to help dissolve sugar)" },
-      { "name": "Orange Peel", "quantity": "For garnish" },
-      { "name": "Large Ice Cube or Sphere", "quantity": "1" }
+      { "id": "bourbon_rye_whiskey", "name": "Bourbon or Rye Whiskey", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "sugar", "name": "Sugar Cube", "quantity": "1", "notes": "or 0.5 tsp granulated sugar, or 0.25 oz simple syrup", "isEssential": true },
+      { "id": "angostura_bitters", "name": "Angostura Bitters", "quantity": "2-3 dashes", "isEssential": true },
+      { "id": "soda_water", "name": "Water or Soda Water", "quantity": "1 tsp (optional, to help dissolve sugar)", "isEssential": false },
+      { "id": "orange_peel_garnish", "name": "Orange Peel", "quantity": "For garnish", "isEssential": false },
+      { "id": "large_ice_cube", "name": "Large Ice Cube or Sphere", "quantity": "1", "isEssential": false }
     ],
     "instructions": [
       "Place the sugar cube (or sugar/simple syrup) in an Old Fashioned glass.",
@@ -176,10 +177,10 @@
     "flavorProfile": ["spirituous", "bitter-sweet", "aromatic", "herbaceous"],
     "toolsNeeded": ["Mixing glass", "Jigger", "Bar spoon", "Strainer", "Coupe or Martini glass"],
     "ingredients": [
-      { "name": "Rye Whiskey", "quantity": "2 oz (60ml)" },
-      { "name": "Sweet Vermouth", "quantity": "1 oz (30ml)" },
-      { "name": "Angostura Bitters", "quantity": "2 Dashes" },
-      { "name": "Maraschino Cherry", "quantity": "For garnish" }
+      { "id": "rye_whiskey", "name": "Rye Whiskey", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "sweet_vermouth_red", "name": "Sweet Vermouth", "quantity": "1 oz (30ml)", "isEssential": true },
+      { "id": "angostura_bitters", "name": "Angostura Bitters", "quantity": "2 Dashes", "isEssential": true },
+      { "id": "maraschino_cherry_garnish", "name": "Maraschino Cherry", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "Stir ingredients with ice.",
@@ -201,11 +202,11 @@
     "flavorProfile": ["tart", "sweet", "spirituous", "citrusy"],
     "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Rocks glass or Coupe"],
     "ingredients": [
-      { "name": "Bourbon or Rye Whiskey", "quantity": "2 oz (60ml)" },
-      { "name": "Lemon Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed" },
-      { "name": "Simple Syrup (1:1)", "quantity": "0.75 oz (22ml)", "notes": "adjust to taste" },
-      { "name": "Egg White", "quantity": "0.5 oz (15ml) or 1 small egg white", "notes": "optional, for texture and foam" },
-      { "name": "Cherry & Orange slice", "quantity": "For garnish (optional)" }
+      { "id": "bourbon_rye_whiskey", "name": "Bourbon or Rye Whiskey", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "lemon_juice", "name": "Lemon Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed", "isEssential": true },
+      { "id": "simple_syrup", "name": "Simple Syrup (1:1)", "quantity": "0.75 oz (22ml)", "notes": "adjust to taste", "isEssential": true },
+      { "id": "egg_white", "name": "Egg White", "quantity": "0.5 oz (15ml) or 1 small egg white", "notes": "optional, for texture and foam", "isEssential": false },
+      { "id": "cherry_orange_slice_garnish", "name": "Cherry & Orange slice", "quantity": "For garnish (optional)", "isEssential": false }
     ],
     "instructions": [
       "If using egg white, combine whiskey, lemon juice, simple syrup, and egg white in a shaker. Dry shake (without ice) vigorously for about 15 seconds to emulsify.",
@@ -229,11 +230,11 @@
     "flavorProfile": ["smoky", "spicy", "sweet-tart", "ginger", "honey"],
     "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Rocks glass"],
     "ingredients": [
-      { "name": "Blended Scotch Whisky (unpeated)", "quantity": "2 oz (60ml)" },
-      { "name": "Fresh Lemon Juice", "quantity": "1 oz (30ml)" },
-      { "name": "Honey-Ginger Syrup", "quantity": "0.5 oz (15ml)", "notes": "Equal parts honey and ginger juice (from fresh ginger, juiced or muddled and strained)" },
-      { "name": "Islay Scotch Whisky (peated)", "quantity": "0.25 oz (7.5ml)", "notes": "for float" },
-      { "name": "Candied Ginger", "quantity": "For garnish (optional)" }
+      { "id": "blended_scotch_unpeated", "name": "Blended Scotch Whisky (unpeated)", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "lemon_juice", "name": "Fresh Lemon Juice", "quantity": "1 oz (30ml)", "isEssential": true },
+      { "id": "honey_ginger_syrup", "name": "Honey-Ginger Syrup", "quantity": "0.5 oz (15ml)", "notes": "Equal parts honey and ginger juice (from fresh ginger, juiced or muddled and strained)", "isEssential": true },
+      { "id": "peated_scotch_islay", "name": "Islay Scotch Whisky (peated)", "quantity": "0.25 oz (7.5ml)", "notes": "for float", "isEssential": true },
+      { "id": "candied_ginger_garnish", "name": "Candied Ginger", "quantity": "For garnish (optional)", "isEssential": false }
     ],
     "instructions": [
       "Combine blended Scotch, lemon juice, and honey-ginger syrup in a shaker with ice.",
@@ -257,10 +258,10 @@
     "flavorProfile": ["spirituous", "bitter-sweet", "aromatic", "complex"],
     "toolsNeeded": ["Mixing glass", "Jigger", "Bar spoon", "Strainer", "Old Fashioned glass or Coupe"],
     "ingredients": [
-      { "name": "Bourbon or Rye Whiskey", "quantity": "1.5 oz (45ml)" },
-      { "name": "Campari", "quantity": "1 oz (30ml)" },
-      { "name": "Sweet Vermouth (Red)", "quantity": "1 oz (30ml)" },
-      { "name": "Orange Twist", "quantity": "For garnish" }
+      { "id": "bourbon_rye_whiskey", "name": "Bourbon or Rye Whiskey", "quantity": "1.5 oz (45ml)", "isEssential": true },
+      { "id": "campari", "name": "Campari", "quantity": "1 oz (30ml)", "isEssential": true },
+      { "id": "sweet_vermouth_red", "name": "Sweet Vermouth (Red)", "quantity": "1 oz (30ml)", "isEssential": true },
+      { "id": "orange_twist_garnish", "name": "Orange Twist", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "Add whiskey, Campari, and sweet vermouth to a mixing glass filled with ice.",
@@ -283,11 +284,11 @@
     "flavorProfile": ["spirituous", "minty", "sweet", "refreshing"],
     "toolsNeeded": ["Muddler", "Jigger", "Bar spoon", "Julep cup or Rocks glass"],
     "ingredients": [
-      { "name": "Bourbon", "quantity": "2 oz (60ml)" },
-      { "name": "Fresh Mint Leaves", "quantity": "8-10 leaves" },
-      { "name": "Simple Syrup (1:1)", "quantity": "0.5 oz (15ml)", "notes": "adjust to taste" },
-      { "name": "Crushed Ice", "quantity": "Plenty" },
-      { "name": "Mint Sprig", "quantity": "For garnish" }
+      { "id": "bourbon_whiskey", "name": "Bourbon", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "mint_leaves", "name": "Fresh Mint Leaves", "quantity": "8-10 leaves", "isEssential": true },
+      { "id": "simple_syrup", "name": "Simple Syrup (1:1)", "quantity": "0.5 oz (15ml)", "notes": "adjust to taste", "isEssential": true },
+      { "id": "crushed_ice", "name": "Crushed Ice", "quantity": "Plenty", "isEssential": false },
+      { "id": "mint_sprig_garnish", "name": "Mint Sprig", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "In a chilled julep cup or rocks glass, gently muddle the mint leaves with the simple syrup. Be careful not to tear the mint too much, just release its oils.",
@@ -312,10 +313,10 @@
     "flavorProfile": ["bitter-sweet", "botanical", "crisp", "refreshing"],
     "toolsNeeded": ["Jigger", "Bar spoon (optional)", "Highball or Copa glass"],
     "ingredients": [
-      { "name": "Gin (London Dry preferred)", "quantity": "2 oz (60ml)" },
-      { "name": "Tonic Water", "quantity": "4-5 oz (120-150ml)", "notes": "good quality, chilled" },
-      { "name": "Lime Wedge or Cucumber Ribbon", "quantity": "For garnish" },
-      { "name": "Ice Cubes", "quantity": "Plenty" }
+      { "id": "gin_london_dry", "name": "Gin (London Dry preferred)", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "tonic_water", "name": "Tonic Water", "quantity": "4-5 oz (120-150ml)", "notes": "good quality, chilled", "isEssential": true },
+      { "id": "lime_cucumber_ribbon_garnish", "name": "Lime Wedge or Cucumber Ribbon", "quantity": "For garnish", "isEssential": false },
+      { "id": "ice_cubes", "name": "Ice Cubes", "quantity": "Plenty", "isEssential": false }
     ],
     "instructions": [
       "Fill a highball or Copa glass to the top with good quality ice cubes.",
@@ -339,10 +340,10 @@
     "flavorProfile": ["bitter", "sweet", "herbal", "complex"],
     "toolsNeeded": ["Mixing glass", "Jigger", "Bar spoon", "Strainer", "Old Fashioned glass"],
     "ingredients": [
-      { "name": "Gin", "quantity": "1 oz (30ml)" },
-      { "name": "Campari", "quantity": "1 oz (30ml)" },
-      { "name": "Sweet Vermouth (Red)", "quantity": "1 oz (30ml)" },
-      { "name": "Orange Peel or Slice", "quantity": "For garnish" }
+      { "id": "gin", "name": "Gin", "quantity": "1 oz (30ml)", "isEssential": true },
+      { "id": "campari", "name": "Campari", "quantity": "1 oz (30ml)", "isEssential": true },
+      { "id": "sweet_vermouth_red", "name": "Sweet Vermouth (Red)", "quantity": "1 oz (30ml)", "isEssential": true },
+      { "id": "orange_slice_garnish", "name": "Orange Peel or Slice", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "Add gin, Campari, and sweet vermouth to a mixing glass filled with ice.",
@@ -365,11 +366,11 @@
     "flavorProfile": ["floral", "citrusy", "tart", "sweet"],
     "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Coupe glass"],
     "ingredients": [
-      { "name": "Gin", "quantity": "2 oz (60ml)" },
-      { "name": "Maraschino Liqueur", "quantity": "0.5 oz (15ml)" },
-      { "name": "Crème de Violette", "quantity": "0.25 oz (7.5ml)" },
-      { "name": "Lemon Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed" },
-      { "name": "Lemon Twist or Cherry", "quantity": "For garnish" }
+      { "id": "gin", "name": "Gin", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "maraschino_liqueur", "name": "Maraschino Liqueur", "quantity": "0.5 oz (15ml)", "isEssential": true },
+      { "id": "creme_de_violette", "name": "Crème de Violette", "quantity": "0.25 oz (7.5ml)", "isEssential": true },
+      { "id": "lemon_juice", "name": "Lemon Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed", "isEssential": true },
+      { "id": "lemon_twist_cherry_garnish", "name": "Lemon Twist or Cherry", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "Add gin, maraschino liqueur, crème de violette, and lemon juice to a shaker with ice.",
@@ -392,10 +393,10 @@
     "flavorProfile": ["gingery", "citrusy", "crisp", "effervescent"],
     "toolsNeeded": ["Jigger", "Bar spoon (optional)", "Copper mug or Highball glass"],
     "ingredients": [
-      { "name": "Vodka", "quantity": "2 oz (60ml)" },
-      { "name": "Lime Juice", "quantity": "0.5 oz (15ml)", "notes": "freshly squeezed" },
-      { "name": "Ginger Beer", "quantity": "4 oz (120ml)", "notes": "good quality, spicy, chilled" },
-      { "name": "Lime Wedge & Mint Sprig", "quantity": "For garnish" }
+      { "id": "vodka", "name": "Vodka", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "lime_juice", "name": "Lime Juice", "quantity": "0.5 oz (15ml)", "notes": "freshly squeezed", "isEssential": true },
+      { "id": "ginger_beer", "name": "Ginger Beer", "quantity": "4 oz (120ml)", "notes": "good quality, spicy, chilled", "isEssential": true },
+      { "id": "lime_mint_garnish", "name": "Lime Wedge & Mint Sprig", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "Fill a copper mug or highball glass with plenty of ice.",
@@ -419,11 +420,11 @@
     "flavorProfile": ["tart-sweet", "cranberry", "citrusy", "smooth"],
     "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Martini or Coupe glass"],
     "ingredients": [
-      { "name": "Citron Vodka (or regular Vodka)", "quantity": "1.5 oz (45ml)" },
-      { "name": "Cointreau (or Triple Sec)", "quantity": "0.75 oz (22ml)" },
-      { "name": "Lime Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed" },
-      { "name": "Cranberry Juice Cocktail", "quantity": "0.5 oz (15ml)", "notes": "a splash for color and slight sweetness" },
-      { "name": "Lemon or Lime Twist, or Orange Peel", "quantity": "For garnish" }
+      { "id": "citron_vodka", "name": "Citron Vodka (or regular Vodka)", "quantity": "1.5 oz (45ml)", "isEssential": true },
+      { "id": "cointreau_triple_sec", "name": "Cointreau (or Triple Sec)", "quantity": "0.75 oz (22ml)", "isEssential": true },
+      { "id": "lime_juice", "name": "Lime Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed", "isEssential": true },
+      { "id": "cranberry_juice", "name": "Cranberry Juice Cocktail", "quantity": "0.5 oz (15ml)", "notes": "a splash for color and slight sweetness", "isEssential": true },
+      { "id": "lemon_lime_orange_peel_garnish", "name": "Lemon or Lime Twist, or Orange Peel", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "Chill your martini or coupe glass.",
@@ -447,11 +448,11 @@
     "flavorProfile": ["coffee", "sweet", "bitter", "rich"],
     "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Martini glass"],
     "ingredients": [
-      { "name": "Vodka", "quantity": "1.5 oz (45ml)" },
-      { "name": "Coffee Liqueur (e.g., Kahlúa)", "quantity": "1 oz (30ml)" },
-      { "name": "Freshly Brewed Espresso", "quantity": "1 oz (30ml)", "notes": "chilled" },
-      { "name": "Simple Syrup (1:1)", "quantity": "0.5 oz (15ml)", "notes": "adjust to taste" },
-      { "name": "Coffee Beans", "quantity": "3, for garnish" }
+      { "id": "vodka", "name": "Vodka", "quantity": "1.5 oz (45ml)", "isEssential": true },
+      { "id": "coffee_liqueur", "name": "Coffee Liqueur (e.g., Kahlúa)", "quantity": "1 oz (30ml)", "isEssential": true },
+      { "id": "espresso_chilled", "name": "Freshly Brewed Espresso", "quantity": "1 oz (30ml)", "notes": "chilled", "isEssential": true },
+      { "id": "simple_syrup", "name": "Simple Syrup (1:1)", "quantity": "0.5 oz (15ml)", "notes": "adjust to taste", "isEssential": true },
+      { "id": "coffee_beans_garnish", "name": "Coffee Beans", "quantity": "3, for garnish", "isEssential": false }
     ],
     "instructions": [
       "Add vodka, coffee liqueur, chilled espresso, and simple syrup to a shaker with ice.",
@@ -474,12 +475,12 @@
     "flavorProfile": ["tart", "citrusy", "earthy-tequila", "sweet"],
     "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Margarita glass (or other)"],
     "ingredients": [
-      { "name": "Tequila Blanco (100% Agave)", "quantity": "2 oz (60ml)" },
-      { "name": "Lime Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed" },
-      { "name": "Orange Liqueur (e.g., Cointreau, Triple Sec)", "quantity": "0.75 oz (22ml)" },
-      { "name": "Agave Nectar (optional)", "quantity": "0.25 oz (7ml)", "notes": "adjust to taste if using, especially if Triple Sec is less sweet" },
-      { "name": "Salt", "quantity": "For rim (optional)" },
-      { "name": "Lime Wedge", "quantity": "For garnish" }
+      { "id": "tequila_blanco", "name": "Tequila Blanco (100% Agave)", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "lime_juice", "name": "Lime Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed", "isEssential": true },
+      { "id": "orange_liqueur", "name": "Orange Liqueur (e.g., Cointreau, Triple Sec)", "quantity": "0.75 oz (22ml)", "isEssential": true },
+      { "id": "agave_nectar", "name": "Agave Nectar (optional)", "quantity": "0.25 oz (7ml)", "notes": "adjust to taste if using, especially if Triple Sec is less sweet", "isEssential": false },
+      { "id": "salt", "name": "Salt", "quantity": "For rim (optional)", "isEssential": false },
+      { "id": "lime_wedge_garnish", "name": "Lime Wedge", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "If using a salted rim, run a lime wedge around the outer rim of your chosen glass, then dip the rim into a plate of coarse salt.",
@@ -503,11 +504,11 @@
     "flavorProfile": ["bitter-sweet", "citrusy", "grapefruit", "effervescent"],
     "toolsNeeded": ["Jigger", "Bar spoon (optional)", "Highball glass"],
     "ingredients": [
-      { "name": "Tequila Blanco (100% Agave)", "quantity": "2 oz (60ml)" },
-      { "name": "Lime Juice", "quantity": "0.5 oz (15ml)", "notes": "freshly squeezed" },
-      { "name": "Grapefruit Soda (e.g., Jarritos, Squirt, Fever-Tree Sparkling Pink Grapefruit)", "quantity": "4 oz (120ml) or to top", "notes": "chilled" },
-      { "name": "Salt", "quantity": "Pinch (optional, in the drink or for rim)" },
-      { "name": "Lime Wedge or Grapefruit Slice", "quantity": "For garnish" }
+      { "id": "tequila_blanco", "name": "Tequila Blanco (100% Agave)", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "lime_juice", "name": "Lime Juice", "quantity": "0.5 oz (15ml)", "notes": "freshly squeezed", "isEssential": true },
+      { "id": "grapefruit_soda", "name": "Grapefruit Soda (e.g., Jarritos, Squirt, Fever-Tree Sparkling Pink Grapefruit)", "quantity": "4 oz (120ml) or to top", "notes": "chilled", "isEssential": true },
+      { "id": "salt", "name": "Salt", "quantity": "Pinch (optional, in the drink or for rim)", "isEssential": false },
+      { "id": "grapefruit_slice_garnish", "name": "Lime Wedge or Grapefruit Slice", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "If desired, salt the rim of a highball glass.",
@@ -533,9 +534,9 @@
     "flavorProfile": ["coffee", "sweet", "creamy", "rich"],
     "toolsNeeded": ["Jigger", "Bar spoon (optional)", "Old Fashioned glass"],
     "ingredients": [
-      { "name": "Vodka", "quantity": "2 oz (60ml)" },
-      { "name": "Coffee Liqueur (e.g., Kahlúa, Tia Maria)", "quantity": "1 oz (30ml)" },
-      { "name": "Heavy Cream or Half-and-Half", "quantity": "1 oz (30ml)", "notes": "milk can be used for a lighter version" }
+      { "id": "vodka", "name": "Vodka", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "coffee_liqueur", "name": "Coffee Liqueur (e.g., Kahlúa, Tia Maria)", "quantity": "1 oz (30ml)", "isEssential": true },
+      { "id": "heavy_cream_half_half", "name": "Heavy Cream or Half-and-Half", "quantity": "1 oz (30ml)", "notes": "milk can be used for a lighter version", "isEssential": true }
     ],
     "instructions": [
       "Fill an Old Fashioned glass with ice cubes.",
@@ -558,12 +559,12 @@
     "flavorProfile": ["almond", "sweet-tart", "citrusy", "smooth"],
     "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Rocks glass or Coupe"],
     "ingredients": [
-      { "name": "Amaretto Liqueur", "quantity": "1.5 oz (45ml)" },
-      { "name": "Lemon Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed, can adjust from 0.75oz to 1oz based on preference" },
-      { "name": "Egg White", "quantity": "0.5 oz (15ml) or 1 small egg white", "notes": "optional, for foam" },
-      { "name": "Simple Syrup (1:1) (optional)", "quantity": "0.25 oz (7ml)", "notes": "if Amaretto is not very sweet or if you prefer a sweeter drink" },
-      { "name": "Bourbon (optional)", "quantity": "0.5 oz (15ml)", "notes": "adds depth, making it a Morganthaler Amaretto Sour" },
-      { "name": "Cherry & Lemon Slice", "quantity": "For garnish" }
+      { "id": "amaretto_liqueur", "name": "Amaretto Liqueur", "quantity": "1.5 oz (45ml)", "isEssential": true },
+      { "id": "lemon_juice", "name": "Lemon Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed, can adjust from 0.75oz to 1oz based on preference", "isEssential": true },
+      { "id": "egg_white", "name": "Egg White", "quantity": "0.5 oz (15ml) or 1 small egg white", "notes": "optional, for foam", "isEssential": false },
+      { "id": "simple_syrup", "name": "Simple Syrup (1:1) (optional)", "quantity": "0.25 oz (7ml)", "notes": "if Amaretto is not very sweet or if you prefer a sweeter drink", "isEssential": false },
+      { "id": "bourbon_whiskey", "name": "Bourbon (optional)", "quantity": "0.5 oz (15ml)", "notes": "adds depth, making it a Morganthaler Amaretto Sour", "isEssential": false },
+      { "id": "cherry_orange_slice_garnish", "name": "Cherry & Lemon Slice", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "If using egg white, combine Amaretto, lemon juice, optional simple syrup, optional bourbon, and egg white in a shaker. Dry shake vigorously for 15 seconds.",
@@ -587,12 +588,12 @@
     "flavorProfile": ["sweet-tart", "citrusy", "lemon"],
     "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Martini glass"],
     "ingredients": [
-      { "name": "Citron Vodka", "quantity": "1.5 oz (45ml)" },
-      { "name": "Lemon Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed" },
-      { "name": "Triple Sec or Cointreau", "quantity": "0.5 oz (15ml)" },
-      { "name": "Simple Syrup (1:1)", "quantity": "0.5 oz (15ml)", "notes": "adjust to taste" },
-      { "name": "Sugar", "quantity": "For rim (optional)" },
-      { "name": "Lemon Twist", "quantity": "For garnish" }
+      { "id": "citron_vodka", "name": "Citron Vodka", "quantity": "1.5 oz (45ml)", "isEssential": true },
+      { "id": "lemon_juice", "name": "Lemon Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed", "isEssential": true },
+      { "id": "triple_sec", "name": "Triple Sec or Cointreau", "quantity": "0.5 oz (15ml)", "isEssential": true },
+      { "id": "simple_syrup", "name": "Simple Syrup (1:1)", "quantity": "0.5 oz (15ml)", "notes": "adjust to taste", "isEssential": true },
+      { "id": "sugar_rim_garnish", "name": "Sugar", "quantity": "For rim (optional)", "isEssential": false },
+      { "id": "lemon_twist_garnish", "name": "Lemon Twist", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "If desired, prepare a sugar rim on your martini glass by moistening the rim with a lemon wedge and dipping it into sugar.",
@@ -616,10 +617,10 @@
     "flavorProfile": ["sweet", "cherry", "ginger", "citrusy"],
     "toolsNeeded": ["Jigger (optional)", "Bar spoon (optional)", "Highball glass"],
     "ingredients": [
-      { "name": "Ginger Ale", "quantity": "6-8 oz (180-240ml)", "notes": "chilled" },
-      { "name": "Grenadine", "quantity": "0.5 - 0.75 oz (15-22ml)", "notes": "adjust to taste" },
-      { "name": "Lime Juice (optional)", "quantity": "0.25 oz (7ml)", "notes": "for a bit of tartness" },
-      { "name": "Maraschino Cherry & Orange Slice", "quantity": "For garnish" }
+      { "id": "ginger_ale", "name": "Ginger Ale", "quantity": "6-8 oz (180-240ml)", "notes": "chilled", "isEssential": true },
+      { "id": "grenadine", "name": "Grenadine", "quantity": "0.5 - 0.75 oz (15-22ml)", "notes": "adjust to taste", "isEssential": true },
+      { "id": "lime_juice", "name": "Lime Juice (optional)", "quantity": "0.25 oz (7ml)", "notes": "for a bit of tartness", "isEssential": false },
+      { "id": "maraschino_cherry_orange_garnish", "name": "Maraschino Cherry & Orange Slice", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "Fill a highball or Collins glass with ice.",
@@ -643,11 +644,11 @@
     "flavorProfile": ["citrusy", "sweet", "herbal", "refreshing"],
     "toolsNeeded": ["Muddler", "Jigger", "Bar spoon", "Highball glass"],
     "ingredients": [
-      { "name": "Lime Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed" },
-      { "name": "Simple Syrup (1:1)", "quantity": "0.75 oz (22ml)", "notes": "adjust to taste" },
-      { "name": "Fresh Mint Leaves", "quantity": "8-10 leaves" },
-      { "name": "Soda Water or Sparkling Water", "quantity": "Top up", "notes": "chilled" },
-      { "name": "Lime wedge & Mint sprig", "quantity": "For garnish" }
+      { "id": "lime_juice", "name": "Lime Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed", "isEssential": true },
+      { "id": "simple_syrup", "name": "Simple Syrup (1:1)", "quantity": "0.75 oz (22ml)", "notes": "adjust to taste", "isEssential": true },
+      { "id": "mint_leaves", "name": "Fresh Mint Leaves", "quantity": "8-10 leaves", "isEssential": true },
+      { "id": "soda_water", "name": "Soda Water or Sparkling Water", "quantity": "Top up", "notes": "chilled", "isEssential": true },
+      { "id": "lime_mint_garnish", "name": "Lime wedge & Mint sprig", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "In a sturdy highball glass, gently muddle the mint leaves with simple syrup and lime juice.",
@@ -671,10 +672,10 @@
     "flavorProfile": ["smoky", "gingery", "citrusy", "effervescent"],
     "toolsNeeded": ["Jigger", "Bar spoon (optional)", "Copper mug or Highball glass"],
     "ingredients": [
-      { "name": "Mezcal", "quantity": "2 oz (60ml)" },
-      { "name": "Lime Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed" },
-      { "name": "Ginger Beer", "quantity": "4 oz (120ml)", "notes": "good quality, spicy, chilled" },
-      { "name": "Lime Wedge", "quantity": "For garnish" }
+      { "id": "mezcal", "name": "Mezcal", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "lime_juice", "name": "Lime Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed", "isEssential": true },
+      { "id": "ginger_beer", "name": "Ginger Beer", "quantity": "4 oz (120ml)", "notes": "good quality, spicy, chilled", "isEssential": true },
+      { "id": "lime_wedge_garnish", "name": "Lime Wedge", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "Fill a copper mug or highball glass with plenty of ice.",
@@ -698,13 +699,13 @@
     "flavorProfile": ["smoky", "sweet", "bitter", "agave", "complex"],
     "toolsNeeded": ["Mixing glass", "Jigger", "Bar spoon", "Strainer", "Old Fashioned glass"],
     "ingredients": [
-      { "name": "Reposado Tequila", "quantity": "1.5 oz (45ml)" },
-      { "name": "Mezcal", "quantity": "0.5 oz (15ml)" },
-      { "name": "Agave Nectar (1:1 with water)", "quantity": "0.25 oz (7.5ml)" },
-      { "name": "Angostura Bitters", "quantity": "1 dash" },
-      { "name": "Orange Bitters", "quantity": "1 dash" },
-      { "name": "Orange Peel", "quantity": "For garnish" },
-      { "name": "Large Ice Cube or Sphere", "quantity": "1" }
+      { "id": "reposado_tequila", "name": "Reposado Tequila", "quantity": "1.5 oz (45ml)", "isEssential": true },
+      { "id": "mezcal", "name": "Mezcal", "quantity": "0.5 oz (15ml)", "isEssential": true },
+      { "id": "agave_nectar", "name": "Agave Nectar (1:1 with water)", "quantity": "0.25 oz (7.5ml)", "isEssential": true },
+      { "id": "angostura_bitters", "name": "Angostura Bitters", "quantity": "1 dash", "isEssential": true },
+      { "id": "orange_bitters", "name": "Orange Bitters", "quantity": "1 dash", "isEssential": true },
+      { "id": "orange_peel_garnish", "name": "Orange Peel", "quantity": "For garnish", "isEssential": false },
+      { "id": "large_ice_cube", "name": "Large Ice Cube or Sphere", "quantity": "1", "isEssential": false }
     ],
     "instructions": [
       "Add reposado tequila, mezcal, agave nectar, Angostura bitters, and orange bitters to a mixing glass filled with ice.",
@@ -727,11 +728,11 @@
     "flavorProfile": ["tart", "citrusy", "brandy", "sweet-dry"],
     "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Coupe glass"],
     "ingredients": [
-      { "name": "Cognac", "quantity": "2 oz (60ml)" },
-      { "name": "Cointreau (or Triple Sec)", "quantity": "0.75 oz (22ml)" },
-      { "name": "Lemon Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed" },
-      { "name": "Sugar Rim", "quantity": "Optional" },
-      { "name": "Orange Twist", "quantity": "For garnish" }
+      { "id": "cognac", "name": "Cognac", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "cointreau_triple_sec", "name": "Cointreau (or Triple Sec)", "quantity": "0.75 oz (22ml)", "isEssential": true },
+      { "id": "lemon_juice", "name": "Lemon Juice", "quantity": "0.75 oz (22ml)", "notes": "freshly squeezed", "isEssential": true },
+      { "id": "sugar_rim_garnish", "name": "Sugar Rim", "quantity": "Optional", "isEssential": false },
+      { "id": "orange_twist_garnish", "name": "Orange Twist", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "If desired, prepare a sugar rim on your coupe glass by moistening the rim with a lemon wedge and dipping it into sugar.",
@@ -755,11 +756,11 @@
     "flavorProfile": ["citrusy", "tart", "sweet", "grape-spirit", "aromatic"],
     "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Coupe or Old Fashioned glass"],
     "ingredients": [
-      { "name": "Peruvian Pisco", "quantity": "2 oz (60ml)" },
-      { "name": "Lime Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed" },
-      { "name": "Simple Syrup (1:1)", "quantity": "0.75 oz (22ml)", "notes": "adjust to taste" },
-      { "name": "Egg White", "quantity": "0.5 oz (15ml) or 1 small egg white" },
-      { "name": "Angostura Bitters", "quantity": "3 dashes, for garnish" }
+      { "id": "peruvian_pisco", "name": "Peruvian Pisco", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "lime_juice", "name": "Lime Juice", "quantity": "1 oz (30ml)", "notes": "freshly squeezed", "isEssential": true },
+      { "id": "simple_syrup", "name": "Simple Syrup (1:1)", "quantity": "0.75 oz (22ml)", "notes": "adjust to taste", "isEssential": true },
+      { "id": "egg_white", "name": "Egg White", "quantity": "0.5 oz (15ml) or 1 small egg white", "isEssential": true },
+      { "id": "angostura_bitters", "name": "Angostura Bitters", "quantity": "3 dashes, for garnish", "isEssential": false }
     ],
     "instructions": [
       "Add pisco, lime juice, simple syrup, and egg white to a shaker. Dry shake (without ice) vigorously for about 15-20 seconds to emulsify.",
@@ -782,11 +783,11 @@
     "flavorProfile": ["gingery", "citrusy", "grape-spirit", "effervescent"],
     "toolsNeeded": ["Jigger", "Bar spoon (optional)", "Highball glass"],
     "ingredients": [
-      { "name": "Peruvian Pisco", "quantity": "2 oz (60ml)" },
-      { "name": "Lime Juice", "quantity": "0.5 oz (15ml)", "notes": "freshly squeezed" },
-      { "name": "Ginger Ale", "quantity": "4-6 oz (120-180ml)", "notes": "to top, chilled" },
-      { "name": "Angostura Bitters", "quantity": "2-3 dashes (optional)" },
-      { "name": "Lime Wedge", "quantity": "For garnish" }
+      { "id": "peruvian_pisco", "name": "Peruvian Pisco", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "lime_juice", "name": "Lime Juice", "quantity": "0.5 oz (15ml)", "notes": "freshly squeezed", "isEssential": true },
+      { "id": "ginger_ale", "name": "Ginger Ale", "quantity": "4-6 oz (120-180ml)", "notes": "to top, chilled", "isEssential": true },
+      { "id": "angostura_bitters", "name": "Angostura Bitters", "quantity": "2-3 dashes (optional)", "isEssential": false },
+      { "id": "lime_wedge_garnish", "name": "Lime Wedge", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "Fill a highball glass with ice.",
@@ -811,8 +812,8 @@
     "flavorProfile": ["sweet", "fruity", "peach", "sparkling"],
     "toolsNeeded": ["Champagne flute"],
     "ingredients": [
-      { "name": "Fresh Peach Puree", "quantity": "2 oz (60ml)", "notes": "from ripe, peeled peaches" },
-      { "name": "Prosecco", "quantity": "4 oz (120ml)", "notes": "chilled, dry or extra dry" }
+      { "id": "peach_puree_fresh", "name": "Fresh Peach Puree", "quantity": "2 oz (60ml)", "notes": "from ripe, peeled peaches", "isEssential": true },
+      { "id": "prosecco", "name": "Prosecco", "quantity": "4 oz (120ml)", "notes": "chilled, dry or extra dry", "isEssential": true }
     ],
     "instructions": [
       "Pour fresh peach puree into a chilled champagne flute.",
@@ -835,11 +836,11 @@
     "flavorProfile": ["citrusy", "tart", "sweet", "effervescent", "gin-botanical"],
     "toolsNeeded": ["Shaker", "Jigger", "Strainer", "Champagne flute"],
     "ingredients": [
-      { "name": "Gin", "quantity": "1 oz (30ml)" },
-      { "name": "Lemon Juice", "quantity": "0.5 oz (15ml)", "notes": "freshly squeezed" },
-      { "name": "Simple Syrup (1:1)", "quantity": "0.5 oz (15ml)" },
-      { "name": "Champagne or Dry Sparkling Wine", "quantity": "2 oz (60ml)", "notes": "to top, chilled" },
-      { "name": "Lemon Twist", "quantity": "For garnish" }
+      { "id": "gin", "name": "Gin", "quantity": "1 oz (30ml)", "isEssential": true },
+      { "id": "lemon_juice", "name": "Lemon Juice", "quantity": "0.5 oz (15ml)", "notes": "freshly squeezed", "isEssential": true },
+      { "id": "simple_syrup", "name": "Simple Syrup (1:1)", "quantity": "0.5 oz (15ml)", "isEssential": true },
+      { "id": "champagne_sparkling_wine", "name": "Champagne or Dry Sparkling Wine", "quantity": "2 oz (60ml)", "notes": "to top, chilled", "isEssential": true },
+      { "id": "lemon_twist_garnish", "name": "Lemon Twist", "quantity": "For garnish", "isEssential": false }
     ],
     "instructions": [
       "Add gin, lemon juice, and simple syrup to a shaker with ice.",
@@ -863,9 +864,9 @@
     "flavorProfile": ["dry", "savory", "citrusy", "refreshing", "effervescent"],
     "toolsNeeded": ["Jigger (optional)", "Bar spoon (optional)", "Highball glass"],
     "ingredients": [
-      { "name": "Fino or Manzanilla Sherry", "quantity": "2 oz (60ml)" },
-      { "name": "Lemon-Lime Soda (e.g., Sprite, 7UP) or Soda Water with Lemon Slice", "quantity": "4-6 oz (120-180ml)", "notes": "chilled" },
-      { "name": "Mint Sprig", "quantity": "For garnish (optional)" }
+      { "id": "fino_manzanilla_sherry", "name": "Fino or Manzanilla Sherry", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "lemon_lime_soda", "name": "Lemon-Lime Soda (e.g., Sprite, 7UP) or Soda Water with Lemon Slice", "quantity": "4-6 oz (120-180ml)", "notes": "chilled", "isEssential": true },
+      { "id": "mint_sprig_garnish", "name": "Mint Sprig", "quantity": "For garnish (optional)", "isEssential": false }
     ],
     "instructions": [
       "Fill a highball glass with plenty of ice.",
@@ -889,11 +890,11 @@
     "flavorProfile": ["bitter-sweet", "citrusy", "herbaceous", "effervescent"],
     "toolsNeeded": ["Jigger (optional)", "Bar spoon (optional)", "Large wine glass"],
     "ingredients": [
-      { "name": "Prosecco", "quantity": "3 oz (90ml)", "notes": "chilled" },
-      { "name": "Aperol", "quantity": "2 oz (60ml)" },
-      { "name": "Soda Water", "quantity": "1 oz (30ml)", "notes": "chilled" },
-      { "name": "Orange Slice", "quantity": "For garnish" },
-      { "name": "Ice Cubes", "quantity": "Plenty" }
+      { "id": "prosecco", "name": "Prosecco", "quantity": "3 oz (90ml)", "notes": "chilled", "isEssential": true },
+      { "id": "aperol", "name": "Aperol", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "soda_water", "name": "Soda Water", "quantity": "1 oz (30ml)", "notes": "chilled", "isEssential": true },
+      { "id": "orange_slice_garnish", "name": "Orange Slice", "quantity": "For garnish", "isEssential": false },
+      { "id": "ice_cubes", "name": "Ice Cubes", "quantity": "Plenty", "isEssential": false }
     ],
     "instructions": [
       "Fill a large wine glass with plenty of ice cubes.",
@@ -918,11 +919,11 @@
     "flavorProfile": ["bitter", "citrusy", "herbaceous", "effervescent"],
     "toolsNeeded": ["Jigger (optional)", "Bar spoon (optional)", "Large wine glass"],
     "ingredients": [
-      { "name": "Prosecco", "quantity": "3 oz (90ml)", "notes": "chilled" },
-      { "name": "Campari", "quantity": "2 oz (60ml)" },
-      { "name": "Soda Water", "quantity": "1 oz (30ml)", "notes": "chilled" },
-      { "name": "Orange Slice", "quantity": "For garnish" },
-      { "name": "Ice Cubes", "quantity": "Plenty" }
+      { "id": "prosecco", "name": "Prosecco", "quantity": "3 oz (90ml)", "notes": "chilled", "isEssential": true },
+      { "id": "campari", "name": "Campari", "quantity": "2 oz (60ml)", "isEssential": true },
+      { "id": "soda_water", "name": "Soda Water", "quantity": "1 oz (30ml)", "notes": "chilled", "isEssential": true },
+      { "id": "orange_slice_garnish", "name": "Orange Slice", "quantity": "For garnish", "isEssential": false },
+      { "id": "ice_cubes", "name": "Ice Cubes", "quantity": "Plenty", "isEssential": false }
     ],
     "instructions": [
       "Fill a large wine glass with plenty of ice cubes.",

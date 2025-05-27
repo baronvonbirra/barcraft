@@ -25,7 +25,8 @@ export const useCocktailFilter = (allCocktails) => {
     } else if (selectedBar === 'bar2') {
       stock = bar2StockData.ingredientsAvailable;
     }
-    return new Set(stock.map(ing => ing.toLowerCase()));
+    // Assuming stock is now an array of IDs and IDs are consistently cased.
+    return new Set(stock); 
   }, [selectedBar]);
   
   const isCocktailMakeable = useCallback((cocktailIngredients) => {
@@ -45,9 +46,10 @@ export const useCocktailFilter = (allCocktails) => {
     }
 
 
-    return cocktailIngredients.every(ingObj =>
-      stockToCheck.has(ingObj.name.toLowerCase())
-    );
+    return cocktailIngredients.every(ingObj => {
+      if (!ingObj.isEssential) return true; // Optional ingredients don't break makeability
+      return stockToCheck.has(ingObj.id); // Check ID for essential ingredients
+    });
   }, [selectedBar, viewingCuratedMenu, currentBarStockSet]);
 
 
@@ -56,16 +58,20 @@ export const useCocktailFilter = (allCocktails) => {
     if (!cocktailIngredients || cocktailIngredients.length === 0) return availability;
 
     const stockToCheck = currentBarStockSet;
+    const allAvailable = selectedBar === 'all' || (stockToCheck.size === 0 && selectedBar !== 'all');
 
-    // If no specific bar is selected, assume all ingredients are "available" from a general view.
-    // Or, if a bar is selected but has no stock defined for some reason.
-    const allAvailable = selectedBar === 'all' || stockToCheck.size === 0;
 
     cocktailIngredients.forEach(ingObj => {
-      if (allAvailable && selectedBar === 'all') {
-        availability[ingObj.name] = true;
-      } else {
-        availability[ingObj.name] = stockToCheck.has(ingObj.name.toLowerCase());
+      // If no specific bar is selected (all bars), consider all ingredients as "available" for UI indication purposes
+      // or if a bar is selected but has no stock (stockToCheck.size === 0), also treat as generally available for UI
+      if (selectedBar === 'all') {
+        availability[ingObj.id] = true; 
+      } else if (stockToCheck.size === 0 && (selectedBar === 'bar1' || selectedBar === 'bar2')) {
+        // Specific bar selected but no stock, so nothing is available unless it's not essential
+        availability[ingObj.id] = !ingObj.isEssential;
+      }
+      else {
+        availability[ingObj.id] = stockToCheck.has(ingObj.id);
       }
     });
     return availability;
@@ -91,8 +97,21 @@ export const useCocktailFilter = (allCocktails) => {
         return false; // Return false if c.glass is not an array or string (or is null/undefined)
       });
     }
-    if (includeIngredients.length > 0) cocktails = cocktails.filter(c => includeIngredients.every(selIng => c.ingredients.some(ingObj => ingObj.name.toLowerCase().includes(selIng.toLowerCase()))));
-    if (excludeIngredients.length > 0) cocktails = cocktails.filter(c => !excludeIngredients.some(selIng => c.ingredients.some(ingObj => ingObj.name.toLowerCase().includes(selIng.toLowerCase()))));
+    // Updated ingredient filters to use ID and isEssential
+    if (includeIngredients.length > 0) {
+      cocktails = cocktails.filter(c => 
+        includeIngredients.every(selIngId => 
+          c.ingredients.some(ingObj => ingObj.id === selIngId) // Assuming includeIngredients now stores IDs
+        )
+      );
+    }
+    if (excludeIngredients.length > 0) {
+      cocktails = cocktails.filter(c => 
+        !excludeIngredients.some(selIngId => 
+          c.ingredients.some(ingObj => ingObj.id === selIngId) // Assuming excludeIngredients now stores IDs
+        )
+      );
+    }
     if (flavorProfile.length > 0) cocktails = cocktails.filter(c => flavorProfile.every(selFlavor => c.flavorProfile?.some(fp => fp.toLowerCase().includes(selFlavor.toLowerCase()))));
     if (tags.length > 0) cocktails = cocktails.filter(c => tags.every(selTag => c.tags?.some(tag => tag.toLowerCase().includes(selTag.toLowerCase()))));
     // Added thematic categories filter
@@ -119,7 +138,8 @@ export const useCocktailFilter = (allCocktails) => {
     if (searchTerm) {
       cocktails = cocktails.filter(cocktail =>
         cocktail.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        cocktail.ingredients.some(ing => ing.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        // Search term can still check ingredient names for user convenience
+        cocktail.ingredients.some(ing => ing.name.toLowerCase().includes(searchTerm.toLowerCase())) || 
         (cocktail.tags && cocktail.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())))
       );
     }
