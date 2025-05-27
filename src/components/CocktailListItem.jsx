@@ -27,12 +27,18 @@ const ListItemWrapper = styled.div`
   }
 `;
 
+const ImageContainer = styled.div`
+  position: relative;
+  width: 100%; 
+  margin-bottom: ${({ theme }) => theme.spacing.medium}; 
+`;
+
 const CocktailImage = styled.img`
   width: 100%;
   aspect-ratio: 3/2; /* Or height: 180px; */
   object-fit: cover;
   border-radius: ${({ theme }) => theme.borderRadius}; /* Full radius if image is main element */
-  margin-bottom: ${({ theme }) => theme.spacing.medium};
+  display: block; // Added
 `;
 
 const CocktailName = styled.h3`
@@ -127,16 +133,16 @@ const FavoriteButton = styled.button`
   bottom: ${({ theme }) => theme.spacing.small};
   right: ${({ theme }) => theme.spacing.small};
   background: transparent;
-  border: 2px solid ${({ theme, isFavorite }) => isFavorite ? theme.colors.primary : theme.colors.textOffset};
-  color: ${({ theme, isFavorite }) => isFavorite ? theme.colors.primary : theme.colors.textOffset};
+  border: none; // Border removed
+  color: ${({ theme, isFavorite }) => isFavorite ? '#DA70D6' : theme.colors.textOffset}; // New colors
   font-size: 1.5rem; /* Slightly smaller for better balance */
   cursor: pointer;
   padding: 0;
-  z-index: 1;
+  z-index: 1; // Keep z-index
   transition: color 0.3s ease;
 
   &:hover {
-    color: ${({ theme, isFavorite }) => isFavorite ? theme.colors.secondary : theme.colors.primary};
+    color: ${({ theme, isFavorite }) => isFavorite ? '#C060C0' : '#DA70D6'}; // New hover colors
   }
 
   @media (max-width: 600px) {
@@ -175,18 +181,21 @@ const CocktailListItem = ({ cocktail }) => { // Removed isMakeable and selectedB
 
   return (
     <ListItemWrapper>
-      <FavoriteButton
-        isFavorite={currentIsFavorite}
-        onClick={handleFavoriteClick}
-        title={currentIsFavorite ? "Remove from Favorites" : "Add to Favorites"}
-        aria-pressed={currentIsFavorite}
-        aria-label={currentIsFavorite ? `Remove ${cocktail.name} from Favorites` : `Add ${cocktail.name} to Favorites`}
-      >
-        {currentIsFavorite ? '♥' : '♡'}
-      </FavoriteButton>
+      {/* FavoriteButton removed from here */}
       {/* Old AvailabilityIndicator removed */}
       <Link to={`/cocktails/${cocktail.id}`} style={{ textDecoration: 'none' }}>
-        <CocktailImage src={imageSrc} alt={cocktail.name} />
+        <ImageContainer> {/* New wrapper */}
+          <CocktailImage src={imageSrc} alt={cocktail.name} />
+          <FavoriteButton
+            isFavorite={currentIsFavorite}
+            onClick={handleFavoriteClick}
+            title={currentIsFavorite ? "Remove from Favorites" : "Add to Favorites"}
+            aria-pressed={currentIsFavorite}
+            aria-label={currentIsFavorite ? `Remove ${cocktail.name} from Favorites` : `Add ${cocktail.name} to Favorites`}
+          >
+            {currentIsFavorite ? '♥' : '♡'}
+          </FavoriteButton>
+        </ImageContainer>
         <CocktailName>{cocktail.name}</CocktailName>
       </Link>
       <BarAvailabilityIconWrapper>
