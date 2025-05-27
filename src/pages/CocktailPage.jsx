@@ -254,24 +254,44 @@ const CocktailPage = () => {
           <h2>Details</h2>
           <p>
             <strong>Glass:</strong>{' '}
-            {cocktail.glass && typeof cocktail.glass === 'string' ? (
-              cocktail.glass.split(', ').map(glassName => (
-                <FilterLinkTag 
-                  key={glassName.trim()} 
-                  to={`/cocktails/filter/glass/${encodeURIComponent(glassName.trim())}`}
-                >
-                  {glassName.trim()}
-                </FilterLinkTag>
-              ))
-            ) : cocktail.glass ? ( 
-              <FilterLinkTag to={`/cocktails/filter/glass/${encodeURIComponent(cocktail.glass)}`}>
-                {cocktail.glass}
+            {(() => {
+              if (Array.isArray(cocktail.glass)) {
+                // Case 1: cocktail.glass is an array of strings
+                return cocktail.glass.map(glassName => (
+                  <FilterLinkTag 
+                    key={glassName.trim()} 
+                    to={`/cocktails/filter/glass/${encodeURIComponent(glassName.trim())}`}
+                  >
+                    {glassName.trim()}
+                  </FilterLinkTag>
+                ));
+              } else if (typeof cocktail.glass === 'string') {
+                // Case 2: cocktail.glass is a single string
+                return (
+                  <FilterLinkTag 
+                    to={`/cocktails/filter/glass/${encodeURIComponent(cocktail.glass.trim())}`}
+                  >
+                    {cocktail.glass.trim()}
+                  </FilterLinkTag>
+                );
+              } else {
+                // Case 3: cocktail.glass is null, undefined, or other
+                return 'N/A';
+              }
+            })()}
+          </p>
+          <p>
+            <strong>Difficulty:</strong>{' '}
+            {cocktail.difficulty ? (
+              <FilterLinkTag 
+                to={`/cocktails/filter/difficulty/${encodeURIComponent(cocktail.difficulty.toLowerCase())}`}
+              >
+                {cocktail.difficulty}
               </FilterLinkTag>
             ) : (
               'N/A' 
             )}
           </p>
-          <p><strong>Difficulty:</strong> {cocktail.difficulty}</p>
           {cocktail.tags && cocktail.tags.length > 0 && (
             <p>
               <strong>Tags:</strong>{' '}
