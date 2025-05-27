@@ -13,6 +13,7 @@ export const useCocktailFilter = (allCocktails) => {
   const [tags, setTags] = useState([]);
   const [thematic, setThematic] = useState([]); // Added thematic state
   const [glassType, setGlassType] = useState('');
+  const [searchTerm, setSearchTerm] = useState(''); // Added search term state
 
   const { selectedBar, viewingCuratedMenu } = useBar();
 
@@ -102,10 +103,19 @@ export const useCocktailFilter = (allCocktails) => {
       cocktails = cocktails.filter(c => isCocktailMakeable(c.ingredients));
     }
 
+    // Apply search term filter (after other filters)
+    if (searchTerm) {
+      cocktails = cocktails.filter(cocktail =>
+        cocktail.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cocktail.ingredients.some(ing => ing.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (cocktail.tags && cocktail.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())))
+      );
+    }
+
     return cocktails;
   }, [
     allCocktails, baseSpirit, includeIngredients, excludeIngredients,
-    flavorProfile, difficulty, tags, glassType, thematic, // Added thematic to dependency array
+    flavorProfile, difficulty, tags, glassType, thematic, searchTerm, // Added thematic and searchTerm to dependency array
     selectedBar, viewingCuratedMenu, isCocktailMakeable
   ]);
 
@@ -116,8 +126,9 @@ export const useCocktailFilter = (allCocktails) => {
     setFlavorProfile([]);
     setDifficulty('');
     setTags([]);
-    setThematic([]); // Added thematic reset
+    setThematic([]);
     setGlassType('');
+    setSearchTerm(''); // Reset search term
   };
 
   return {
@@ -128,11 +139,12 @@ export const useCocktailFilter = (allCocktails) => {
     flavorProfile, setFlavorProfile,
     difficulty, setDifficulty,
     tags, setTags,
-    thematic, setThematic, // Added thematic and setThematic
+    thematic, setThematic,
     glassType, setGlassType,
+    searchTerm, setSearchTerm, // Added searchTerm and setSearchTerm
     resetFilters,
-    getIngredientAvailability, // Export this new function
-    isCocktailMakeable, // Export this new function
+    getIngredientAvailability,
+    isCocktailMakeable,
     // Exposing currentBarStockSet might be useful for debugging or advanced UI
     // currentBarStock: currentBarStockSet (consider if needed for direct UI use)
   };

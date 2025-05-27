@@ -122,10 +122,12 @@ const SingleBarIcon = styled.span`
 
 const FavoriteButton = styled.button`
   position: absolute;
-  top: ${({ theme }) => theme.spacing.small};
-  left: ${({ theme }) => theme.spacing.small};
+  top: auto;
+  left: auto;
+  bottom: ${({ theme }) => theme.spacing.small};
+  right: ${({ theme }) => theme.spacing.small};
   background: transparent;
-  border: none;
+  border: 2px solid ${({ theme, isFavorite }) => isFavorite ? theme.colors.primary : theme.colors.textOffset};
   color: ${({ theme, isFavorite }) => isFavorite ? theme.colors.primary : theme.colors.textOffset};
   font-size: 1.5rem; /* Slightly smaller for better balance */
   cursor: pointer;
@@ -139,8 +141,10 @@ const FavoriteButton = styled.button`
 
   @media (max-width: 600px) {
     font-size: 1.3rem; // Adjust icon size on smaller screens
-    top: ${({ theme }) => theme.spacing.xs};
-    left: ${({ theme }) => theme.spacing.xs};
+    top: auto;
+    left: auto;
+    bottom: ${({ theme }) => theme.spacing.xs};
+    right: ${({ theme }) => theme.spacing.xs};
   }
 `;
 
