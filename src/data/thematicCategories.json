@@ -2,61 +2,61 @@
   {
     "id": "classic",
     "name": "Classic",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/classic-category.jpg"
   },
   {
     "id": "modern",
     "name": "Modern",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/modern-category.jpg"
   },
   {
     "id": "tropical",
     "name": "Tropical",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/tropical-category.jpg"
   },
   {
     "id": "seasonal",
     "name": "Seasonal",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/seasonal-category.jpg"
   },
   {
     "id": "experimental",
     "name": "Experimental",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/experimental-category.jpg"
   },
   {
     "id": "aperitif",
     "name": "Aperitif",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/aperitif-category.jpg"
   },
   {
     "id": "digestif",
     "name": "Digestif",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/digestif-category.jpg"
   },
   {
     "id": "low-abv-light",
     "name": "Low ABV / Light",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/low-abv-light-category.jpg"
   },
   {
     "id": "spirit-forward",
     "name": "Spirit-Forward",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/spirit-forward-category.jpg"
   },
   {
     "id": "sours",
     "name": "Sours",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/sour-category.jpg"
   },
   {
     "id": "creamy-dessert",
     "name": "Creamy / Dessert",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/creamy-dessert-category.jpg"
   },
   {
     "id": "andalusian-inspired",
     "name": "Andalusian Inspired",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/andalusian-inspired-category.jpg"
   }
 ]
