@@ -118,6 +118,21 @@ const AvailabilityStatus = styled.div`
   font-weight: bold;
 `;
 
+// New AvailabilityPill styled component
+const AvailabilityPill = styled.span`
+  display: inline-block; // To allow margin and padding
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.medium}; // Adjusted padding
+  border-radius: ${({ theme }) => theme.borderRadius};
+  font-size: 0.9rem;
+  font-weight: 600; // Slightly bolder
+  color: #fff; // White text for better contrast on colored backgrounds
+  background-color: ${({ theme, available }) => 
+    available ? theme.colors.secondary : '#D32F2F'}; // Using secondary for green, and a specific darker red
+  margin-top: ${({ theme }) => theme.spacing.medium}; // Added margin-top for spacing from image
+  margin-bottom: ${({ theme }) => theme.spacing.medium}; // Ensure it pushes content below
+  text-align: center; // Ensure text is centered if pill takes full width due to other styles
+`;
+
 const FilterLinkTag = styled(Link)`
   display: inline-block;
   background-color: ${({ theme }) => theme.colors.surface};
@@ -198,11 +213,11 @@ const CocktailPage = () => {
         </CocktailNameWrapper>
         <CocktailImage src={getImageUrl(cocktail.image)} alt={cocktail.name} />
         
-        {/* Display AvailabilityStatus if a bar is selected */}
+        {/* Display AvailabilityPill if a bar is selected */}
         {selectedBarName && (
-          <AvailabilityStatus theme={theme} isMakeable={isMakeable}>
-            {isMakeable ? '✓ Available' : '✗ Unavailable'} at {selectedBarName}
-          </AvailabilityStatus>
+          <AvailabilityPill available={isMakeable} theme={theme}>
+            {isMakeable ? 'Available at: ' : 'Unavailable at: '} {selectedBarName}
+          </AvailabilityPill>
         )}
       </CocktailHeader>
 
