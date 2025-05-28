@@ -27,7 +27,7 @@
   {
     "id": "mezcal",
     "name": "Mezcal",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/mezcal-category.png"
   },
   {
     "id": "brandy-cognac",
@@ -37,12 +37,12 @@
   {
     "id": "pisco",
     "name": "Pisco",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/pisco-category.png"
   },
   {
     "id": "liqueur",
     "name": "Liqueur",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/liqueur-category.png"
   },
   {
     "id": "sparkling-wine",
@@ -52,6 +52,6 @@
   {
     "id": "mocktails",
     "name": "Mocktails",
-    "image": "src/assets/cocktails/placeholder.png"
+    "image": "src/assets/categories/mocktail-category.png"
   }
 ]
