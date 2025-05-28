@@ -30,7 +30,7 @@ const CocktailList = ({ cocktails }) => {
         <CocktailListItem
           key={cocktail.id}
           cocktail={cocktail}
-          isMakeable={cocktail.isMakeable} // Pass the pre-calculated boolean from the cocktail object
+          // isMakeable prop removed as CocktailListItem now handles its own general availability display
         />
       ))}
     </ListWrapper>

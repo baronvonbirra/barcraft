@@ -2,11 +2,13 @@ import React, { useContext, useMemo } from 'react'; // Added useMemo
 import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import cocktailsData from '../data/cocktails.json';
-import { useBar } from '../contexts/BarContext'; // Import useBar
+// import { useBar } from '../contexts/BarContext'; // Import useBar - Will be removed if not used elsewhere
 import { useFavorites } from '../hooks/useFavorites';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { getImageUrl } from '../utils/cocktailImageLoader.js';
-// Removed bar1StockData and bar2StockData as BarContext now provides stock
+import bar1StockData from '../data/bar1_stock.json'; // Added
+import bar2StockData from '../data/bar2_stock.json'; // Added
+import barSpecificData from '../data/bar_specific_data.json'; // Added
 
 // Styled Components
 const PageWrapper = styled.div`
@@ -161,26 +163,41 @@ const BarAvailabilityIconWrapper = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing.large}; /* Increased margin for page view */
 `;
 
-// SingleBarIcon and BarAvailabilityIconWrapper are removed as they are no longer used.
+// SingleBarIcon and BarAvailabilityIconWrapper are removed.
+// isMakeableInSelectedBar (contextual) removed.
 
-// New helper function to check makeability against selected bar's stock (from context)
-const isMakeableInSelectedBar = (cocktailIngredients, currentBarStockSet, selectedBarId) => {
-  if (!selectedBarId || selectedBarId === 'all' || !currentBarStockSet || currentBarStockSet.size === 0) {
-    return false; // Not makeable if no specific bar selected or bar has no stock
-  }
-  if (!cocktailIngredients || cocktailIngredients.length === 0) {
-    return true; // Makeable if cocktail has no ingredients
-  }
+// Helper function to check makeability at a specific bar (similar to CocktailListItem)
+const checkMakeableAtBar = (cocktailIngredients, barStockData) => {
+  if (!cocktailIngredients || !barStockData) return false;
+
+  const availableStockIds = new Set(
+    barStockData
+      .filter(item => item.isAvailable)
+      .map(item => item.id)
+  );
+
+  if (cocktailIngredients.length === 0) return true; // Makeable if no ingredients
+
   return cocktailIngredients.every(ing => {
     if (!ing.isEssential) return true; // Optional ingredients don't break makeability
-    return currentBarStockSet.has(ing.id); // Check essential ingredient ID in stock
+    return availableStockIds.has(ing.id);
   });
 };
+
+// Wrapper for the general availability pills
+const GeneralAvailabilityWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing.medium};
+  margin-top: ${({ theme }) => theme.spacing.medium};
+  margin-bottom: ${({ theme }) => theme.spacing.large};
+`;
+
 
 const CocktailPage = () => {
   const { cocktailId } = useParams();
   const { theme } = useContext(ThemeContext);
-  const { selectedBarId, barStock, selectedBarName } = useBar(); // Use BarContext
+  // const { selectedBarId, barStock, selectedBarName } = useBar(); // Removed as we are showing general availability
   const { isFavorite, toggleFavorite } = useFavorites();
 
   const cocktail = cocktailsData.find(c => c.id === cocktailId);
@@ -191,10 +208,14 @@ const CocktailPage = () => {
 
   const currentIsFavorite = isFavorite(cocktail.id);
 
-  // Determine makeability in the context of the selected bar
-  const isMakeable = useMemo(() => 
-    isMakeableInSelectedBar(cocktail.ingredients, barStock, selectedBarId),
-    [cocktail.ingredients, barStock, selectedBarId]
+  // Determine makeability for each bar
+  const isMakeableBar1 = useMemo(() => 
+    checkMakeableAtBar(cocktail.ingredients, bar1StockData),
+    [cocktail.ingredients] // bar1StockData is stable
+  ); 
+  const isMakeableBar2 = useMemo(() =>
+    checkMakeableAtBar(cocktail.ingredients, bar2StockData),
+    [cocktail.ingredients] // bar2StockData is stable
   );
 
   return (
@@ -213,11 +234,16 @@ const CocktailPage = () => {
         </CocktailNameWrapper>
         <CocktailImage src={getImageUrl(cocktail.image)} alt={cocktail.name} />
         
-        {/* Display AvailabilityPill if a bar is selected */}
-        {selectedBarName && (
-          <AvailabilityPill available={isMakeable} theme={theme}>
-            {isMakeable ? 'Available at: ' : 'Unavailable at: '} {selectedBarName}
-          </AvailabilityPill>
+        {/* General Availability Display */}
+        {cocktail && ( // Ensure cocktail data is loaded
+          <GeneralAvailabilityWrapper theme={theme}>
+            <AvailabilityPill available={isMakeableBar1} theme={theme}>
+              {barSpecificData.bar1.barName}: {isMakeableBar1 ? 'Available' : 'Unavailable'}
+            </AvailabilityPill>
+            <AvailabilityPill available={isMakeableBar2} theme={theme}>
+              {barSpecificData.bar2.barName}: {isMakeableBar2 ? 'Available' : 'Unavailable'}
+            </AvailabilityPill>
+          </GeneralAvailabilityWrapper>
         )}
       </CocktailHeader>
 

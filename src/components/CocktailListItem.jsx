@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 // import PlaceholderImage from '../assets/cocktails/placeholder.png'; // Removed
 import { getImageUrl } from '../utils/cocktailImageLoader.js'; // Corrected path
 import { useFavorites } from '../hooks/useFavorites'; // Import useFavorites
-// Removed bar1StockData, bar2StockData, barSpecificData
+import bar1StockData from '../data/bar1_stock.json';
+import bar2StockData from '../data/bar2_stock.json';
+import barSpecificData from '../data/bar_specific_data.json';
 
 // Styled components (ensure they exist or are defined if not already)
 const ListItemWrapper = styled.div`
@@ -106,16 +108,28 @@ const AvailabilityIndicator = styled.div`
   z-index: 1;
 `;
 
-// New styled components for Bar Availability Icons
-const BarAvailabilityIconWrapper = styled.div`
+// AvailabilityIndicator removed.
+
+// New styled components for general bar availability
+const BarAvailabilityWrapper = styled.div`
   display: flex;
   justify-content: center;
   gap: ${({ theme }) => theme.spacing.small};
   margin-top: ${({ theme }) => theme.spacing.xs};
-  margin-bottom: ${({ theme }) => theme.spacing.small};
+  margin-bottom: ${({ theme }) => theme.spacing.medium}; // Added more margin for separation
 `;
 
-// BarAvailabilityIconWrapper and SingleBarIcon removed
+const BarAvailabilityTag = styled.span`
+  font-size: 0.8em;
+  color: #fff; // White text
+  background-color: ${({ available, theme }) => 
+    available ? theme.colors.secondary : theme.colors.textOffset}; // Green if available, grey if not
+  border-radius: ${({ theme }) => theme.borderRadius};
+  padding: 3px 6px;
+  margin: 2px;
+  white-space: nowrap;
+  display: inline-block;
+`;
 
 const FavoriteButton = styled.button`
   position: absolute;
@@ -145,17 +159,34 @@ const FavoriteButton = styled.button`
   }
 `;
 
-// Helper function checkMakeable removed
+// Helper function to check makeability at a specific bar
+const checkMakeableAtBar = (cocktailIngredients, barStockData) => {
+  if (!cocktailIngredients || !barStockData) return false;
 
-const CocktailListItem = ({ cocktail, isMakeable }) => { // Added isMakeable to props
+  const availableStockIds = new Set(
+    barStockData
+      .filter(item => item.isAvailable)
+      .map(item => item.id)
+  );
+
+  if (!cocktailIngredients || cocktailIngredients.length === 0) return true; // Makeable if no ingredients
+
+  return cocktailIngredients.every(ing => {
+    if (!ing.isEssential) return true; // Optional ingredients don't break makeability
+    return availableStockIds.has(ing.id);
+  });
+};
+
+const CocktailListItem = ({ cocktail }) => { // Removed isMakeable prop
   const { isFavorite, toggleFavorite } = useFavorites(); // Use the hook
 
   if (!cocktail) return null;
 
-  const imageSrc = getImageUrl(cocktail.image); // New way
+  const imageSrc = getImageUrl(cocktail.image);
   const currentIsFavorite = isFavorite(cocktail.id);
 
-  // isMakeableBarA and isMakeableBarB calculations removed
+  const isMakeableBar1 = checkMakeableAtBar(cocktail.ingredients, bar1StockData);
+  const isMakeableBar2 = checkMakeableAtBar(cocktail.ingredients, bar2StockData);
 
   const handleFavoriteClick = (e) => {
     e.preventDefault(); // Prevent link navigation if heart is on top of link area
@@ -167,8 +198,7 @@ const CocktailListItem = ({ cocktail, isMakeable }) => { // Added isMakeable to 
     <ListItemWrapper>
       <Link to={`/cocktails/${cocktail.id}`} style={{ textDecoration: 'none' }}>
         <ImageContainer>
-          {/* Render AvailabilityIndicator if isMakeable is true or false, but not undefined/null */}
-          {typeof isMakeable === 'boolean' && <AvailabilityIndicator isMakeable={isMakeable} />}
+          {/* AvailabilityIndicator removed */}
           <CocktailImage src={imageSrc} alt={cocktail.name} />
           <FavoriteButton
             isFavorite={currentIsFavorite}
@@ -182,7 +212,14 @@ const CocktailListItem = ({ cocktail, isMakeable }) => { // Added isMakeable to 
         </ImageContainer>
         <CocktailName>{cocktail.name}</CocktailName>
       </Link>
-      {/* BarAvailabilityIconWrapper removed */}
+      <BarAvailabilityWrapper>
+        <BarAvailabilityTag available={isMakeableBar1} theme={cocktail.theme}> 
+          {barSpecificData.bar1.barName}: {isMakeableBar1 ? 'Available' : 'Unavailable'}
+        </BarAvailabilityTag>
+        <BarAvailabilityTag available={isMakeableBar2} theme={cocktail.theme}>
+          {barSpecificData.bar2.barName}: {isMakeableBar2 ? 'Available' : 'Unavailable'}
+        </BarAvailabilityTag>
+      </BarAvailabilityWrapper>
       <ViewLink to={`/cocktails/${cocktail.id}`}>View Recipe</ViewLink>
     </ListItemWrapper>
   );

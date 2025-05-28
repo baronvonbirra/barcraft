@@ -25,8 +25,8 @@ const BarHeader = styled.h1`
 // Placeholder for where filters for this bar would go
 const BarFiltersWrapper = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing.large};
-  padding: ${({ theme }) => theme.spacing.medium};
-  background-color: ${({ theme }) => theme.colors.surface};
+  padding: 0; // Changed from theme.spacing.medium to 0
+  /* background-color removed */
   border-radius: ${({ theme }) => theme.borderRadius};
   text-align: center;
   color: ${({ theme }) => theme.colors.textOffset};
@@ -158,32 +158,30 @@ const BarSpecificPage = () => {
       return [];
     }
     return cocktailsData
-      .filter(cocktail => currentBarSpecifics.curatedCocktailIds.includes(cocktail.id))
-      .map(cocktail => ({
-        ...cocktail,
-        isMakeable: isCocktailMakeableAtCurrentBar(cocktail.ingredients)
-      }));
-  }, [currentBarSpecifics.curatedCocktailIds, isCocktailMakeableAtCurrentBar]);
+      .filter(cocktail => currentBarSpecifics.curatedCocktailIds.includes(cocktail.id));
+    // No longer mapping to add .isMakeable, so isCocktailMakeableAtCurrentBar is removed from deps if not used elsewhere for this list.
+    // However, currentBarSpecifics itself might change if barId changes, so that dep is fine.
+  }, [currentBarSpecifics.curatedCocktailIds]);
 
-  // And availableCocktails (depends on stockSet, currentBarData, isCocktailMakeableAtCurrentBar)
+  // And availableCocktails (depends on stockSet, currentBarData - indirectly on isCocktailMakeableAtCurrentBar for filtering logic)
   const availableCocktails = useMemo(() => {
     if (stockSet.size === 0 && currentBarData.internalId !== null) { // internalId check to ensure a bar is actually selected
       return [];
     }
       return cocktailsData
-      .filter(cocktail => {
+      .filter(cocktail => { // This filter IS the logic of isCocktailMakeableAtCurrentBar
         // If no ingredients, it's "makeable" by default (e.g. a conceptual "Water")
         if (!cocktail.ingredients || cocktail.ingredients.length === 0) return true;
         return cocktail.ingredients.every(ing => {
           if (!ing.isEssential) return true; // Optional ingredients don't break makeability
           return stockSet.has(ing.id);     // Check ID for essential ingredients
         });
-      })
-      .map(cocktail => ({
-        ...cocktail,
-        isMakeable: isCocktailMakeableAtCurrentBar(cocktail.ingredients) // Explicitly set, though filter implies true
-      }));
-  }, [stockSet, currentBarData.internalId, isCocktailMakeableAtCurrentBar]); 
+      });
+    // No longer mapping to add .isMakeable.
+    // The dependencies for filtering (stockSet, currentBarData.internalId) are correct.
+    // isCocktailMakeableAtCurrentBar function itself isn't directly called in this map anymore, 
+    // but its logic is embedded in the filter.
+  }, [stockSet, currentBarData.internalId]); 
 
   return (
     <PageWrapper theme={theme}>
