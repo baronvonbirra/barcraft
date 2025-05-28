@@ -148,21 +148,59 @@ const Button = styled.button`
 // Helper to get unique values for select options
 const getUniqueValues = (items, key, subKey = null) => {
   if (!items) return [];
-  const valueSet = new Set();
+  const valueMap = new Map(); // Use a Map to store unique objects by ID
+
   items.forEach(item => {
-    if (subKey && item[key]) { // e.g., ingredients: item.ingredients (array) -> ing.name
+    if (subKey && item[key]) { // e.g., ingredients: item.ingredients (array)
       item[key].forEach(subItem => {
-        if (subItem && subItem[subKey]) valueSet.add(subItem[subKey]);
+        // If subKey is 'name', we assume subItem is an object like { id: '...', name: '...' }
+        // and we want to store the whole object, ensuring uniqueness by id.
+        if (subKey === 'name' && subItem && subItem.id && subItem.name) {
+          if (!valueMap.has(subItem.id)) {
+            valueMap.set(subItem.id, { id: subItem.id, name: subItem.name });
+          }
+        } else if (subItem && subItem[subKey]) { // Original logic for other subKey extractions
+          // This branch might need to be revisited if other subKey extractions are needed.
+          // For now, the primary concern is ingredient objects.
+          // To keep original behavior for non-ingredient cases (though not explicitly used in current problem):
+           if (!valueMap.has(subItem[subKey])) { // Fallback to value itself as key if not object with id
+            valueMap.set(subItem[subKey], subItem[subKey]);
+           }
+        }
       });
-    } else if (item[key]) { // e.g., tags: item.tags (array of strings)
+    } else if (item[key]) { // e.g., tags: item.tags (array of strings) or item.glass (string)
       if (Array.isArray(item[key])) {
-        item[key].forEach(val => valueSet.add(val));
+        item[key].forEach(val => {
+          if (!valueMap.has(val)) valueMap.set(val, val);
+        });
       } else { // e.g., glass: item.glass (string)
-         valueSet.add(item[key]);
+        if (!valueMap.has(item[key])) valueMap.set(item[key], item[key]);
       }
     }
   });
-  return Array.from(valueSet).sort();
+
+  // For ingredients (identified by subKey === 'name'), we sort by name.
+  // For others, we sort by the value itself.
+  const sortedValues = Array.from(valueMap.values());
+  if (subKey === 'name') {
+    // Ensure all elements are objects with a name property before sorting
+    if (sortedValues.every(val => typeof val === 'object' && val !== null && 'name' in val)) {
+      sortedValues.sort((a, b) => a.name.localeCompare(b.name));
+    }
+    // If not all are objects with 'name', implies mixed types or different structure,
+    // potentially log a warning or handle as per broader application needs.
+    // For this specific task, we expect objects with 'name'.
+  } else {
+    // Attempt to sort, works best if values are consistently strings or numbers.
+    // If mixed types that can't be compared, sort might be unpredictable.
+    try {
+      sortedValues.sort((a, b) => String(a).localeCompare(String(b)));
+    } catch (e) {
+      // console.error("Could not sort values:", e);
+      // Fallback or no sort if complex types are mixed without a clear sorting strategy
+    }
+  }
+  return sortedValues;
 };
 
 
@@ -233,17 +271,17 @@ const FilterSidebar = ({
             onChange={(e) => setIncludeIngredientSearchTerm(e.target.value)}
           />
           {uniqueIngredients
-            .filter(ing => ing.toLowerCase().includes(includeIngredientSearchTerm.toLowerCase()))
-            .map(ing => (
-            <div key={ing} className="checkbox-item">
+            .filter(ingObj => ingObj.name.toLowerCase().includes(includeIngredientSearchTerm.toLowerCase()))
+            .map(ingObj => (
+            <div key={ingObj.id} className="checkbox-item">
               <input
                 type="checkbox"
-                id={`include-${ing}`}
-                value={ing}
-                checked={filters.includeIngredients.includes(ing)}
-                onChange={() => handleMultiSelectChange(setters.setIncludeIngredients, filters.includeIngredients, ing)}
+                id={`include-${ingObj.id}`}
+                value={ingObj.id} // Use ID for the value
+                checked={filters.includeIngredients.includes(ingObj.id)} // Check against ID
+                onChange={() => handleMultiSelectChange(setters.setIncludeIngredients, filters.includeIngredients, ingObj.id)} // Pass ID to handler
               />
-              <label htmlFor={`include-${ing}`}>{ing}</label>
+              <label htmlFor={`include-${ingObj.id}`}>{ingObj.name}</label> {/* Display name */}
             </div>
           ))}
         </div>
@@ -260,17 +298,17 @@ const FilterSidebar = ({
             onChange={(e) => setExcludeIngredientSearchTerm(e.target.value)}
           />
           {uniqueIngredients
-            .filter(ing => ing.toLowerCase().includes(excludeIngredientSearchTerm.toLowerCase()))
-            .map(ing => (
-            <div key={ing} className="checkbox-item">
+            .filter(ingObj => ingObj.name.toLowerCase().includes(excludeIngredientSearchTerm.toLowerCase()))
+            .map(ingObj => (
+            <div key={ingObj.id} className="checkbox-item">
               <input
                 type="checkbox"
-                id={`exclude-${ing}`}
-                value={ing}
-                checked={filters.excludeIngredients.includes(ing)}
-                onChange={() => handleMultiSelectChange(setters.setExcludeIngredients, filters.excludeIngredients, ing)}
+                id={`exclude-${ingObj.id}`}
+                value={ingObj.id} // Use ID for the value
+                checked={filters.excludeIngredients.includes(ingObj.id)} // Check against ID
+                onChange={() => handleMultiSelectChange(setters.setExcludeIngredients, filters.excludeIngredients, ingObj.id)} // Pass ID to handler
               />
-              <label htmlFor={`exclude-${ing}`}>{ing}</label>
+              <label htmlFor={`exclude-${ingObj.id}`}>{ingObj.name}</label> {/* Display name */}
             </div>
           ))}
         </div>
