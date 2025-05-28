@@ -6,7 +6,9 @@ import { useBar } from '../contexts/BarContext'; // Import useBar
 import { useFavorites } from '../hooks/useFavorites';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { getImageUrl } from '../utils/cocktailImageLoader.js';
-// Removed bar1StockData and bar2StockData as BarContext now provides stock
+import bar1StockData from '../data/bar1_stock.json'; // Import bar1_stock.json
+import bar2StockData from '../data/bar2_stock.json'; // Import bar2_stock.json
+import barSpecificData from '../data/bar_specific_data.json'; // Import bar_specific_data.json
 
 // Styled Components
 const PageWrapper = styled.div`
@@ -133,6 +135,27 @@ const AvailabilityPill = styled.span`
   text-align: center; // Ensure text is centered if pill takes full width due to other styles
 `;
 
+// New Styled Components for All Bars Availability
+const AllBarsAvailabilityWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: ${({ theme }) => theme.spacing.medium};
+  margin-top: ${({ theme }) => theme.spacing.medium};
+  margin-bottom: ${({ theme }) => theme.spacing.large};
+`;
+
+const IndividualBarStatus = styled.div`
+  padding: ${({ theme }) => theme.spacing.small} ${({ theme }) => theme.spacing.medium};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff; // White text for contrast
+  background-color: ${({ theme, isAvailable }) => 
+    isAvailable ? theme.colors.secondary : (theme.colors.error || '#D32F2F')};
+  text-align: center;
+  min-width: 120px; // Ensure a minimum width for better visual consistency
+`;
+
 const FilterLinkTag = styled(Link)`
   display: inline-block;
   background-color: ${({ theme }) => theme.colors.surface};
@@ -161,29 +184,48 @@ const BarAvailabilityIconWrapper = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing.large}; /* Increased margin for page view */
 `;
 
-// SingleBarIcon and BarAvailabilityIconWrapper are removed as they are no longer used.
-
-// New helper function to check makeability against selected bar's stock (from context)
-const isMakeableInSelectedBar = (cocktailIngredients, currentBarStockSet, selectedBarId) => {
-  if (!selectedBarId || selectedBarId === 'all' || !currentBarStockSet || currentBarStockSet.size === 0) {
-    return false; // Not makeable if no specific bar selected or bar has no stock
-  }
-  if (!cocktailIngredients || cocktailIngredients.length === 0) {
-    return true; // Makeable if cocktail has no ingredients
-  }
+// Helper function to check if a cocktail is makeable at a specific bar
+// (Copied from CocktailListItem.jsx as per instructions for this task)
+const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
+  if (!cocktailIngredients || cocktailIngredients.length === 0) return true; // No ingredients needed
   return cocktailIngredients.every(ing => {
     if (!ing.isEssential) return true; // Optional ingredients don't break makeability
-    return currentBarStockSet.has(ing.id); // Check essential ingredient ID in stock
+    return barStockSet.has(ing.id);
   });
 };
 
 const CocktailPage = () => {
   const { cocktailId } = useParams();
   const { theme } = useContext(ThemeContext);
-  const { selectedBarId, barStock, selectedBarName } = useBar(); // Use BarContext
+  // const { selectedBarId, barStock, selectedBarName } = useBar(); // Retaining for now, but new logic will override display part
   const { isFavorite, toggleFavorite } = useFavorites();
 
   const cocktail = cocktailsData.find(c => c.id === cocktailId);
+
+  // Memoize stock data for Bar 1 (Level One)
+  const bar1StockSet = useMemo(() => 
+    new Set(bar1StockData.filter(item => item.isAvailable).map(item => item.id)), 
+    [] // Empty dependency array as bar1StockData is a static import
+  );
+
+  // Memoize stock data for Bar 2 (The Glitch)
+  const bar2StockSet = useMemo(() =>
+    new Set(bar2StockData.filter(item => item.isAvailable).map(item => item.id)),
+    [] // Empty dependency array as bar2StockData is a static import
+  );
+
+  // Determine makeability for each bar
+  const isMakeableBar1 = useMemo(() => 
+    checkMakeableForBar(cocktail?.ingredients, bar1StockSet), 
+    [cocktail?.ingredients, bar1StockSet]
+  );
+  const isMakeableBar2 = useMemo(() => 
+    checkMakeableForBar(cocktail?.ingredients, bar2StockSet), 
+    [cocktail?.ingredients, bar2StockSet]
+  );
+
+  const bar1Name = barSpecificData.bar1.barName; // "Level One"
+  const bar2Name = barSpecificData.bar2.barName; // "The Glitch"
 
   if (!cocktail) {
     return <PageWrapper theme={theme}><p>Cocktail not found!</p></PageWrapper>;
@@ -191,11 +233,9 @@ const CocktailPage = () => {
 
   const currentIsFavorite = isFavorite(cocktail.id);
 
-  // Determine makeability in the context of the selected bar
-  const isMakeable = useMemo(() => 
-    isMakeableInSelectedBar(cocktail.ingredients, barStock, selectedBarId),
-    [cocktail.ingredients, barStock, selectedBarId]
-  );
+  // Note: The existing 'isMakeable' based on selectedBarId context is still here.
+  // The new display for Bar1 and Bar2 availability is separate and unconditional.
+  // const { selectedBarId, barStock, selectedBarName } = useBar(); // This line is already present
 
   return (
     <PageWrapper theme={theme}>
@@ -213,12 +253,27 @@ const CocktailPage = () => {
         </CocktailNameWrapper>
         <CocktailImage src={getImageUrl(cocktail.image)} alt={cocktail.name} />
         
-        {/* Display AvailabilityPill if a bar is selected */}
-        {selectedBarName && (
-          <AvailabilityPill available={isMakeable} theme={theme}>
-            {isMakeable ? 'Available at: ' : 'Unavailable at: '} {selectedBarName}
+        {/* New All Bars Availability Display */}
+        <AllBarsAvailabilityWrapper theme={theme}>
+          <IndividualBarStatus theme={theme} isAvailable={isMakeableBar1}>
+            {bar1Name}: {isMakeableBar1 ? "Available" : "Unavailable"}
+          </IndividualBarStatus>
+          <IndividualBarStatus theme={theme} isAvailable={isMakeableBar2}>
+            {bar2Name}: {isMakeableBar2 ? "Available" : "Unavailable"}
+          </IndividualBarStatus>
+        </AllBarsAvailabilityWrapper>
+        
+        {/* The old AvailabilityPill based on context can be kept or removed. */}
+        {/* For this task, the requirement is to show *both* bars, which the above does. */}
+        {/* If selectedBarName related pill is still desired: */}
+        {/* {selectedBarName && (
+          <AvailabilityPill 
+            available={isMakeableInSelectedBar(cocktail.ingredients, barStock, selectedBarId)} 
+            theme={theme}
+          >
+            {isMakeableInSelectedBar(cocktail.ingredients, barStock, selectedBarId) ? 'Available at: ' : 'Unavailable at: '} {selectedBarName}
           </AvailabilityPill>
-        )}
+        )} */}
       </CocktailHeader>
 
       <CocktailDetailsGrid>

@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react'; // Added useMemo
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-// import PlaceholderImage from '../assets/cocktails/placeholder.png'; // Removed
-import { getImageUrl } from '../utils/cocktailImageLoader.js'; // Corrected path
-import { useFavorites } from '../hooks/useFavorites'; // Import useFavorites
-// Removed bar1StockData, bar2StockData, barSpecificData
+import { getImageUrl } from '../utils/cocktailImageLoader.js';
+import { useFavorites } from '../hooks/useFavorites';
+import bar1StockData from '../data/bar1_stock.json'; // Import bar1_stock.json
+import bar2StockData from '../data/bar2_stock.json'; // Import bar2_stock.json
+import barSpecificData from '../data/bar_specific_data.json'; // Import bar_specific_data.json
 
 // Styled components (ensure they exist or are defined if not already)
 const ListItemWrapper = styled.div`
@@ -115,7 +116,19 @@ const BarAvailabilityIconWrapper = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing.small};
 `;
 
-// BarAvailabilityIconWrapper and SingleBarIcon removed
+const SingleBarAvailabilityIcon = styled.span`
+  padding: 2px 6px;
+  border-radius: ${({ theme }) => theme.borderRadiusSmall || '4px'}; /* Ensure borderRadiusSmall is in theme or use fallback */
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: ${({ theme }) => theme.colors.onPrimary}; /* Default text color, adjust as needed */
+  background-color: ${({ theme, isAvailable }) => isAvailable ? theme.colors.secondary : theme.colors.error || '#E74C3C'};
+  border: 1px solid ${({ theme, isAvailable }) => isAvailable ? theme.colors.secondary : theme.colors.error || '#E74C3C'};
+
+  &:not(:last-child) {
+    margin-right: ${({ theme }) => theme.spacing.xs};
+  }
+`;
 
 const FavoriteButton = styled.button`
   position: absolute;
@@ -145,20 +158,42 @@ const FavoriteButton = styled.button`
   }
 `;
 
-// Helper function checkMakeable removed
+// Memoize stock data for Bar 1 (Level One)
+const bar1StockSet = new Set(
+  bar1StockData.filter(item => item.isAvailable).map(item => item.id)
+);
 
-const CocktailListItem = ({ cocktail, isMakeable }) => { // Added isMakeable to props
-  const { isFavorite, toggleFavorite } = useFavorites(); // Use the hook
+// Memoize stock data for Bar 2 (The Glitch)
+const bar2StockSet = new Set(
+  bar2StockData.filter(item => item.isAvailable).map(item => item.id)
+);
+
+// Helper function to check if a cocktail is makeable at a specific bar
+const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
+  if (!cocktailIngredients || cocktailIngredients.length === 0) return true; // No ingredients needed
+  return cocktailIngredients.every(ing => {
+    if (!ing.isEssential) return true; // Optional ingredients don't break makeability
+    return barStockSet.has(ing.id);
+  });
+};
+
+const CocktailListItem = ({ cocktail, isMakeable }) => {
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   if (!cocktail) return null;
 
-  const imageSrc = getImageUrl(cocktail.image); // New way
+  const imageSrc = getImageUrl(cocktail.image);
   const currentIsFavorite = isFavorite(cocktail.id);
 
-  // isMakeableBarA and isMakeableBarB calculations removed
+  // Determine makeability for each bar
+  const isMakeableBar1 = useMemo(() => checkMakeableForBar(cocktail.ingredients, bar1StockSet), [cocktail.ingredients]);
+  const isMakeableBar2 = useMemo(() => checkMakeableForBar(cocktail.ingredients, bar2StockSet), [cocktail.ingredients]);
+
+  const bar1Name = barSpecificData.bar1.barName; // "Level One"
+  const bar2Name = barSpecificData.bar2.barName; // "The Glitch"
 
   const handleFavoriteClick = (e) => {
-    e.preventDefault(); // Prevent link navigation if heart is on top of link area
+    e.preventDefault();
     e.stopPropagation(); // Prevent card click event if any
     toggleFavorite(cocktail.id);
   };
@@ -182,7 +217,20 @@ const CocktailListItem = ({ cocktail, isMakeable }) => { // Added isMakeable to 
         </ImageContainer>
         <CocktailName>{cocktail.name}</CocktailName>
       </Link>
-      {/* BarAvailabilityIconWrapper removed */}
+      <BarAvailabilityIconWrapper>
+        <SingleBarAvailabilityIcon
+          isAvailable={isMakeableBar1}
+          title={`${bar1Name}: ${isMakeableBar1 ? 'Available' : 'Unavailable'}`}
+        >
+          L1 {/* Short name for Level One */}
+        </SingleBarAvailabilityIcon>
+        <SingleBarAvailabilityIcon
+          isAvailable={isMakeableBar2}
+          title={`${bar2Name}: ${isMakeableBar2 ? 'Available' : 'Unavailable'}`}
+        >
+          TG {/* Short name for The Glitch */}
+        </SingleBarAvailabilityIcon>
+      </BarAvailabilityIconWrapper>
       <ViewLink to={`/cocktails/${cocktail.id}`}>View Recipe</ViewLink>
     </ListItemWrapper>
   );

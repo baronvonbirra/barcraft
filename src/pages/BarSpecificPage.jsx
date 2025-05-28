@@ -24,9 +24,9 @@ const BarHeader = styled.h1`
 
 // Placeholder for where filters for this bar would go
 const BarFiltersWrapper = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing.large};
-  padding: ${({ theme }) => theme.spacing.medium};
-  background-color: ${({ theme }) => theme.colors.surface};
+  // margin-bottom: ${({ theme }) => theme.spacing.large}; // Removed to prevent double margin
+  // padding: ${({ theme }) => theme.spacing.medium}; // Removed to hide empty placeholder
+  // background-color: ${({ theme }) => theme.colors.surface}; // Removed to hide empty placeholder
   border-radius: ${({ theme }) => theme.borderRadius};
   text-align: center;
   color: ${({ theme }) => theme.colors.textOffset};
