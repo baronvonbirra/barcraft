@@ -3,9 +3,22 @@ import { render, screen, within } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import CocktailPage from './CocktailPage';
 import { ThemeProvider } from '../contexts/ThemeContext';
-import cocktailsData from '../data/cocktails.json'; // Using actual data
+import cocktailsData from '../data/cocktails.json';
 
-// Updated Mock Theme for testing, aligned with new ThemeContext
+// Mock data imports for bar stock and names
+// Default to empty stock, specific tests can override
+jest.mock('../data/bar1_stock.json', () => [], { virtual: true });
+jest.mock('../data/bar2_stock.json', () => [], { virtual: true });
+jest.mock('../data/bar_specific_data.json', () => ({
+  bar1: { barName: "Level One", /* other properties */ },
+  bar2: { barName: "The Glitch", /* other properties */ }
+}), { virtual: true });
+
+// Mock cocktailImageLoader (if not already adequately handled by existing tests using actual data)
+jest.mock('../utils/cocktailImageLoader.js', () => ({
+  getImageUrl: jest.fn((imageName) => imageName ? `mock_path_to/${imageName}` : 'mock_path_to/placeholder.png'),
+}));
+
 const mockTheme = {
   mode: 'dark',
   colors: {
@@ -134,5 +147,75 @@ describe('CocktailPage', () => {
     
     // Ensure no specific details of another cocktail (e.g., Mojito) are shown
     expect(screen.queryByRole('heading', { name: /Mojito/i })).not.toBeInTheDocument();
+  });
+
+  describe('AllBarsAvailability Section', () => {
+    // Use a cocktail that requires a specific, unique ingredient for easier testing.
+    const testCocktail = cocktailsData.find(c => c.id === 'mojito'); // Mojito uses 'mint leaves'
+    if (!testCocktail) throw new Error("Test cocktail 'mojito' not found in data.");
+    
+    // Assume 'mint leaves' has id 'mint' and is essential for Mojito
+    // This requires knowledge of your ingredient IDs in cocktails.json and stock .json files.
+    // Let's say Mojito's essential ingredient is { id: 'mint', name: 'Mint Leaves', isEssential: true }
+
+    const renderPageForAvailabilityTest = (bar1Stock, bar2Stock) => {
+      // Mock the stock files for this specific test run
+      if (bar1Stock) jest.doMock('../data/bar1_stock.json', () => bar1Stock, { virtual: true });
+      if (bar2Stock) jest.doMock('../data/bar2_stock.json', () => bar2Stock, { virtual: true });
+
+      // Re-require CocktailPage to pick up the new mocks if jest.doMock is used.
+      // This is important because the component might have already been imported with different mocks.
+      // Alternatively, structure tests so mocks are set globally or use jest.resetModules().
+      const UpdatedCocktailPage = require('./CocktailPage').default;
+
+      renderWithProviders(<UpdatedCocktailPage />, { 
+        route: `/cocktails/${testCocktail.id}`, 
+        path: '/cocktails/:cocktailId' 
+      });
+    };
+    
+    // Find an ingredient that Mojito needs, e.g., 'mint'. Assume its ID is 'mint'.
+    // This should align with your actual data structure for ingredients and stock.
+    const essentialIngredientForMojito = { id: 'mint', name: 'Mint', isAvailable: true }; // Example
+
+    it('renders correctly when available in Bar1, unavailable in Bar2', () => {
+      renderPageForAvailabilityTest([essentialIngredientForMojito], []); // Bar1 has mint, Bar2 doesn't
+      expect(screen.getByText("Level One: Available")).toBeInTheDocument();
+      expect(screen.getByText("The Glitch: Unavailable")).toBeInTheDocument();
+    });
+
+    it('renders correctly when unavailable in Bar1, available in Bar2', () => {
+      renderPageForAvailabilityTest([], [essentialIngredientForMojito]); // Bar1 no mint, Bar2 has mint
+      expect(screen.getByText("Level One: Unavailable")).toBeInTheDocument();
+      expect(screen.getByText("The Glitch: Available")).toBeInTheDocument();
+    });
+
+    it('renders correctly when available in both bars', () => {
+      renderPageForAvailabilityTest([essentialIngredientForMojito], [essentialIngredientForMojito]);
+      expect(screen.getByText("Level One: Available")).toBeInTheDocument();
+      expect(screen.getByText("The Glitch: Available")).toBeInTheDocument();
+    });
+
+    it('renders correctly when unavailable in both bars', () => {
+      renderPageForAvailabilityTest([], []); // Neither bar has mint
+      expect(screen.getByText("Level One: Unavailable")).toBeInTheDocument();
+      expect(screen.getByText("The Glitch: Unavailable")).toBeInTheDocument();
+    });
+
+    it('renders the wrapper and two status components', () => {
+      renderPageForAvailabilityTest([], []); // Doesn't matter the stock for this structure test
+      // Check for the wrapper by finding one of the children and going to its parent
+      const anAvailabilityStatus = screen.getByText(/Level One:/);
+      const wrapper = anAvailabilityStatus.parentElement; // This should be IndividualBarStatus
+      const outerWrapper = wrapper.parentElement; // This should be AllBarsAvailabilityWrapper
+
+      expect(outerWrapper).toBeInTheDocument();
+      // Check for two IndividualBarStatus components within the AllBarsAvailabilityWrapper
+      // A more robust query might be to check for elements with specific styles or test IDs.
+      // For now, checking for text content is a good proxy.
+      expect(within(outerWrapper).getByText(/Level One:/)).toBeInTheDocument();
+      expect(within(outerWrapper).getByText(/The Glitch:/)).toBeInTheDocument();
+      expect(outerWrapper.children.length).toBe(2); // Assuming direct children are the status divs
+    });
   });
 });
