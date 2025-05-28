@@ -1,11 +1,11 @@
 {
   "bar1": {
-    "barName": "Level One",
+    "barName": "Golden Age Cocktails",
     "curatedMenuName": "Level One's Signatures",
     "curatedCocktailIds": ["mojito", "old-fashioned", "negroni", "moscow-mule"]
   },
   "bar2": {
-    "barName": "The Glitch",
+    "barName": "The Alchemist's Corner",
     "curatedMenuName": "The Glitch's Classics",
     "curatedCocktailIds": ["daiquiri", "manhattan", "gin-tonic", "margarita", "shirley-temple"]
   }

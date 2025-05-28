@@ -1,8 +1,13 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import bar1StockData from '../data/bar1_stock.json';
+import bar2StockData from '../data/bar2_stock.json';
+import barSpecificDataJson from '../data/bar_specific_data.json';
 
 // Initial state
 const initialState = {
-  selectedBar: 'all', // 'all', 'bar1', 'bar2'
+  selectedBarId: 'all', // 'all', 'bar1', 'bar2'
+  barStock: new Set(), // Set of available ingredient IDs for the selected bar
+  selectedBarName: null, // Name of the selected bar
   viewingCuratedMenu: null, // null, 'bar1_curated', 'bar2_curated'
   selectBar: () => {},
   viewCuratedMenu: () => {},
@@ -11,39 +16,49 @@ const initialState = {
 export const BarContext = createContext(initialState);
 
 export const BarProvider = ({ children }) => {
-  const [selectedBar, setSelectedBar] = useState('all');
+  const [selectedBarId, setSelectedBarId] = useState('all');
+  const [barStock, setBarStock] = useState(new Set());
+  const [selectedBarName, setSelectedBarName] = useState(null);
   const [viewingCuratedMenu, setViewingCuratedMenu] = useState(null);
 
+  useEffect(() => {
+    if (selectedBarId === 'bar1') {
+      setBarStock(new Set(bar1StockData.ingredientsAvailable));
+      setSelectedBarName(barSpecificDataJson.bar1.barName);
+    } else if (selectedBarId === 'bar2') {
+      setBarStock(new Set(bar2StockData.ingredientsAvailable));
+      setSelectedBarName(barSpecificDataJson.bar2.barName);
+    } else {
+      setBarStock(new Set());
+      setSelectedBarName(null);
+    }
+  }, [selectedBarId]);
+
   const selectBar = (barId) => {
-    setSelectedBar(barId);
-    // If a specific bar is selected, clear any curated menu view
-    // unless the curated menu belongs to the selected bar (handled in UI or later)
-    // For now, simplify: selecting a bar directly clears curated view.
+    setSelectedBarId(barId);
     setViewingCuratedMenu(null); 
   };
 
   const viewCuratedMenuAction = (curatedMenuId) => {
     setViewingCuratedMenu(curatedMenuId);
-    // When a curated menu is viewed, update selectedBar to match the menu's bar
-    // e.g., if curatedMenuId is 'bar1_curated', selectedBar becomes 'bar1'
     if (curatedMenuId) {
-      if (curatedMenuId.startsWith('bar1')) setSelectedBar('bar1');
-      else if (curatedMenuId.startsWith('bar2')) setSelectedBar('bar2');
-      else setSelectedBar('all'); // Fallback, though should not happen with valid IDs
+      if (curatedMenuId.startsWith('bar1')) setSelectedBarId('bar1');
+      else if (curatedMenuId.startsWith('bar2')) setSelectedBarId('bar2');
+      else setSelectedBarId('all'); 
     } else {
-      // If clearing curated menu, perhaps revert to 'all' or last selected bar.
-      // For now, let's set to 'all' if no curated menu.
-      setSelectedBar('all');
+      setSelectedBarId('all');
     }
   };
 
   return (
     <BarContext.Provider
       value={{
-        selectedBar,
+        selectedBarId,
+        barStock,
+        selectedBarName,
         viewingCuratedMenu,
         selectBar,
-        viewCuratedMenu: viewCuratedMenuAction, // Renamed to avoid conflict
+        viewCuratedMenu: viewCuratedMenuAction,
       }}
     >
       {children}

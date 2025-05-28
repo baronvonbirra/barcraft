@@ -35,13 +35,21 @@ const BarFiltersWrapper = styled.div`
 const CuratedSectionWrapper = styled.section`
   margin-bottom: ${({ theme }) => theme.spacing.large};
   padding: ${({ theme }) => theme.spacing.medium};
-  background-color: ${({ theme }) => theme.colors.background}; // Or a slightly different background
+  background-color: ${({ theme }) => theme.colors.surface}; // Changed to surface for distinction
   border-radius: ${({ theme }) => theme.borderRadius};
+  box-shadow: ${({ theme }) => theme.shadows.small}; // Added a subtle shadow for more definition
 `;
 
 const CuratedSectionHeader = styled.h2`
   color: ${({ theme }) => theme.colors.secondary}; // Or primary
   text-align: center;
+  margin-bottom: ${({ theme }) => theme.spacing.medium};
+`;
+
+const AvailableCocktailsHeader = styled.h2`
+  color: ${({ theme }) => theme.colors.primary}; // Using primary color for this header
+  text-align: center;
+  margin-top: ${({ theme }) => theme.spacing.xlarge}; // Increased top margin for better separation
   margin-bottom: ${({ theme }) => theme.spacing.medium};
 `;
 
@@ -104,10 +112,13 @@ const BarSpecificPage = () => {
     if (!currentBarSpecifics.curatedCocktailIds || currentBarSpecifics.curatedCocktailIds.length === 0) {
       return [];
     }
-    return cocktailsData.filter(cocktail => 
-      currentBarSpecifics.curatedCocktailIds.includes(cocktail.id)
-    );
-  }, [currentBarSpecifics.curatedCocktailIds]);
+    return cocktailsData
+      .filter(cocktail => currentBarSpecifics.curatedCocktailIds.includes(cocktail.id))
+      .map(cocktail => ({
+        ...cocktail,
+        isMakeable: isCocktailMakeableAtCurrentBar(cocktail.ingredients)
+      }));
+  }, [currentBarSpecifics.curatedCocktailIds, isCocktailMakeableAtCurrentBar]); // Added isCocktailMakeableAtCurrentBar to dependency array
 
   // Create a memoized set of available stock for efficient lookup
   const stockSet = useMemo(() => {
@@ -123,40 +134,49 @@ const BarSpecificPage = () => {
     if (stockSet.size === 0 && currentBarData.internalId !== null) { // internalId check to ensure a bar is actually selected
       return [];
     }
-    return cocktailsData.filter(cocktail => {
-      // If no ingredients, it's "makeable" by default (e.g. a conceptual "Water")
-      if (!cocktail.ingredients || cocktail.ingredients.length === 0) return true;
-      return cocktail.ingredients.every(ing => {
+      return cocktailsData
+      .filter(cocktail => {
+        // If no ingredients, it's "makeable" by default (e.g. a conceptual "Water")
+        if (!cocktail.ingredients || cocktail.ingredients.length === 0) return true;
+        return cocktail.ingredients.every(ing => {
+          if (!ing.isEssential) return true; // Optional ingredients don't break makeability
+          return stockSet.has(ing.id);     // Check ID for essential ingredients
+        });
+      })
+      .map(cocktail => ({
+        ...cocktail,
+        isMakeable: isCocktailMakeableAtCurrentBar(cocktail.ingredients) // Explicitly set, though filter implies true
+      }));
+  }, [stockSet, currentBarData.internalId, isCocktailMakeableAtCurrentBar]); // Added isCocktailMakeableAtCurrentBar
+  
+  // This function is now used to augment cocktail data within this component.
+  const isCocktailMakeableAtCurrentBar = useMemo(() => {
+    // Create a memoized version of the function itself, dependent on stockSet and currentBarData.internalId
+    // This prevents unnecessary re-creations of the function if its dependencies haven't changed,
+    // which in turn stabilizes the dependency arrays of curatedCocktailsList and availableCocktails.
+    return (cocktailIngredients) => {
+      // If the bar has no stock defined and it's a specific bar context, nothing requiring ingredients is makeable.
+      if (stockSet.size === 0 && currentBarData.internalId !== null) {
+          // Check if any essential ingredients are required. If so, it's not makeable.
+          return !cocktailIngredients.some(ing => ing.isEssential);
+      }
+      // If no ingredients, it's "makeable"
+      if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
+
+      return cocktailIngredients.every(ing => {
         if (!ing.isEssential) return true; // Optional ingredients don't break makeability
         return stockSet.has(ing.id);     // Check ID for essential ingredients
       });
-    });
+    };
   }, [stockSet, currentBarData.internalId]);
-  
-  // This function will be passed to CocktailList -> CocktailListItem
-  // to determine if a specific cocktail is makeable based on the current bar's stock.
-  const isCocktailMakeableAtCurrentBar = (cocktailIngredients) => {
-    // If the bar has no stock defined and it's a specific bar context, nothing requiring ingredients is makeable.
-    if (stockSet.size === 0 && currentBarData.internalId !== null) {
-        // Check if any essential ingredients are required. If so, it's not makeable.
-        return !cocktailIngredients.some(ing => ing.isEssential);
-    }
-    // If no ingredients, it's "makeable"
-    if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
 
-    return cocktailIngredients.every(ing => {
-      if (!ing.isEssential) return true; // Optional ingredients don't break makeability
-      return stockSet.has(ing.id);     // Check ID for essential ingredients
-    });
-  };
-
+  // Removed the duplicated and misplaced function body causing syntax error
 
   return (
     <PageWrapper theme={theme}>
       <BarHeader>{currentBarData.name}'s Corner</BarHeader>
       
       <BarFiltersWrapper>
-        <p>Filters for {currentBarData.name} will go here. Currently showing all makeable cocktails.</p>
         {/* <FilterSidebar allCocktails={availableCocktails} ... /> */}
         {/* This FilterSidebar would need to be adapted or a new one created */}
         {/* to work with only 'availableCocktails' and reflect 'currentBarData.stock' */}
@@ -168,20 +188,20 @@ const BarSpecificPage = () => {
           <CuratedSectionHeader theme={theme}>{currentBarSpecifics.curatedMenuName}</CuratedSectionHeader>
           <CocktailList 
             cocktails={curatedCocktailsList} 
-            selectedBar={currentBarData.internalId} 
-            isCocktailMakeable={isCocktailMakeableAtCurrentBar} 
+            // selectedBar and isCocktailMakeable (function) props removed
           />
         </CuratedSectionWrapper>
       )}
 
-      {/* Available Cocktails Section (renamed for clarity, or add a header) */}
-      {/* You might want to add a header here too, e.g., "All Makeable Cocktails" */}
+      {/* Available Cocktails Section */}
       {availableCocktails.length > 0 ? (
-        <CocktailList 
-          cocktails={availableCocktails} 
-          selectedBar={currentBarData.internalId} 
-          isCocktailMakeable={isCocktailMakeableAtCurrentBar} 
-        />
+        <>
+          <AvailableCocktailsHeader theme={theme}>On The Bar</AvailableCocktailsHeader>
+          <CocktailList 
+            cocktails={availableCocktails} 
+            // selectedBar and isCocktailMakeable (function) props removed
+          />
+        </>
       ) : (
         <EmptyStateWrapper theme={theme}>
           <EmptyStateIcon>🤷</EmptyStateIcon>
