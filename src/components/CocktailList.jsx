@@ -19,8 +19,8 @@ const ListWrapper = styled.div`
   }
 `;
 
-// Accept isCocktailMakeable function and selectedBar string as props
-const CocktailList = ({ cocktails, isCocktailMakeable, selectedBar }) => {
+// Expects cocktails to be pre-augmented with an 'isMakeable' boolean property
+const CocktailList = ({ cocktails }) => {
   if (!cocktails) return <p>No cocktails to display.</p>;
   if (cocktails.length === 0) return <p>No cocktails match your current filters.</p>;
 
@@ -30,9 +30,7 @@ const CocktailList = ({ cocktails, isCocktailMakeable, selectedBar }) => {
         <CocktailListItem
           key={cocktail.id}
           cocktail={cocktail}
-          // Call isCocktailMakeable for each cocktail and pass the result
-          isMakeable={isCocktailMakeable ? isCocktailMakeable(cocktail.ingredients) : undefined}
-          selectedBar={selectedBar}
+          isMakeable={cocktail.isMakeable} // Pass the pre-calculated boolean from the cocktail object
         />
       ))}
     </ListWrapper>
