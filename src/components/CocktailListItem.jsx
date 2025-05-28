@@ -121,9 +121,9 @@ const SingleBarAvailabilityIcon = styled.span`
   border-radius: ${({ theme }) => theme.borderRadiusSmall || '4px'}; /* Ensure borderRadiusSmall is in theme or use fallback */
   font-size: 0.75rem;
   font-weight: bold;
-  color: ${({ theme }) => theme.colors.onPrimary}; /* Default text color, adjust as needed */
-  background-color: ${({ theme, isAvailable }) => isAvailable ? theme.colors.secondary : theme.colors.error || '#E74C3C'};
-  border: 1px solid ${({ theme, isAvailable }) => isAvailable ? theme.colors.secondary : theme.colors.error || '#E74C3C'};
+  color: ${({ theme, isAvailable }) => isAvailable ? theme.colors.secondary : theme.colors.error || '#E74C3C'}; /* Text color matches border */
+  background-color: transparent; /* Transparent background */
+  border: 1px solid ${({ theme, isAvailable }) => isAvailable ? theme.colors.secondary : theme.colors.error || '#E74C3C'}; /* Border color indicates availability */
 
   &:not(:last-child) {
     margin-right: ${({ theme }) => theme.spacing.xs};
