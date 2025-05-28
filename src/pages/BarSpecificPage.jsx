@@ -95,19 +95,64 @@ const BarSpecificPage = () => {
   // }, [barId, selectBar]);
 
   const currentBarData = useMemo(() => {
-    // bar1Stock.ingredients and bar2Stock.ingredients are now bar1Stock.ingredientsAvailable and bar2Stock.ingredientsAvailable respectively
-    // and they directly contain arrays of IDs.
-    if (barId === 'barA') return { name: barSpecificData.bar1.barName, stock: bar1Stock.ingredientsAvailable, internalId: 'bar1' };
-    if (barId === 'barB') return { name: barSpecificData.bar2.barName, stock: bar2Stock.ingredientsAvailable, internalId: 'bar2' };
-    return { name: 'Unknown Bar', stock: [], internalId: null };
-  }, [barId]);
+    let availableStockIds = [];
+    let barName = 'Unknown Bar';
+    let internalId = null;
+
+    if (barId === 'level-one') { // Updated from 'barA'
+      // bar1Stock is the array: [{id, name, isAvailable}, ...]
+      availableStockIds = bar1Stock
+        .filter(ingredient => ingredient.isAvailable)
+        .map(ingredient => ingredient.id);
+      barName = barSpecificData.bar1.barName;
+      internalId = 'bar1';
+    } else if (barId === 'the-glitch') { // Updated from 'barB'
+      // bar2Stock is the array: [{id, name, isAvailable}, ...]
+      availableStockIds = bar2Stock
+        .filter(ingredient => ingredient.isAvailable)
+        .map(ingredient => ingredient.id);
+      barName = barSpecificData.bar2.barName;
+      internalId = 'bar2';
+    }
+    
+    return { name: barName, stock: availableStockIds, internalId: internalId };
+  }, [barId]); // bar1Stock and bar2Stock are stable JSON imports, so not explicitly listed as deps
 
   const currentBarSpecifics = useMemo(() => {
-    if (barId === 'barA') return barSpecificData.bar1;
-    if (barId === 'barB') return barSpecificData.bar2;
+    if (barId === 'level-one') return barSpecificData.bar1; // Updated from 'barA'
+    if (barId === 'the-glitch') return barSpecificData.bar2; // Updated from 'barB'
     return { curatedMenuName: '', curatedCocktailIds: [] };
   }, [barId]);
 
+  // Create a memoized set of available stock for efficient lookup
+  const stockSet = useMemo(() => {
+    if (!currentBarData.stock || currentBarData.stock.length === 0) {
+      return new Set();
+    }
+    // currentBarData.stock is now an array of ingredient IDs.
+    return new Set(currentBarData.stock);
+  }, [currentBarData.stock]);
+  
+  // Define isCocktailMakeableAtCurrentBar function using useMemo (depends on stockSet, currentBarData)
+  // This must be defined before curatedCocktailsList and availableCocktails
+  const isCocktailMakeableAtCurrentBar = useMemo(() => {
+    return (cocktailIngredients) => {
+      // If the bar has no stock defined and it's a specific bar context, nothing requiring ingredients is makeable.
+      if (stockSet.size === 0 && currentBarData.internalId !== null) {
+          // Check if any essential ingredients are required. If so, it's not makeable.
+          return !cocktailIngredients.some(ing => ing.isEssential);
+      }
+      // If no ingredients, it's "makeable"
+      if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
+
+      return cocktailIngredients.every(ing => {
+        if (!ing.isEssential) return true; // Optional ingredients don't break makeability
+        return stockSet.has(ing.id);     // Check ID for essential ingredients
+      });
+    };
+  }, [stockSet, currentBarData.internalId]);
+
+  // Now define curatedCocktailsList (depends on currentBarSpecifics, isCocktailMakeableAtCurrentBar)
   const curatedCocktailsList = useMemo(() => {
     if (!currentBarSpecifics.curatedCocktailIds || currentBarSpecifics.curatedCocktailIds.length === 0) {
       return [];
@@ -118,18 +163,9 @@ const BarSpecificPage = () => {
         ...cocktail,
         isMakeable: isCocktailMakeableAtCurrentBar(cocktail.ingredients)
       }));
-  }, [currentBarSpecifics.curatedCocktailIds, isCocktailMakeableAtCurrentBar]); // Added isCocktailMakeableAtCurrentBar to dependency array
+  }, [currentBarSpecifics.curatedCocktailIds, isCocktailMakeableAtCurrentBar]);
 
-  // Create a memoized set of available stock for efficient lookup
-  const stockSet = useMemo(() => {
-    if (!currentBarData.stock || currentBarData.stock.length === 0) {
-      return new Set();
-    }
-    // currentBarData.stock is now an array of ingredient IDs.
-    return new Set(currentBarData.stock);
-  }, [currentBarData.stock]);
-
-  // Filter cocktailsData to only include those makeable with currentBarData.stock
+  // And availableCocktails (depends on stockSet, currentBarData, isCocktailMakeableAtCurrentBar)
   const availableCocktails = useMemo(() => {
     if (stockSet.size === 0 && currentBarData.internalId !== null) { // internalId check to ensure a bar is actually selected
       return [];
@@ -147,30 +183,7 @@ const BarSpecificPage = () => {
         ...cocktail,
         isMakeable: isCocktailMakeableAtCurrentBar(cocktail.ingredients) // Explicitly set, though filter implies true
       }));
-  }, [stockSet, currentBarData.internalId, isCocktailMakeableAtCurrentBar]); // Added isCocktailMakeableAtCurrentBar
-  
-  // This function is now used to augment cocktail data within this component.
-  const isCocktailMakeableAtCurrentBar = useMemo(() => {
-    // Create a memoized version of the function itself, dependent on stockSet and currentBarData.internalId
-    // This prevents unnecessary re-creations of the function if its dependencies haven't changed,
-    // which in turn stabilizes the dependency arrays of curatedCocktailsList and availableCocktails.
-    return (cocktailIngredients) => {
-      // If the bar has no stock defined and it's a specific bar context, nothing requiring ingredients is makeable.
-      if (stockSet.size === 0 && currentBarData.internalId !== null) {
-          // Check if any essential ingredients are required. If so, it's not makeable.
-          return !cocktailIngredients.some(ing => ing.isEssential);
-      }
-      // If no ingredients, it's "makeable"
-      if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
-
-      return cocktailIngredients.every(ing => {
-        if (!ing.isEssential) return true; // Optional ingredients don't break makeability
-        return stockSet.has(ing.id);     // Check ID for essential ingredients
-      });
-    };
-  }, [stockSet, currentBarData.internalId]);
-
-  // Removed the duplicated and misplaced function body causing syntax error
+  }, [stockSet, currentBarData.internalId, isCocktailMakeableAtCurrentBar]); 
 
   return (
     <PageWrapper theme={theme}>
