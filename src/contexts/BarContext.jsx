@@ -22,17 +22,27 @@ export const BarProvider = ({ children }) => {
   const [viewingCuratedMenu, setViewingCuratedMenu] = useState(null);
 
   useEffect(() => {
+    let availableIngredientIds = [];
+    let currentBarName = null; // Initialize to null
+    let currentStockData = [];
+
     if (selectedBarId === 'bar1') {
-      setBarStock(new Set(bar1StockData.ingredientsAvailable));
-      setSelectedBarName(barSpecificDataJson.bar1.barName);
+      currentStockData = bar1StockData; // bar1StockData is the new array structure
+      currentBarName = barSpecificDataJson.bar1.barName;
     } else if (selectedBarId === 'bar2') {
-      setBarStock(new Set(bar2StockData.ingredientsAvailable));
-      setSelectedBarName(barSpecificDataJson.bar2.barName);
-    } else {
-      setBarStock(new Set());
-      setSelectedBarName(null);
+      currentStockData = bar2StockData; // bar2StockData is the new array structure
+      currentBarName = barSpecificDataJson.bar2.barName;
     }
-  }, [selectedBarId]);
+
+    if (currentStockData && currentStockData.length > 0) {
+      availableIngredientIds = currentStockData
+        .filter(ingredient => ingredient.isAvailable)
+        .map(ingredient => ingredient.id);
+    }
+
+    setBarStock(new Set(availableIngredientIds));
+    setSelectedBarName(currentBarName); // currentBarName will be null if no specific bar is selected
+  }, [selectedBarId]); // bar1StockData & bar2StockData are stable JSON imports, no need to add to deps
 
   const selectBar = (barId) => {
     setSelectedBarId(barId);
