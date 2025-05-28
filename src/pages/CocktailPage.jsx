@@ -1,16 +1,14 @@
 import React, { useContext, useMemo } from 'react'; // Added useMemo
-import { useParams, Link } from 'react-router-dom'; // Added Link
+import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import cocktailsData from '../data/cocktails.json';
-// import { useCocktailFilter } from '../hooks/useCocktailFilter'; // To be removed
-// import { useBar } from '../contexts/BarContext'; // To be removed
+import { useBar } from '../contexts/BarContext'; // Import useBar
 import { useFavorites } from '../hooks/useFavorites';
 import { ThemeContext } from '../contexts/ThemeContext';
-import { getImageUrl } from '../utils/cocktailImageLoader.js'; // Corrected path
-import bar1StockData from '../data/bar1_stock.json';
-import bar2StockData from '../data/bar2_stock.json';
+import { getImageUrl } from '../utils/cocktailImageLoader.js';
+// Removed bar1StockData and bar2StockData as BarContext now provides stock
 
-// Styled Components (ensure they are defined or reuse existing ones if applicable)
+// Styled Components
 const PageWrapper = styled.div`
   padding: ${({ theme }) => theme.spacing.medium};
   color: ${({ theme }) => theme.colors.text};
@@ -120,6 +118,21 @@ const AvailabilityStatus = styled.div`
   font-weight: bold;
 `;
 
+// New AvailabilityPill styled component
+const AvailabilityPill = styled.span`
+  display: inline-block; // To allow margin and padding
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.medium}; // Adjusted padding
+  border-radius: ${({ theme }) => theme.borderRadius};
+  font-size: 0.9rem;
+  font-weight: 600; // Slightly bolder
+  color: #fff; // White text for better contrast on colored backgrounds
+  background-color: ${({ theme, available }) => 
+    available ? theme.colors.secondary : '#D32F2F'}; // Using secondary for green, and a specific darker red
+  margin-top: ${({ theme }) => theme.spacing.medium}; // Added margin-top for spacing from image
+  margin-bottom: ${({ theme }) => theme.spacing.medium}; // Ensure it pushes content below
+  text-align: center; // Ensure text is centered if pill takes full width due to other styles
+`;
+
 const FilterLinkTag = styled(Link)`
   display: inline-block;
   background-color: ${({ theme }) => theme.colors.surface};
@@ -148,35 +161,26 @@ const BarAvailabilityIconWrapper = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing.large}; /* Increased margin for page view */
 `;
 
-const SingleBarIcon = styled.span`
-  font-size: 1em; /* Larger font size for page view */
-  color: ${({ theme, available }) => available ? theme.colors.secondary : theme.colors.textOffset};
-  border: 1px solid ${({ theme, available }) => available ? theme.colors.secondary : theme.colors.textOffset};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.small};
-  white-space: nowrap;
-  
-  .bar-name {
-    font-weight: bold;
-  }
-  .status {
-    margin-left: ${({ theme }) => theme.spacing.xs};
-  }
-`;
+// SingleBarIcon and BarAvailabilityIconWrapper are removed as they are no longer used.
 
-// Helper function to check makeability
-const checkMakeable = (cocktailIngredients, barStockIngredients) => {
-  if (!cocktailIngredients || !barStockIngredients) return false;
-  return cocktailIngredients.every(ing =>
-    barStockIngredients.some(stockIng => stockIng.name === ing.name && stockIng.available)
-  );
+// New helper function to check makeability against selected bar's stock (from context)
+const isMakeableInSelectedBar = (cocktailIngredients, currentBarStockSet, selectedBarId) => {
+  if (!selectedBarId || selectedBarId === 'all' || !currentBarStockSet || currentBarStockSet.size === 0) {
+    return false; // Not makeable if no specific bar selected or bar has no stock
+  }
+  if (!cocktailIngredients || cocktailIngredients.length === 0) {
+    return true; // Makeable if cocktail has no ingredients
+  }
+  return cocktailIngredients.every(ing => {
+    if (!ing.isEssential) return true; // Optional ingredients don't break makeability
+    return currentBarStockSet.has(ing.id); // Check essential ingredient ID in stock
+  });
 };
 
 const CocktailPage = () => {
   const { cocktailId } = useParams();
   const { theme } = useContext(ThemeContext);
-  // selectedBar and related logic (isCocktailMakeable, getIngredientAvailability from useCocktailFilter) are removed
-  // as we now show availability for both bars.
+  const { selectedBarId, barStock, selectedBarName } = useBar(); // Use BarContext
   const { isFavorite, toggleFavorite } = useFavorites();
 
   const cocktail = cocktailsData.find(c => c.id === cocktailId);
@@ -187,14 +191,11 @@ const CocktailPage = () => {
 
   const currentIsFavorite = isFavorite(cocktail.id);
 
-  const isMakeableBarA = useMemo(() => checkMakeable(cocktail.ingredients, bar1StockData.ingredients), [cocktail.ingredients]);
-  const isMakeableBarB = useMemo(() => checkMakeable(cocktail.ingredients, bar2StockData.ingredients), [cocktail.ingredients]);
-  
-  // Logic for individual ingredient availability (if needed for styling)
-  // This part is tricky without selectedBar. If we want to show which ingredients are missing for EACH bar,
-  // the UI in IngredientListItem would need significant changes.
-  // For now, let's assume IngredientListItem will just list ingredients without per-bar availability.
-  // The overall makeability is shown by the new icons.
+  // Determine makeability in the context of the selected bar
+  const isMakeable = useMemo(() => 
+    isMakeableInSelectedBar(cocktail.ingredients, barStock, selectedBarId),
+    [cocktail.ingredients, barStock, selectedBarId]
+  );
 
   return (
     <PageWrapper theme={theme}>
@@ -212,30 +213,21 @@ const CocktailPage = () => {
         </CocktailNameWrapper>
         <CocktailImage src={getImageUrl(cocktail.image)} alt={cocktail.name} />
         
-        {/* New Bar Availability Icons */}
-        <BarAvailabilityIconWrapper theme={theme}>
-          <SingleBarIcon available={isMakeableBarA} theme={theme}>
-            <span className="bar-name">Bar A:</span>
-            <span className="status">{isMakeableBarA ? 'Available' : 'Unavailable'}</span>
-          </SingleBarIcon>
-          <SingleBarIcon available={isMakeableBarB} theme={theme}>
-            <span className="bar-name">Bar B:</span>
-            <span className="status">{isMakeableBarB ? 'Available' : 'Unavailable'}</span>
-          </SingleBarIcon>
-        </BarAvailabilityIconWrapper>
+        {/* Display AvailabilityPill if a bar is selected */}
+        {selectedBarName && (
+          <AvailabilityPill available={isMakeable} theme={theme}>
+            {isMakeable ? 'Available at: ' : 'Unavailable at: '} {selectedBarName}
+          </AvailabilityPill>
+        )}
       </CocktailHeader>
-
-      {/* Old AvailabilityStatus removed */}
 
       <CocktailDetailsGrid>
         <DetailSection theme={theme}>
           <h2>Ingredients</h2>
           <IngredientList>
             {cocktail.ingredients.map((ing, index) => (
-              // Simplified IngredientListItem: remove individual availability styling based on selectedBar
-              <IngredientListItem key={index} theme={theme} available={true}> 
+              <IngredientListItem key={index} theme={theme}> {/* Removed available prop, not relevant here anymore */}
                 {ing.quantity} {ing.name} {ing.notes ? `(${ing.notes})` : ''}
-                {/* Removed unavailable note based on selectedBar */}
               </IngredientListItem>
             ))}
           </IngredientList>

@@ -1,19 +1,382 @@
-{
-  "ingredientsAvailable": [
-    "white_rum",
-    "lime_juice",
-    "simple_syrup",
-    "gin",
-    "tonic_water",
-    "rye_whiskey",
-    "sweet_vermouth_red",
-    "angostura_bitters",
-    "maraschino_cherry",
-    "tequila_blanco",
-    "orange_liqueur",
-    "coffee_liqueur",
-    "heavy_cream",
-    "ginger_ale",
-    "grenadine"
-  ]
-}
+[
+  {
+    "id": "white_rum",
+    "name": "White Rum",
+    "isAvailable": true
+  },
+  {
+    "id": "lime_juice",
+    "name": "Lime Juice",
+    "isAvailable": true
+  },
+  {
+    "id": "simple_syrup",
+    "name": "Simple Syrup (1:1)",
+    "isAvailable": true
+  },
+  {
+    "id": "mint_leaves",
+    "name": "Fresh Mint Leaves",
+    "isAvailable": false
+  },
+  {
+    "id": "soda_water",
+    "name": "Soda Water",
+    "isAvailable": false
+  },
+  {
+    "id": "lime_mint_garnish",
+    "name": "Lime wedge & Mint sprig",
+    "isAvailable": false
+  },
+  {
+    "id": "lime_wheel_garnish",
+    "name": "Lime wheel or twist",
+    "isAvailable": false
+  },
+  {
+    "id": "coconut_cream",
+    "name": "Coconut Cream",
+    "isAvailable": false
+  },
+  {
+    "id": "pineapple_juice",
+    "name": "Pineapple Juice",
+    "isAvailable": false
+  },
+  {
+    "id": "pineapple_cherry_garnish",
+    "name": "Pineapple Wedge & Cherry",
+    "isAvailable": false
+  },
+  {
+    "id": "dark_rum",
+    "name": "Gosling's Black Seal Rum",
+    "isAvailable": false
+  },
+  {
+    "id": "ginger_beer",
+    "name": "Ginger Beer",
+    "isAvailable": false
+  },
+  {
+    "id": "lime_wedge_garnish",
+    "name": "Lime Wedge",
+    "isAvailable": false
+  },
+  {
+    "id": "grapefruit_juice",
+    "name": "Grapefruit Juice",
+    "isAvailable": false
+  },
+  {
+    "id": "maraschino_liqueur",
+    "name": "Maraschino Liqueur",
+    "isAvailable": false
+  },
+  {
+    "id": "bourbon_rye_whiskey",
+    "name": "Bourbon or Rye Whiskey",
+    "isAvailable": false
+  },
+  {
+    "id": "sugar",
+    "name": "Sugar Cube",
+    "isAvailable": false
+  },
+  {
+    "id": "angostura_bitters",
+    "name": "Angostura Bitters",
+    "isAvailable": true
+  },
+  {
+    "id": "orange_peel_garnish",
+    "name": "Orange Peel",
+    "isAvailable": false
+  },
+  {
+    "id": "large_ice_cube",
+    "name": "Large Ice Cube or Sphere",
+    "isAvailable": false
+  },
+  {
+    "id": "rye_whiskey",
+    "name": "Rye Whiskey",
+    "isAvailable": true
+  },
+  {
+    "id": "sweet_vermouth_red",
+    "name": "Sweet Vermouth",
+    "isAvailable": true
+  },
+  {
+    "id": "maraschino_cherry_garnish",
+    "name": "Maraschino Cherry",
+    "isAvailable": false
+  },
+  {
+    "id": "lemon_juice",
+    "name": "Lemon Juice",
+    "isAvailable": false
+  },
+  {
+    "id": "egg_white",
+    "name": "Egg White",
+    "isAvailable": false
+  },
+  {
+    "id": "cherry_orange_slice_garnish",
+    "name": "Cherry & Orange slice",
+    "isAvailable": false
+  },
+  {
+    "id": "blended_scotch_unpeated",
+    "name": "Blended Scotch Whisky (unpeated)",
+    "isAvailable": false
+  },
+  {
+    "id": "honey_ginger_syrup",
+    "name": "Honey-Ginger Syrup",
+    "isAvailable": false
+  },
+  {
+    "id": "peated_scotch_islay",
+    "name": "Islay Scotch Whisky (peated)",
+    "isAvailable": false
+  },
+  {
+    "id": "candied_ginger_garnish",
+    "name": "Candied Ginger",
+    "isAvailable": false
+  },
+  {
+    "id": "campari",
+    "name": "Campari",
+    "isAvailable": false
+  },
+  {
+    "id": "orange_twist_garnish",
+    "name": "Orange Twist",
+    "isAvailable": false
+  },
+  {
+    "id": "bourbon_whiskey",
+    "name": "Bourbon",
+    "isAvailable": false
+  },
+  {
+    "id": "crushed_ice",
+    "name": "Crushed Ice",
+    "isAvailable": false
+  },
+  {
+    "id": "mint_sprig_garnish",
+    "name": "Mint Sprig",
+    "isAvailable": false
+  },
+  {
+    "id": "gin_london_dry",
+    "name": "Gin (London Dry preferred)",
+    "isAvailable": false
+  },
+  {
+    "id": "tonic_water",
+    "name": "Tonic Water",
+    "isAvailable": true
+  },
+  {
+    "id": "lime_cucumber_ribbon_garnish",
+    "name": "Lime Wedge or Cucumber Ribbon",
+    "isAvailable": false
+  },
+  {
+    "id": "ice_cubes",
+    "name": "Ice Cubes",
+    "isAvailable": false
+  },
+  {
+    "id": "gin",
+    "name": "Gin",
+    "isAvailable": true
+  },
+  {
+    "id": "orange_slice_garnish",
+    "name": "Orange Peel or Slice",
+    "isAvailable": false
+  },
+  {
+    "id": "creme_de_violette",
+    "name": "Crème de Violette",
+    "isAvailable": false
+  },
+  {
+    "id": "lemon_twist_cherry_garnish",
+    "name": "Lemon Twist or Cherry",
+    "isAvailable": false
+  },
+  {
+    "id": "vodka",
+    "name": "Vodka",
+    "isAvailable": false
+  },
+  {
+    "id": "citron_vodka",
+    "name": "Citron Vodka (or regular Vodka)",
+    "isAvailable": false
+  },
+  {
+    "id": "cointreau_triple_sec",
+    "name": "Cointreau (or Triple Sec)",
+    "isAvailable": false
+  },
+  {
+    "id": "cranberry_juice",
+    "name": "Cranberry Juice Cocktail",
+    "isAvailable": false
+  },
+  {
+    "id": "lemon_lime_orange_peel_garnish",
+    "name": "Lemon or Lime Twist, or Orange Peel",
+    "isAvailable": false
+  },
+  {
+    "id": "coffee_liqueur",
+    "name": "Coffee Liqueur (e.g., Kahlúa)",
+    "isAvailable": true
+  },
+  {
+    "id": "espresso_chilled",
+    "name": "Freshly Brewed Espresso",
+    "isAvailable": false
+  },
+  {
+    "id": "coffee_beans_garnish",
+    "name": "Coffee Beans",
+    "isAvailable": false
+  },
+  {
+    "id": "tequila_blanco",
+    "name": "Tequila Blanco (100% Agave)",
+    "isAvailable": true
+  },
+  {
+    "id": "orange_liqueur",
+    "name": "Orange Liqueur (e.g., Cointreau, Triple Sec)",
+    "isAvailable": true
+  },
+  {
+    "id": "agave_nectar",
+    "name": "Agave Nectar (optional)",
+    "isAvailable": false
+  },
+  {
+    "id": "salt",
+    "name": "Salt",
+    "isAvailable": false
+  },
+  {
+    "id": "grapefruit_soda",
+    "name": "Grapefruit Soda (e.g., Jarritos, Squirt, Fever-Tree Sparkling Pink Grapefruit)",
+    "isAvailable": false
+  },
+  {
+    "id": "grapefruit_slice_garnish",
+    "name": "Lime Wedge or Grapefruit Slice",
+    "isAvailable": false
+  },
+  {
+    "id": "heavy_cream_half_half",
+    "name": "Heavy Cream or Half-and-Half",
+    "isAvailable": true
+  },
+  {
+    "id": "amaretto_liqueur",
+    "name": "Amaretto Liqueur",
+    "isAvailable": false
+  },
+  {
+    "id": "triple_sec",
+    "name": "Triple Sec or Cointreau",
+    "isAvailable": false
+  },
+  {
+    "id": "sugar_rim_garnish",
+    "name": "Sugar",
+    "isAvailable": false
+  },
+  {
+    "id": "lemon_twist_garnish",
+    "name": "Lemon Twist",
+    "isAvailable": false
+  },
+  {
+    "id": "ginger_ale",
+    "name": "Ginger Ale",
+    "isAvailable": true
+  },
+  {
+    "id": "grenadine",
+    "name": "Grenadine",
+    "isAvailable": true
+  },
+  {
+    "id": "maraschino_cherry_orange_garnish",
+    "name": "Maraschino Cherry & Orange Slice",
+    "isAvailable": false
+  },
+  {
+    "id": "mezcal",
+    "name": "Mezcal",
+    "isAvailable": false
+  },
+  {
+    "id": "reposado_tequila",
+    "name": "Reposado Tequila",
+    "isAvailable": false
+  },
+  {
+    "id": "orange_bitters",
+    "name": "Orange Bitters",
+    "isAvailable": false
+  },
+  {
+    "id": "cognac",
+    "name": "Cognac",
+    "isAvailable": false
+  },
+  {
+    "id": "peruvian_pisco",
+    "name": "Peruvian Pisco",
+    "isAvailable": false
+  },
+  {
+    "id": "peach_puree_fresh",
+    "name": "Fresh Peach Puree",
+    "isAvailable": false
+  },
+  {
+    "id": "prosecco",
+    "name": "Prosecco",
+    "isAvailable": false
+  },
+  {
+    "id": "champagne_sparkling_wine",
+    "name": "Champagne or Dry Sparkling Wine",
+    "isAvailable": false
+  },
+  {
+    "id": "fino_manzanilla_sherry",
+    "name": "Fino or Manzanilla Sherry",
+    "isAvailable": false
+  },
+  {
+    "id": "lemon_lime_soda",
+    "name": "Lemon-Lime Soda (e.g., Sprite, 7UP) or Soda Water with Lemon Slice",
+    "isAvailable": false
+  },
+  {
+    "id": "aperol",
+    "name": "Aperol",
+    "isAvailable": false
+  }
+]
