@@ -1,7 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'; // Added useCallback
 import { useBar } from '../contexts/BarContext';
-import bar1StockData from '../data/bar1_stock.json';
-import bar2StockData from '../data/bar2_stock.json';
 import barSpecificData from '../data/bar_specific_data.json';
 
 export const useCocktailFilter = (allCocktails) => {
@@ -15,33 +13,24 @@ export const useCocktailFilter = (allCocktails) => {
   const [glassType, setGlassType] = useState('');
   const [searchTerm, setSearchTerm] = useState(''); // Added search term state
 
-  const { selectedBar, viewingCuratedMenu } = useBar();
+  const { selectedBarId, viewingCuratedMenu, barStock } = useBar();
 
-  // Memoize current bar stock to avoid recalculating on every render
-  const currentBarStockSet = useMemo(() => {
-    let stock = [];
-    if (selectedBar === 'bar1') {
-      stock = bar1StockData.ingredientsAvailable;
-    } else if (selectedBar === 'bar2') {
-      stock = bar2StockData.ingredientsAvailable;
-    }
-    // Assuming stock is now an array of IDs and IDs are consistently cased.
-    return new Set(stock); 
-  }, [selectedBar]);
+  // The barStock from the context is already a Set of available ingredient IDs.
+  const currentBarStockSet = barStock;
   
   const isCocktailMakeable = useCallback((cocktailIngredients) => {
-    if (selectedBar === 'all' && !viewingCuratedMenu) return true; // Always makeable if no bar selected
+    if (selectedBarId === 'all' && !viewingCuratedMenu) return true; // Always makeable if no bar selected
     if (!cocktailIngredients || cocktailIngredients.length === 0) return true; // No ingredients needed
 
     // If a curated menu is viewed, availability still depends on the *associated* bar's stock.
-    // The selectedBar state is correctly set by BarContext when viewing a curated menu.
+    // The selectedBarId state is correctly set by BarContext when viewing a curated menu.
     const stockToCheck = currentBarStockSet;
-    if (stockToCheck.size === 0 && (selectedBar === 'bar1' || selectedBar === 'bar2')) {
+    if (stockToCheck.size === 0 && (selectedBarId === 'bar1' || selectedBarId === 'bar2')) {
         // A specific bar is selected, but its stock appears empty or wasn't loaded for currentBarStockSet.
         // This implies the bar cannot make anything that requires ingredients.
-        return cocktailIngredients.length === 0;
+        return !cocktailIngredients.some(ing => ing.isEssential);
     }
-     if (stockToCheck.size === 0 && selectedBar === 'all') { // No bar selected, so can't check against specific stock
+     if (stockToCheck.size === 0 && selectedBarId === 'all') { // No bar selected, so can't check against specific stock
         return true; // Effectively, consider it makeable from a "general" perspective
     }
 
@@ -50,7 +39,7 @@ export const useCocktailFilter = (allCocktails) => {
       if (!ingObj.isEssential) return true; // Optional ingredients don't break makeability
       return stockToCheck.has(ingObj.id); // Check ID for essential ingredients
     });
-  }, [selectedBar, viewingCuratedMenu, currentBarStockSet]);
+  }, [selectedBarId, viewingCuratedMenu, currentBarStockSet]);
 
 
   const getIngredientAvailability = useCallback((cocktailIngredients) => {
@@ -58,15 +47,12 @@ export const useCocktailFilter = (allCocktails) => {
     if (!cocktailIngredients || cocktailIngredients.length === 0) return availability;
 
     const stockToCheck = currentBarStockSet;
-    const allAvailable = selectedBar === 'all' || (stockToCheck.size === 0 && selectedBar !== 'all');
-
 
     cocktailIngredients.forEach(ingObj => {
       // If no specific bar is selected (all bars), consider all ingredients as "available" for UI indication purposes
-      // or if a bar is selected but has no stock (stockToCheck.size === 0), also treat as generally available for UI
-      if (selectedBar === 'all') {
+      if (selectedBarId === 'all') {
         availability[ingObj.id] = true; 
-      } else if (stockToCheck.size === 0 && (selectedBar === 'bar1' || selectedBar === 'bar2')) {
+      } else if (stockToCheck.size === 0 && (selectedBarId === 'bar1' || selectedBarId === 'bar2')) {
         // Specific bar selected but no stock, so nothing is available unless it's not essential
         availability[ingObj.id] = !ingObj.isEssential;
       }
@@ -75,7 +61,7 @@ export const useCocktailFilter = (allCocktails) => {
       }
     });
     return availability;
-  }, [selectedBar, currentBarStockSet]);
+  }, [selectedBarId, currentBarStockSet]);
 
 
   const filteredCocktails = useMemo(() => {
@@ -129,7 +115,7 @@ export const useCocktailFilter = (allCocktails) => {
       // After filtering for curated, we then check if they are makeable by the selected bar (which is set by viewingCuratedMenu)
       cocktails = cocktails.filter(c => isCocktailMakeable(c.ingredients));
 
-    } else if (selectedBar === 'bar1' || selectedBar === 'bar2') {
+    } else if (selectedBarId === 'bar1' || selectedBarId === 'bar2') {
       // Filter by what the selected bar can make
       cocktails = cocktails.filter(c => isCocktailMakeable(c.ingredients));
     }
@@ -148,7 +134,7 @@ export const useCocktailFilter = (allCocktails) => {
   }, [
     allCocktails, baseSpirit, includeIngredients, excludeIngredients,
     flavorProfile, difficulty, tags, glassType, thematic, searchTerm, // Added thematic and searchTerm to dependency array
-    selectedBar, viewingCuratedMenu, isCocktailMakeable
+    selectedBarId, viewingCuratedMenu, isCocktailMakeable
   ]);
 
   const resetFilters = () => {
@@ -177,7 +163,5 @@ export const useCocktailFilter = (allCocktails) => {
     resetFilters,
     getIngredientAvailability,
     isCocktailMakeable,
-    // Exposing currentBarStockSet might be useful for debugging or advanced UI
-    // currentBarStock: currentBarStockSet (consider if needed for direct UI use)
   };
 };
