@@ -14,6 +14,7 @@ import BarSpecificPage from './pages/BarSpecificPage'; // Added
 import FilteredCocktailListPage from './pages/FilteredCocktailListPage'; // Added
 import BackToTopButton from './components/BackToTopButton'; // Added
 import ScrollToTop from './components/ScrollToTop'; // Import ScrollToTop
+import AdminPage from './pages/AdminPage'; // Import AdminPage
 
 // Basic App layout styling
 const AppWrapper = styled.div`
@@ -42,6 +43,7 @@ const AppContent = () => {
               <Route path="/cocktails/:cocktailId" element={<CocktailPage />} />
               <Route path="/bar/:barId" element={<BarSpecificPage />} /> {/* Added */}
               <Route path="/cocktails/filter/:filterType/:filterValue" element={<FilteredCocktailListPage />} /> {/* Added */}
+              <Route path="/admin" element={<AdminPage />} />
             </Routes>
           </main>
         </AppWrapper>
