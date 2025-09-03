@@ -1,13 +1,12 @@
-import React, { useMemo } from 'react'; // Added useMemo
+import React, { useMemo, useContext } from 'react'; // Added useContext
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { getImageUrl } from '../utils/cocktailImageLoader.js';
 import { useFavorites } from '../hooks/useFavorites';
-import bar1StockData from '../data/bar1_stock.json'; // Import bar1_stock.json
-import bar2StockData from '../data/bar2_stock.json'; // Import bar2_stock.json
-import barSpecificData from '../data/bar_specific_data.json'; // Import bar_specific_data.json
+import { useBar } from '../contexts/BarContext'; // Import useBar
+import barSpecificData from '../data/bar_specific_data.json';
 
-// Styled components (ensure they exist or are defined if not already)
+// Styled components
 const ListItemWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.surface};
   border-radius: ${({ theme }) => theme.borderRadius};
@@ -17,7 +16,7 @@ const ListItemWrapper = styled.div`
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 100%; /* For consistent card heights in a grid */
+  height: 100%;
   transition: all 0.3s ease;
   position: relative;
 
@@ -35,32 +34,24 @@ const ImageContainer = styled.div`
 
 const CocktailImage = styled.img`
   width: 100%;
-  aspect-ratio: 3/2; /* Or height: 180px; */
+  aspect-ratio: 3/2;
   object-fit: cover;
-  border-radius: ${({ theme }) => theme.borderRadius}; /* Full radius if image is main element */
-  display: block; // Added
+  border-radius: ${({ theme }) => theme.borderRadius};
+  display: block;
 `;
 
 const CocktailName = styled.h3`
   font-family: ${({ theme }) => theme.fonts.headings};
   color: ${({ theme }) => theme.colors.primary};
   font-size: 1.25rem;
-  margin: 0 0 ${({ theme }) => theme.spacing.small} 0; /* Adjusted margin */
-  min-height: 2.5em; // Ensure space for text to avoid layout shifts, adjust as needed
+  margin: 0 0 ${({ theme }) => theme.spacing.small} 0;
+  min-height: 2.5em;
 
   @media (max-width: 600px) {
-    font-size: 1.1rem; // Slightly smaller font for smaller cards
+    font-size: 1.1rem;
     min-height: 2.2em;
   }
 `;
-
-// Description/Tags (Example, if added later)
-// const CocktailTags = styled.p`
-//   font-family: ${({ theme }) => theme.fonts.main};
-//   color: ${({ theme }) => theme.colors.textOffset};
-//   font-size: 0.9rem;
-//   margin-bottom: ${({ theme }) => theme.spacing.small};
-// `;
 
 const ViewLink = styled(Link)`
   display: inline-block;
@@ -73,7 +64,7 @@ const ViewLink = styled(Link)`
   font-family: ${({ theme }) => theme.fonts.main};
   font-weight: 600;
   text-transform: uppercase;
-  margin-top: auto; /* Pushes button to the bottom if card is flex column */
+  margin-top: auto;
   transition: all 0.3s ease;
 
   &:hover, &:focus {
@@ -98,16 +89,15 @@ const AvailabilityIndicator = styled.div`
   height: 12px;
   border-radius: 50%;
   background-color: ${({ theme, isMakeable }) => {
-    if (isMakeable === true) return theme.colors.secondary; // Use theme color for "green"
-    if (isMakeable === false) return '#E74C3C'; // A generic red, or add to theme.colors.error
+    if (isMakeable === true) return theme.colors.secondary;
+    if (isMakeable === false) return '#E74C3C';
     return 'transparent';
   }};
-  border: 1px solid ${({ theme }) => theme.colors.surface}; /* Border against card background */
+  border: 1px solid ${({ theme }) => theme.colors.surface};
   box-shadow: ${({ theme }) => theme.shadows.small};
   z-index: 1;
 `;
 
-// New styled components for Bar Availability Icons
 const BarAvailabilityIconWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -118,12 +108,12 @@ const BarAvailabilityIconWrapper = styled.div`
 
 const SingleBarAvailabilityIcon = styled.span`
   padding: 2px 6px;
-  border-radius: ${({ theme }) => theme.borderRadiusSmall || '4px'}; /* Ensure borderRadiusSmall is in theme or use fallback */
+  border-radius: ${({ theme }) => theme.borderRadiusSmall || '4px'};
   font-size: 0.75rem;
   font-weight: bold;
-  color: ${({ theme, isAvailable }) => isAvailable ? theme.colors.secondary : theme.colors.error || '#E74C3C'}; /* Text color matches border */
-  background-color: transparent; /* Transparent background */
-  border: 1px solid ${({ theme, isAvailable }) => isAvailable ? theme.colors.secondary : theme.colors.error || '#E74C3C'}; /* Border color indicates availability */
+  color: ${({ theme, isAvailable }) => isAvailable ? theme.colors.secondary : theme.colors.error || '#E74C3C'};
+  background-color: transparent;
+  border: 1px solid ${({ theme, isAvailable }) => isAvailable ? theme.colors.secondary : theme.colors.error || '#E74C3C'};
 
   &:not(:last-child) {
     margin-right: ${({ theme }) => theme.spacing.xs};
@@ -137,36 +127,26 @@ const FavoriteButton = styled.button`
   bottom: ${({ theme }) => theme.spacing.small};
   right: ${({ theme }) => theme.spacing.small};
   background: transparent;
-  border: none; // Border removed
-  color: ${({ theme, isFavorite }) => isFavorite ? '#DA70D6' : theme.colors.textOffset}; // New colors
-  font-size: 1.5rem; /* Slightly smaller for better balance */
+  border: none;
+  color: ${({ theme, isFavorite }) => isFavorite ? '#DA70D6' : theme.colors.textOffset};
+  font-size: 1.5rem;
   cursor: pointer;
   padding: 0;
-  z-index: 1; // Keep z-index
+  z-index: 1;
   transition: color 0.3s ease;
 
   &:hover {
-    color: ${({ theme, isFavorite }) => isFavorite ? '#C060C0' : '#DA70D6'}; // New hover colors
+    color: ${({ theme, isFavorite }) => isFavorite ? '#C060C0' : '#DA70D6'};
   }
 
   @media (max-width: 600px) {
-    font-size: 1.3rem; // Adjust icon size on smaller screens
+    font-size: 1.3rem;
     top: auto;
     left: auto;
     bottom: ${({ theme }) => theme.spacing.xs};
     right: ${({ theme }) => theme.spacing.xs};
   }
 `;
-
-// Memoize stock data for Bar 1 (Level One)
-const bar1StockSet = new Set(
-  bar1StockData.filter(item => item.isAvailable).map(item => item.id)
-);
-
-// Memoize stock data for Bar 2 (The Glitch)
-const bar2StockSet = new Set(
-  bar2StockData.filter(item => item.isAvailable).map(item => item.id)
-);
 
 // Helper function to check if a cocktail is makeable at a specific bar
 const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
@@ -179,22 +159,23 @@ const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
 
 const CocktailListItem = ({ cocktail, isMakeable }) => {
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { barAStock, barBStock } = useBar(); // Get both bar stocks from context
 
   if (!cocktail) return null;
 
   const imageSrc = getImageUrl(cocktail.image);
   const currentIsFavorite = isFavorite(cocktail.id);
 
-  // Determine makeability for each bar
-  const isMakeableBar1 = useMemo(() => checkMakeableForBar(cocktail.ingredients, bar1StockSet), [cocktail.ingredients]);
-  const isMakeableBar2 = useMemo(() => checkMakeableForBar(cocktail.ingredients, bar2StockSet), [cocktail.ingredients]);
+  // Determine makeability for each bar using context data
+  const isMakeableBar1 = useMemo(() => checkMakeableForBar(cocktail.ingredients, barAStock), [cocktail.ingredients, barAStock]);
+  const isMakeableBar2 = useMemo(() => checkMakeableForBar(cocktail.ingredients, barBStock), [cocktail.ingredients, barBStock]);
 
-  const bar1Name = barSpecificData.bar1.barName; // "Level One"
-  const bar2Name = barSpecificData.bar2.barName; // "The Glitch"
+  const bar1Name = barSpecificData.bar1.barName;
+  const bar2Name = barSpecificData.bar2.barName;
 
   const handleFavoriteClick = (e) => {
     e.preventDefault();
-    e.stopPropagation(); // Prevent card click event if any
+    e.stopPropagation();
     toggleFavorite(cocktail.id);
   };
 
@@ -202,7 +183,6 @@ const CocktailListItem = ({ cocktail, isMakeable }) => {
     <ListItemWrapper>
       <Link to={`/cocktails/${cocktail.id}`} style={{ textDecoration: 'none' }}>
         <ImageContainer>
-          {/* Render AvailabilityIndicator if isMakeable is true or false, but not undefined/null */}
           {typeof isMakeable === 'boolean' && <AvailabilityIndicator isMakeable={isMakeable} />}
           <CocktailImage src={imageSrc} alt={cocktail.name} />
           <FavoriteButton
@@ -222,13 +202,13 @@ const CocktailListItem = ({ cocktail, isMakeable }) => {
           isAvailable={isMakeableBar1}
           title={`${bar1Name}: ${isMakeableBar1 ? 'Available' : 'Unavailable'}`}
         >
-          L1 {/* Short name for Level One */}
+          L1
         </SingleBarAvailabilityIcon>
         <SingleBarAvailabilityIcon
           isAvailable={isMakeableBar2}
           title={`${bar2Name}: ${isMakeableBar2 ? 'Available' : 'Unavailable'}`}
         >
-          TG {/* Short name for The Glitch */}
+          TG
         </SingleBarAvailabilityIcon>
       </BarAvailabilityIconWrapper>
       <ViewLink to={`/cocktails/${cocktail.id}`}>View Recipe</ViewLink>

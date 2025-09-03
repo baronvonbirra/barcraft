@@ -1,14 +1,12 @@
-import React, { useContext, useMemo } from 'react'; // Added useMemo
+import React, { useContext, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import cocktailsData from '../data/cocktails.json';
-import { useBar } from '../contexts/BarContext'; // Import useBar
+import { useBar } from '../contexts/BarContext';
 import { useFavorites } from '../hooks/useFavorites';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { getImageUrl } from '../utils/cocktailImageLoader.js';
-import bar1StockData from '../data/bar1_stock.json'; // Import bar1_stock.json
-import bar2StockData from '../data/bar2_stock.json'; // Import bar2_stock.json
-import barSpecificData from '../data/bar_specific_data.json'; // Import bar_specific_data.json
+import barSpecificData from '../data/bar_specific_data.json';
 
 // Styled Components
 const PageWrapper = styled.div`
@@ -20,7 +18,7 @@ const PageWrapper = styled.div`
 const CocktailHeader = styled.div`
   text-align: center;
   margin-bottom: ${({ theme }) => theme.spacing.large};
-  position: relative; // For FavoriteButton positioning
+  position: relative;
 `;
 
 const CocktailNameWrapper = styled.div`
@@ -34,18 +32,18 @@ const CocktailName = styled.h1`
   font-family: ${({ theme }) => theme.fonts.headings};
   color: ${({ theme }) => theme.colors.primary};
   font-size: 2.5rem;
-  margin: 0; // Remove default margin
-  margin-right: ${({ theme }) => theme.spacing.medium}; // Space for the button
+  margin: 0;
+  margin-right: ${({ theme }) => theme.spacing.medium};
 `;
 
 const FavoriteButtonDetail = styled.button`
   background: transparent;
   border: none;
   color: ${props => props.isFavorite ? props.theme.colors.primary : props.theme.colors.textOffset};
-  font-size: 2.5rem; // Larger heart icon for detail page
+  font-size: 2.5rem;
   cursor: pointer;
   padding: 0;
-  line-height: 1; // Align icon better with text
+  line-height: 1;
 
   &:hover {
     color: ${props => props.theme.colors.secondary};
@@ -58,10 +56,10 @@ const CocktailImage = styled.img`
   height: auto;
   object-fit: cover;
   border-radius: ${({ theme }) => theme.borderRadius};
-  display: block; /* Added */
-  margin-left: auto; /* Added */
-  margin-right: auto; /* Added */
-  margin-bottom: ${({ theme }) => theme.spacing.medium}; /* Preserved */
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: ${({ theme }) => theme.spacing.medium};
   border: 1px solid ${({ theme }) => theme.colors.border};
 `;
 
@@ -108,34 +106,6 @@ const IngredientListItem = styled.li`
   }
 `;
 
-const AvailabilityStatus = styled.div`
-  padding: ${({ theme }) => theme.spacing.medium};
-  margin-top: ${({ theme }) => theme.spacing.medium};
-  margin-bottom: ${({ theme }) => theme.spacing.medium};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  background-color: ${props => props.isMakeable ? props.theme.colors.secondary : props.theme.colors.surface};
-  color: ${props => props.isMakeable ? props.theme.colors.onPrimary : props.theme.colors.textOffset};
-  border: 1px solid ${props => props.isMakeable ? props.theme.colors.secondary : props.theme.colors.border};
-  text-align: center;
-  font-weight: bold;
-`;
-
-// New AvailabilityPill styled component
-const AvailabilityPill = styled.span`
-  display: inline-block; // To allow margin and padding
-  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.medium}; // Adjusted padding
-  border-radius: ${({ theme }) => theme.borderRadius};
-  font-size: 0.9rem;
-  font-weight: 600; // Slightly bolder
-  color: #fff; // White text for better contrast on colored backgrounds
-  background-color: ${({ theme, available }) => 
-    available ? theme.colors.secondary : '#D32F2F'}; // Using secondary for green, and a specific darker red
-  margin-top: ${({ theme }) => theme.spacing.medium}; // Added margin-top for spacing from image
-  margin-bottom: ${({ theme }) => theme.spacing.medium}; // Ensure it pushes content below
-  text-align: center; // Ensure text is centered if pill takes full width due to other styles
-`;
-
-// New Styled Components for All Bars Availability
 const AllBarsAvailabilityWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -149,11 +119,11 @@ const IndividualBarStatus = styled.div`
   border-radius: ${({ theme }) => theme.borderRadius};
   font-size: 0.9rem;
   font-weight: 600;
-  color: #fff; // White text for contrast
+  color: #fff;
   background-color: ${({ theme, isAvailable }) => 
     isAvailable ? theme.colors.secondary : (theme.colors.error || '#D32F2F')};
   text-align: center;
-  min-width: 120px; // Ensure a minimum width for better visual consistency
+  min-width: 120px;
 `;
 
 const FilterLinkTag = styled(Link)`
@@ -165,7 +135,7 @@ const FilterLinkTag = styled(Link)`
   border-radius: ${({ theme }) => theme.borderRadius};
   text-decoration: none;
   margin-right: ${({ theme }) => theme.spacing.small};
-  margin-bottom: ${({ theme }) => theme.spacing.small}; // For wrapping
+  margin-bottom: ${({ theme }) => theme.spacing.small};
   transition: all 0.2s ease-in-out;
 
   &:hover {
@@ -175,21 +145,10 @@ const FilterLinkTag = styled(Link)`
   }
 `;
 
-// Re-define or import BarAvailabilityIconWrapper and SingleBarIcon
-const BarAvailabilityIconWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spacing.medium}; /* Increased gap for page view */
-  margin-top: ${({ theme }) => theme.spacing.small};
-  margin-bottom: ${({ theme }) => theme.spacing.large}; /* Increased margin for page view */
-`;
-
-// Helper function to check if a cocktail is makeable at a specific bar
-// (Copied from CocktailListItem.jsx as per instructions for this task)
 const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
-  if (!cocktailIngredients || cocktailIngredients.length === 0) return true; // No ingredients needed
+  if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
   return cocktailIngredients.every(ing => {
-    if (!ing.isEssential) return true; // Optional ingredients don't break makeability
+    if (!ing.isEssential) return true;
     return barStockSet.has(ing.id);
   });
 };
@@ -197,45 +156,28 @@ const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
 const CocktailPage = () => {
   const { cocktailId } = useParams();
   const { theme } = useContext(ThemeContext);
-  // const { selectedBarId, barStock, selectedBarName } = useBar(); // Retaining for now, but new logic will override display part
+  const { barAStock, barBStock } = useBar();
   const { isFavorite, toggleFavorite } = useFavorites();
 
   const cocktail = cocktailsData.find(c => c.id === cocktailId);
 
-  // Memoize stock data for Bar 1 (Level One)
-  const bar1StockSet = useMemo(() => 
-    new Set(bar1StockData.filter(item => item.isAvailable).map(item => item.id)), 
-    [] // Empty dependency array as bar1StockData is a static import
-  );
-
-  // Memoize stock data for Bar 2 (The Glitch)
-  const bar2StockSet = useMemo(() =>
-    new Set(bar2StockData.filter(item => item.isAvailable).map(item => item.id)),
-    [] // Empty dependency array as bar2StockData is a static import
-  );
-
-  // Determine makeability for each bar
   const isMakeableBar1 = useMemo(() => 
-    checkMakeableForBar(cocktail?.ingredients, bar1StockSet), 
-    [cocktail?.ingredients, bar1StockSet]
+    checkMakeableForBar(cocktail?.ingredients, barAStock),
+    [cocktail?.ingredients, barAStock]
   );
   const isMakeableBar2 = useMemo(() => 
-    checkMakeableForBar(cocktail?.ingredients, bar2StockSet), 
-    [cocktail?.ingredients, bar2StockSet]
+    checkMakeableForBar(cocktail?.ingredients, barBStock),
+    [cocktail?.ingredients, barBStock]
   );
 
-  const bar1Name = barSpecificData.bar1.barName; // "Level One"
-  const bar2Name = barSpecificData.bar2.barName; // "The Glitch"
+  const bar1Name = barSpecificData.bar1.barName;
+  const bar2Name = barSpecificData.bar2.barName;
 
   if (!cocktail) {
     return <PageWrapper theme={theme}><p>Cocktail not found!</p></PageWrapper>;
   }
 
   const currentIsFavorite = isFavorite(cocktail.id);
-
-  // Note: The existing 'isMakeable' based on selectedBarId context is still here.
-  // The new display for Bar1 and Bar2 availability is separate and unconditional.
-  // const { selectedBarId, barStock, selectedBarName } = useBar(); // This line is already present
 
   return (
     <PageWrapper theme={theme}>
@@ -253,7 +195,6 @@ const CocktailPage = () => {
         </CocktailNameWrapper>
         <CocktailImage src={getImageUrl(cocktail.image)} alt={cocktail.name} />
         
-        {/* New All Bars Availability Display */}
         <AllBarsAvailabilityWrapper theme={theme}>
           <IndividualBarStatus theme={theme} isAvailable={isMakeableBar1}>
             {bar1Name}: {isMakeableBar1 ? "Available" : "Unavailable"}
@@ -262,18 +203,6 @@ const CocktailPage = () => {
             {bar2Name}: {isMakeableBar2 ? "Available" : "Unavailable"}
           </IndividualBarStatus>
         </AllBarsAvailabilityWrapper>
-        
-        {/* The old AvailabilityPill based on context can be kept or removed. */}
-        {/* For this task, the requirement is to show *both* bars, which the above does. */}
-        {/* If selectedBarName related pill is still desired: */}
-        {/* {selectedBarName && (
-          <AvailabilityPill 
-            available={isMakeableInSelectedBar(cocktail.ingredients, barStock, selectedBarId)} 
-            theme={theme}
-          >
-            {isMakeableInSelectedBar(cocktail.ingredients, barStock, selectedBarId) ? 'Available at: ' : 'Unavailable at: '} {selectedBarName}
-          </AvailabilityPill>
-        )} */}
       </CocktailHeader>
 
       <CocktailDetailsGrid>
@@ -281,7 +210,7 @@ const CocktailPage = () => {
           <h2>Ingredients</h2>
           <IngredientList>
             {cocktail.ingredients.map((ing, index) => (
-              <IngredientListItem key={index} theme={theme}> {/* Removed available prop, not relevant here anymore */}
+              <IngredientListItem key={index} theme={theme}>
                 {ing.quantity} {ing.name} {ing.notes ? `(${ing.notes})` : ''}
               </IngredientListItem>
             ))}
@@ -303,7 +232,6 @@ const CocktailPage = () => {
             <strong>Glass:</strong>{' '}
             {(() => {
               if (Array.isArray(cocktail.glass)) {
-                // Case 1: cocktail.glass is an array of strings
                 return cocktail.glass.map(glassName => (
                   <FilterLinkTag 
                     key={glassName.trim()} 
@@ -313,7 +241,6 @@ const CocktailPage = () => {
                   </FilterLinkTag>
                 ));
               } else if (typeof cocktail.glass === 'string') {
-                // Case 2: cocktail.glass is a single string
                 return (
                   <FilterLinkTag 
                     to={`/cocktails/filter/glass/${encodeURIComponent(cocktail.glass.trim())}`}
@@ -322,7 +249,6 @@ const CocktailPage = () => {
                   </FilterLinkTag>
                 );
               } else {
-                // Case 3: cocktail.glass is null, undefined, or other
                 return 'N/A';
               }
             })()}
