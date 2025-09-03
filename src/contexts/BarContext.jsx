@@ -26,10 +26,29 @@ export const BarProvider = ({ children }) => {
 
   // Fetch all stock data on initial load
   useEffect(() => {
+    const CACHE_KEY = 'ingredientCache';
+    const CACHE_TIMESTAMP_KEY = 'ingredientCacheTimestamp';
+    const CACHE_DURATION_MS = 60 * 60 * 1000; // 1 hour
+
     const fetchAllStock = async () => {
+      // Try to load from cache first
+      const cachedTimestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
+      const cachedData = localStorage.getItem(CACHE_KEY);
+
+      if (cachedTimestamp && cachedData && (Date.now() - parseInt(cachedTimestamp, 10) < CACHE_DURATION_MS)) {
+        console.log("Loading ingredients from cache.");
+        const parsedData = JSON.parse(cachedData);
+        const barAIds = new Set(parsedData.barAIds);
+        const barBIds = new Set(parsedData.barBIds);
+        setBarAStock(barAIds);
+        setBarBStock(barBIds);
+        return;
+      }
+
+      console.log("Fetching ingredients from Supabase.");
       const { data, error } = await supabase
         .from('ingredients')
-        .select('id, isAvailableBarA, isAvailableBarB');
+        .select('id, is_available_bar_a, is_available_bar_b');
 
       if (error) {
         console.error('Error fetching all bar stock:', error);
@@ -37,11 +56,19 @@ export const BarProvider = ({ children }) => {
         const barAIds = new Set();
         const barBIds = new Set();
         data.forEach(ingredient => {
-          if (ingredient.isAvailableBarA) barAIds.add(ingredient.id);
-          if (ingredient.isAvailableBarB) barBIds.add(ingredient.id);
+          if (ingredient.is_available_bar_a) barAIds.add(ingredient.id);
+          if (ingredient.is_available_bar_b) barBIds.add(ingredient.id);
         });
         setBarAStock(barAIds);
         setBarBStock(barBIds);
+
+        // Save to cache
+        const cacheData = {
+          barAIds: Array.from(barAIds),
+          barBIds: Array.from(barBIds)
+        };
+        localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+        localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
       }
     };
     fetchAllStock();

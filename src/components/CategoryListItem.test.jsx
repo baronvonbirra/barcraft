@@ -1,12 +1,13 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { ThemeProvider, ThemeContext } from '../contexts/ThemeContext'; // Adjust path as needed
-import CategoryListItem from './CategoryListItem'; // Adjust path as needed
-import RumIcon from '../assets/categories/rum-category.png'; // Actual path
-import WhiskeyIcon from '../assets/categories/whiskey-category.png'; // Actual path
+import { ThemeProvider } from 'styled-components';
+import CategoryListItem from './CategoryListItem';
 
-// Use the new modern dark theme as the mock theme
+vi.mock('../utils/cocktailImageLoader.js', () => ({
+  getImageUrl: (path) => path, // Return the path directly
+}));
+
 const mockTheme = {
   mode: 'dark',
   colors: {
@@ -20,9 +21,8 @@ const mockTheme = {
 };
 
 const renderWithProviders = (ui) => {
-  // Use a simplified ThemeContext.Provider value if toggleTheme is not used in CategoryListItem
   return render(
-    <ThemeProvider theme={mockTheme}> {/* Pass mockTheme directly */}
+    <ThemeProvider theme={mockTheme}>
       <MemoryRouter>
         {ui}
       </MemoryRouter>
@@ -31,9 +31,9 @@ const renderWithProviders = (ui) => {
 };
 
 describe('CategoryListItem', () => {
-  const rumCategory = { id: 'rum', name: 'Rum-based Cocktails' };
-  const whiskeyCategory = { id: 'whiskey', name: 'Whiskey-based Cocktails' };
-  const ginCategory = { id: 'gin', name: 'Gin-based Cocktails' };
+  const rumCategory = { id: 'rum', name: 'Rum-based Cocktails', image: 'src/assets/categories/rum-category.png' };
+  const whiskeyCategory = { id: 'whiskey', name: 'Whiskey-based Cocktails', image: 'src/assets/categories/whiskey-category.png' };
+  const ginCategory = { id: 'gin', name: 'Gin-based Cocktails', image: 'src/assets/categories/gin-category.png' };
 
   it('renders category name and link correctly', () => {
     renderWithProviders(<CategoryListItem category={ginCategory} />);
@@ -46,22 +46,22 @@ describe('CategoryListItem', () => {
     renderWithProviders(<CategoryListItem category={rumCategory} />);
     const icon = screen.getByAltText(/Rum-based Cocktails icon/i);
     expect(icon).toBeInTheDocument();
-    expect(icon).toHaveAttribute('src', RumIcon); // Check src attribute
+    expect(icon).toHaveAttribute('src', 'src/assets/categories/rum-category.png');
   });
 
   it('displays Whiskey icon for Whiskey-based Cocktails category', () => {
     renderWithProviders(<CategoryListItem category={whiskeyCategory} />);
     const icon = screen.getByAltText(/Whiskey-based Cocktails icon/i);
     expect(icon).toBeInTheDocument();
-    expect(icon).toHaveAttribute('src', WhiskeyIcon);
+    expect(icon).toHaveAttribute('src', 'src/assets/categories/whiskey-category.png');
   });
 
-  it('does not display an icon for other categories', () => {
-    renderWithProviders(<CategoryListItem category={ginCategory} />);
-    // Query for any image; there shouldn't be one for Gin.
-    // Note: If CategoryListItem had other images, this would need adjustment.
-    const icon = screen.queryByRole('img');
-    expect(icon).not.toBeInTheDocument();
+  it('displays placeholder icon for other categories', () => {
+    const otherCategory = { id: 'other', name: 'Other Cocktails' }; // No image property
+    renderWithProviders(<CategoryListItem category={otherCategory} />);
+    const icon = screen.getByAltText(/Other Cocktails icon/i);
+    expect(icon).toBeInTheDocument();
+    expect(icon).toHaveAttribute('src', 'src/assets/cocktails/placeholder.jpg');
   });
 
   it('renders category name correctly for Rum category', () => {

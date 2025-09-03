@@ -1,18 +1,20 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { ThemeProvider } from '../contexts/ThemeContext';
+import { ThemeProvider } from 'styled-components';
 import { BarContext } from '../contexts/BarContext';
 import CocktailListItem from './CocktailListItem';
 
 // Mock data and utilities
-jest.mock('../data/bar_specific_data.json', () => ({
-  bar1: { barName: "Level One" },
-  bar2: { barName: "The Glitch" }
+vi.mock('../data/bar_specific_data.json', () => ({
+  default: {
+    bar1: { barName: "Level One" },
+    bar2: { barName: "The Glitch" }
+  }
 }), { virtual: true });
 
-jest.mock('../utils/cocktailImageLoader.js', () => ({
-  getImageUrl: jest.fn((imageName) => imageName ? `mock_path_to/${imageName}` : 'mock_path_to/placeholder.png'),
+vi.mock('../utils/cocktailImageLoader.js', () => ({
+  getImageUrl: vi.fn((imageName) => imageName ? `mock_path_to/${imageName}` : 'mock_path_to/placeholder.png'),
 }));
 
 const mockTheme = {

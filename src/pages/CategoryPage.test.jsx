@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import CategoryPage from './CategoryPage';
-import { ThemeProvider } from '../contexts/ThemeContext';
+import { ThemeProvider } from 'styled-components';
 import cocktailsData from '../data/cocktails.json'; // Using actual data
 
 // Updated Mock Theme for testing, aligned with new ThemeContext
@@ -60,8 +60,8 @@ describe('CategoryPage', () => {
 
     // Check for category title (assuming it's derived from categories.json or similar)
     // For this test, we'll check if the categoryId (or a transformed version) is in the title
-    // The actual component uses categories.json, so 'Rum-based Cocktails' should appear
-    expect(screen.getByRole('heading', { name: /Rum-based Cocktails/i })).toBeInTheDocument();
+    // The actual component uses categories.json, so 'Rum Cocktails' should appear
+    expect(screen.getByRole('heading', { name: /Rum Cocktails/i })).toBeInTheDocument();
 
     const categoryCocktails = cocktailsData.filter(c => c.categoryId === testCategoryId);
     categoryCocktails.forEach(cocktail => {
@@ -90,7 +90,7 @@ describe('CategoryPage', () => {
     renderWithProviders(<CategoryPage />, { route: `/category/${categoryWithNoCocktails}`, path: '/category/:categoryId' });
     
     expect(screen.getByRole('heading', { name: /Category Not Found/i })).toBeInTheDocument();
-    expect(screen.getByText(`The category "${categoryWithNoCocktails}" does not exist.`)).toBeInTheDocument();
+    expect(screen.getByText(/The category "emptycategory" does not exist/i)).toBeInTheDocument();
     expect(screen.queryByText('Mojito')).not.toBeInTheDocument();
   });
 
