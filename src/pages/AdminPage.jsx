@@ -155,14 +155,19 @@ const Button = styled.button`
 const AdminPage = () => {
   const [user, setUser] = useState(null);
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
   const [ingredients, setIngredients] = useState([]);
   const [selectedBar, setSelectedBar] = useState('isAvailableBarA');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const session = supabase.auth.getSession();
-    setUser(session?.user ?? null);
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user ?? null);
+    };
+
+    checkUser();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
@@ -194,24 +199,14 @@ const AdminPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const { data, error } = await supabase.rpc('admin_login', {
+    setError(null);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: 'soul-to-squeeze@hotmail.com',
       password,
     });
 
     if (error) {
-      alert(error.message);
-      return;
-    }
-
-    if (data) {
-      const { session } = data;
-      if (session) {
-        supabase.auth.setSession(session);
-      } else {
-        alert('Login failed: No session data received.');
-      }
-    } else {
-      alert('Login failed: No data received.');
+      setError(error.message);
     }
   };
 
@@ -267,6 +262,7 @@ const AdminPage = () => {
             required
           />
           <Button type="submit">Login</Button>
+          {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
         </LoginForm>
       </PageWrapper>
     );
