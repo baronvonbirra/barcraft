@@ -164,6 +164,7 @@ const Navbar = () => {
         <NavLinkStyled to="/favorites" onClick={handleLinkClick}>My Favorites</NavLinkStyled>
         <NavLinkStyled to="/bar/level-one" onClick={handleLinkClick}>Level One</NavLinkStyled>
         <NavLinkStyled to="/bar/the-glitch" onClick={handleLinkClick}>The Glitch</NavLinkStyled>
+        <NavLinkStyled to="/admin" onClick={handleLinkClick}>Admin</NavLinkStyled>
         {/* BarSelector removed */}
       </NavLinks>
 
@@ -188,6 +189,7 @@ const Navbar = () => {
         <NavLinkStyled to="/favorites" onClick={handleLinkClick}>My Favorites</NavLinkStyled>
         <NavLinkStyled to="/bar/level-one" onClick={handleLinkClick}>Level One</NavLinkStyled>
         <NavLinkStyled to="/bar/the-glitch" onClick={handleLinkClick}>The Glitch</NavLinkStyled>
+        <NavLinkStyled to="/admin" onClick={handleLinkClick}>Admin</NavLinkStyled>
         {/* BarSelector removed from MobileMenu */}
       </MobileMenu>
     </NavWrapper>

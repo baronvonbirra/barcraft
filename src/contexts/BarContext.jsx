@@ -1,6 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import bar1StockData from '../data/bar1_stock.json';
-import bar2StockData from '../data/bar2_stock.json';
+import { supabase } from '../supabaseClient';
 import barSpecificDataJson from '../data/bar_specific_data.json';
 
 // Initial state
@@ -22,27 +21,40 @@ export const BarProvider = ({ children }) => {
   const [viewingCuratedMenu, setViewingCuratedMenu] = useState(null);
 
   useEffect(() => {
-    let availableIngredientIds = [];
-    let currentBarName = null; // Initialize to null
-    let currentStockData = [];
+    const fetchStock = async () => {
+      let currentBarName = null;
+      let stockColumn = '';
 
-    if (selectedBarId === 'bar1') {
-      currentStockData = bar1StockData; // bar1StockData is the new array structure
-      currentBarName = barSpecificDataJson.bar1.barName;
-    } else if (selectedBarId === 'bar2') {
-      currentStockData = bar2StockData; // bar2StockData is the new array structure
-      currentBarName = barSpecificDataJson.bar2.barName;
-    }
+      if (selectedBarId === 'bar1') {
+        currentBarName = barSpecificDataJson.bar1.barName;
+        stockColumn = 'isAvailableBarA';
+      } else if (selectedBarId === 'bar2') {
+        currentBarName = barSpecificDataJson.bar2.barName;
+        stockColumn = 'isAvailableBarB';
+      } else {
+        // 'all' bars selected, so stock is empty, and name is null
+        setBarStock(new Set());
+        setSelectedBarName(null);
+        return;
+      }
 
-    if (currentStockData && currentStockData.length > 0) {
-      availableIngredientIds = currentStockData
-        .filter(ingredient => ingredient.isAvailable)
-        .map(ingredient => ingredient.id);
-    }
+      const { data, error } = await supabase
+        .from('ingredients')
+        .select('id')
+        .eq(stockColumn, true);
 
-    setBarStock(new Set(availableIngredientIds));
-    setSelectedBarName(currentBarName); // currentBarName will be null if no specific bar is selected
-  }, [selectedBarId]); // bar1StockData & bar2StockData are stable JSON imports, no need to add to deps
+      if (error) {
+        console.error('Error fetching bar stock:', error);
+        setBarStock(new Set());
+      } else {
+        const availableIngredientIds = data.map(ingredient => ingredient.id);
+        setBarStock(new Set(availableIngredientIds));
+      }
+      setSelectedBarName(currentBarName);
+    };
+
+    fetchStock();
+  }, [selectedBarId]);
 
   const selectBar = (barId) => {
     setSelectedBarId(barId);
