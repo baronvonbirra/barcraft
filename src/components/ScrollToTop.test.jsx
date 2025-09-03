@@ -4,15 +4,18 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 import ScrollToTop from './ScrollToTop';
 
 // Mock window.scrollTo
-global.scrollTo = jest.fn();
+global.scrollTo = vi.fn();
 
 // Mock useLocation
 // We need to control the pathname value returned by useLocation
 let mockPathname = '/initial';
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'), 
-  useLocation: () => ({ pathname: mockPathname }), 
-}));
+vi.mock('react-router-dom', async () => {
+    const actual = await vi.importActual('react-router-dom');
+    return {
+        ...actual,
+        useLocation: () => ({ pathname: mockPathname }),
+    };
+});
 
 describe('ScrollToTop', () => {
   beforeEach(() => {

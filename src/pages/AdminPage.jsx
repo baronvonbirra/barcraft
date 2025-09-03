@@ -158,7 +158,7 @@ const AdminPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [ingredients, setIngredients] = useState([]);
-  const [selectedBar, setSelectedBar] = useState('isAvailableBarA');
+  const [selectedBar, setSelectedBar] = useState('is_available_bar_a');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -190,16 +190,21 @@ const AdminPage = () => {
     const { data, error: fetchError } = await supabase
       .from('admin_settings')
       .select('password_hash')
-      .eq('id', 1)
-      .single();
+      .eq('id', 1);
 
-    if (fetchError || !data) {
+    if (fetchError) {
       setError('Could not verify password. Please try again.');
       console.error('Error fetching admin password:', fetchError);
       return;
     }
 
-    const { password_hash } = data;
+    if (!data || data.length !== 1) {
+        setError('Admin configuration error. Expected 1 admin setting, found ' + (data ? data.length : 0) + '.');
+        console.error('Admin configuration error: Expected 1 admin setting, found ' + (data ? data.length : 0));
+        return;
+    }
+
+    const { password_hash } = data[0];
     const isValid = await bcrypt.compare(password, password_hash);
 
     if (isValid) {
@@ -211,6 +216,12 @@ const AdminPage = () => {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+  };
+
+  const handleClearCache = () => {
+    localStorage.removeItem('ingredientCache');
+    localStorage.removeItem('ingredientCacheTimestamp');
+    alert('Ingredient cache has been cleared.');
   };
 
   const handleToggle = async (ingredientId, currentStatus) => {
@@ -270,12 +281,15 @@ const AdminPage = () => {
   return (
     <PageWrapper>
       <Title>Admin - Stock Management</Title>
-      <Button onClick={handleLogout} style={{ marginBottom: '1rem' }}>Logout</Button>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
+        <Button onClick={handleLogout}>Logout</Button>
+        <Button onClick={handleClearCache}>Clear Ingredient Cache</Button>
+      </div>
 
       <ControlsWrapper>
         <Select value={selectedBar} onChange={(e) => setSelectedBar(e.target.value)}>
-          <option value="isAvailableBarA">Bar A</option>
-          <option value="isAvailableBarB">Bar B</option>
+          <option value="is_available_bar_a">Bar A</option>
+          <option value="is_available_bar_b">Bar B</option>
         </Select>
         <SearchInput
           type="text"

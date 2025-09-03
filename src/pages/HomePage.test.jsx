@@ -2,11 +2,11 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import HomePage from './HomePage';
-import { ThemeProvider } from '../contexts/ThemeContext'; // ThemeProvider is needed for styled-components
+import { ThemeProvider } from 'styled-components'; // ThemeProvider is needed for styled-components
 import categoriesData from '../data/categories.json'; // Using actual data for simplicity here
 
 import cocktailsData from '../data/cocktails.json'; // Import cocktails data
-import PlaceholderImage from '../assets/cocktails/placeholder.png'; // Import placeholder
+import placeholderImage from '../assets/cocktails/placeholder.png'; // Direct import for mocking
 
 // Updated Mock Theme for testing, aligned with new ThemeContext
 const mockTheme = {
@@ -87,7 +87,7 @@ describe('HomePage', () => {
       if (featuredCocktail.image) {
         expect(image).toHaveAttribute('src', featuredCocktail.image);
       } else {
-        expect(image).toHaveAttribute('src', PlaceholderImage);
+        expect(image).toHaveAttribute('src', placeholderImage);
       }
     });
 
