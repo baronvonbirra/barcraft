@@ -154,7 +154,6 @@ const Button = styled.button`
 
 const AdminPage = () => {
   const [user, setUser] = useState(null);
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [ingredients, setIngredients] = useState([]);
   const [selectedBar, setSelectedBar] = useState('isAvailableBarA');
@@ -195,12 +194,24 @@ const AdminPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
+    const { data, error } = await supabase.rpc('admin_login', {
       password,
     });
+
     if (error) {
       alert(error.message);
+      return;
+    }
+
+    if (data) {
+      const { session } = data;
+      if (session) {
+        supabase.auth.setSession(session);
+      } else {
+        alert('Login failed: No session data received.');
+      }
+    } else {
+      alert('Login failed: No data received.');
     }
   };
 
@@ -248,13 +259,6 @@ const AdminPage = () => {
       <PageWrapper>
         <LoginForm onSubmit={handleLogin}>
           <Title>Admin Login</Title>
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
           <Input
             type="password"
             placeholder="Password"
