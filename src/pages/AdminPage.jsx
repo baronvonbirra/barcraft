@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { supabase } from '../supabaseClient';
+import bcrypt from 'bcryptjs';
 
 const PageWrapper = styled.div`
   padding: 1rem;
@@ -153,7 +154,7 @@ const Button = styled.button`
 
 
 const AdminPage = () => {
-  const [user, setUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [ingredients, setIngredients] = useState([]);
@@ -162,25 +163,10 @@ const AdminPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkUser = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-    };
-
-    checkUser();
-
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-      }
-    );
-
-    fetchIngredients();
-
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, []);
+    if (isLoggedIn) {
+      fetchIngredients();
+    }
+  }, [isLoggedIn]);
 
   const fetchIngredients = async () => {
     setLoading(true);
@@ -200,18 +186,31 @@ const AdminPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: 'soul-to-squeeze@hotmail.com',
-      password,
-    });
 
-    if (error) {
-      setError(error.message);
+    const { data, error: fetchError } = await supabase
+      .from('admin_settings')
+      .select('password_hash')
+      .eq('id', 1)
+      .single();
+
+    if (fetchError || !data) {
+      setError('Could not verify password. Please try again.');
+      console.error('Error fetching admin password:', fetchError);
+      return;
+    }
+
+    const { password_hash } = data;
+    const isValid = await bcrypt.compare(password, password_hash);
+
+    if (isValid) {
+      setIsLoggedIn(true);
+    } else {
+      setError('Incorrect password.');
     }
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const handleLogout = () => {
+    setIsLoggedIn(false);
   };
 
   const handleToggle = async (ingredientId, currentStatus) => {
@@ -249,7 +248,7 @@ const AdminPage = () => {
     }, {});
   }, [filteredIngredients]);
 
-  if (!user) {
+  if (!isLoggedIn) {
     return (
       <PageWrapper>
         <LoginForm onSubmit={handleLogin}>
