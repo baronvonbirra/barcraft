@@ -6,13 +6,6 @@ import { BarContext } from '../contexts/BarContext';
 import CocktailListItem from './CocktailListItem';
 
 // Mock data and utilities
-vi.mock('../data/bar_specific_data.json', () => ({
-  default: {
-    bar1: { barName: "Level One" },
-    bar2: { barName: "The Glitch" }
-  }
-}), { virtual: true });
-
 vi.mock('../utils/cocktailImageLoader.js', () => ({
   getImageUrl: vi.fn((imageName) => imageName ? `mock_path_to/${imageName}` : 'mock_path_to/placeholder.png'),
 }));
@@ -52,6 +45,10 @@ describe('CocktailListItem', () => {
     barBStock: new Set(),
     isFavorite: () => false,
     toggleFavorite: () => {},
+    barsData: {
+      bar1: { barName: 'Level One', curatedMenuName: "Level One's Signatures", curatedCocktailIds: [] },
+      bar2: { barName: 'The Glitch', curatedMenuName: "The Glitch's Classics", curatedCocktailIds: [] },
+    },
   };
 
   it('renders cocktail name and link correctly', () => {

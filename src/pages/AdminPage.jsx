@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { supabase } from '../supabaseClient';
 import bcrypt from 'bcryptjs';
+import barSpecificData from '../data/bar_specific_data.json';
+import cocktailsData from '../data/cocktails.json';
 
 const PageWrapper = styled.div`
   padding: 1rem;
@@ -152,6 +154,27 @@ const Button = styled.button`
   }
 `;
 
+const TabContainer = styled.div`
+  display: flex;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid ${({ theme }) => theme.colors.border};
+`;
+
+const TabButton = styled.button`
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  color: ${({ theme, active }) => (active ? theme.colors.primary : theme.colors.textOffset)};
+  border-bottom: 3px solid ${({ theme, active }) => (active ? theme.colors.primary : 'transparent')};
+  margin-bottom: -2px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
+`;
 
 const AdminPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -161,12 +184,38 @@ const AdminPage = () => {
   const [selectedBar, setSelectedBar] = useState('is_available_bar_a');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('stock'); // 'stock' or 'curated'
+  const [bars, setBars] = useState([]);
+  const [cocktails, setCocktails] = useState([]);
+  const [curatedCocktails, setCuratedCocktails] = useState([]);
+  const [selectedCuratedBar, setSelectedCuratedBar] = useState('');
+  const [loadingCurated, setLoadingCurated] = useState(false);
+
 
   useEffect(() => {
     if (isLoggedIn) {
-      fetchIngredients();
+      if (activeTab === 'stock') {
+        fetchIngredients();
+      } else if (activeTab === 'curated') {
+        // Set bars and cocktails from imported JSON
+        const barsArray = Object.keys(barSpecificData).map(barId => ({
+          id: barId,
+          name: barSpecificData[barId].barName,
+        }));
+        setBars(barsArray);
+        setCocktails(cocktailsData);
+        if (barsArray.length > 0) {
+          setSelectedCuratedBar(barsArray[0].id);
+        }
+      }
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, activeTab]);
+
+  useEffect(() => {
+    if (selectedCuratedBar) {
+      fetchCuratedCocktails(selectedCuratedBar);
+    }
+  }, [selectedCuratedBar]);
 
   const fetchIngredients = async () => {
     setLoading(true);
@@ -181,6 +230,38 @@ const AdminPage = () => {
       setIngredients(data);
     }
     setLoading(false);
+  };
+
+  const fetchCuratedCocktails = async (barId) => {
+    const { data, error } = await supabase
+      .from('curated_cocktails')
+      .select('cocktail_id')
+      .eq('bar_id', barId);
+
+    if (error) console.error('Error fetching curated cocktails:', error);
+    else setCuratedCocktails(data.map(c => c.cocktail_id));
+  };
+
+  const handleToggleCurated = async (cocktailId) => {
+    const isCurated = curatedCocktails.includes(cocktailId);
+    if (isCurated) {
+      // Remove from curated list
+      const { error } = await supabase
+        .from('curated_cocktails')
+        .delete()
+        .match({ bar_id: selectedCuratedBar, cocktail_id: cocktailId });
+
+      if (error) console.error('Error removing curated cocktail:', error);
+      else setCuratedCocktails(curatedCocktails.filter(id => id !== cocktailId));
+    } else {
+      // Add to curated list
+      const { error } = await supabase
+        .from('curated_cocktails')
+        .insert([{ bar_id: selectedCuratedBar, cocktail_id: cocktailId }]);
+
+      if (error) console.error('Error adding curated cocktail:', error);
+      else setCuratedCocktails([...curatedCocktails, cocktailId]);
+    }
   };
 
   const handleLogin = async (e) => {
@@ -280,48 +361,90 @@ const AdminPage = () => {
 
   return (
     <PageWrapper>
-      <Title>Admin - Stock Management</Title>
+      <Title>Admin Panel</Title>
       <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
         <Button onClick={handleLogout}>Logout</Button>
         <Button onClick={handleClearCache}>Clear Ingredient Cache</Button>
       </div>
 
-      <ControlsWrapper>
-        <Select value={selectedBar} onChange={(e) => setSelectedBar(e.target.value)}>
-          <option value="is_available_bar_a">Bar A</option>
-          <option value="is_available_bar_b">Bar B</option>
-        </Select>
-        <SearchInput
-          type="text"
-          placeholder="Search ingredients..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </ControlsWrapper>
+      <TabContainer>
+        <TabButton active={activeTab === 'stock'} onClick={() => setActiveTab('stock')}>
+          Stock Management
+        </TabButton>
+        <TabButton active={activeTab === 'curated'} onClick={() => setActiveTab('curated')}>
+          Curated Cocktails
+        </TabButton>
+      </TabContainer>
 
-      {loading ? <p>Loading ingredients...</p> : (
-        Object.entries(groupedIngredients)
-          .sort(([catA], [catB]) => catA.localeCompare(catB))
-          .map(([category, ingredients]) => (
-          <CategoryGroup key={category}>
-            <CategoryTitle>{category}</CategoryTitle>
+      {activeTab === 'stock' && (
+        <>
+          <ControlsWrapper>
+            <Select value={selectedBar} onChange={(e) => setSelectedBar(e.target.value)}>
+              <option value="is_available_bar_a">Bar A</option>
+              <option value="is_available_bar_b">Bar B</option>
+            </Select>
+            <SearchInput
+              type="text"
+              placeholder="Search ingredients..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </ControlsWrapper>
+
+          {loading ? <p>Loading ingredients...</p> : (
+            Object.entries(groupedIngredients)
+              .sort(([catA], [catB]) => catA.localeCompare(catB))
+              .map(([category, ingredients]) => (
+              <CategoryGroup key={category}>
+                <CategoryTitle>{category}</CategoryTitle>
+                <IngredientList>
+                  {ingredients.map(ingredient => (
+                    <IngredientItem key={ingredient.id}>
+                      <IngredientName>{ingredient.name}</IngredientName>
+                      <ToggleSwitchLabel>
+                        <input
+                          type="checkbox"
+                          checked={ingredient[selectedBar]}
+                          onChange={() => handleToggle(ingredient.id, ingredient[selectedBar])}
+                        />
+                        <span className="slider"></span>
+                      </ToggleSwitchLabel>
+                    </IngredientItem>
+                  ))}
+                </IngredientList>
+              </CategoryGroup>
+            ))
+          )}
+        </>
+      )}
+
+      {activeTab === 'curated' && (
+        <>
+          <ControlsWrapper>
+            <Select value={selectedCuratedBar} onChange={(e) => setSelectedCuratedBar(e.target.value)}>
+              {bars.map(bar => (
+                <option key={bar.id} value={bar.id}>{bar.name}</option>
+              ))}
+            </Select>
+          </ControlsWrapper>
+          {loadingCurated ? <p>Loading...</p> : (
             <IngredientList>
-              {ingredients.map(ingredient => (
-                <IngredientItem key={ingredient.id}>
-                  <IngredientName>{ingredient.name}</IngredientName>
+              {cocktails.sort((a, b) => a.name.localeCompare(b.name)).map(cocktail => (
+                <IngredientItem key={cocktail.id}>
+                  <IngredientName>{cocktail.name}</IngredientName>
                   <ToggleSwitchLabel>
                     <input
                       type="checkbox"
-                      checked={ingredient[selectedBar]}
-                      onChange={() => handleToggle(ingredient.id, ingredient[selectedBar])}
+                      checked={curatedCocktails.includes(cocktail.id)}
+                      onChange={() => handleToggleCurated(cocktail.id)}
                     />
                     <span className="slider"></span>
                   </ToggleSwitchLabel>
                 </IngredientItem>
               ))}
             </IngredientList>
-          </CategoryGroup>
-        ))
+          )}
+        </>
       )}
     </PageWrapper>
   );

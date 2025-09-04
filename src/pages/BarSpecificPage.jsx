@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import cocktailsData from '../data/cocktails.json';
-import barSpecificData from '../data/bar_specific_data.json';
 import { useBar } from '../contexts/BarContext';
 import CocktailList from '../components/CocktailList';
 import { ThemeContext } from '../contexts/ThemeContext';
@@ -78,7 +77,7 @@ const EmptyStateSuggestion = styled.p`
 const BarSpecificPage = () => {
   const { barId } = useParams(); // 'level-one' or 'the-glitch'
   const { theme } = useContext(ThemeContext);
-  const { barStock, selectBar, selectedBarName } = useBar();
+  const { barStock, selectBar, selectedBarName, barsData } = useBar();
 
   const internalBarId = useMemo(() => {
     if (barId === 'level-one') return 'bar1';
@@ -93,10 +92,11 @@ const BarSpecificPage = () => {
   }, [internalBarId, selectBar]);
 
   const currentBarSpecifics = useMemo(() => {
-    if (barId === 'level-one') return barSpecificData.bar1;
-    if (barId === 'the-glitch') return barSpecificData.bar2;
-    return { curatedMenuName: '', curatedCocktailIds: [] };
-  }, [barId]);
+    if (!internalBarId || !barsData[internalBarId]) {
+      return { curatedMenuName: '', curatedCocktailIds: [] };
+    }
+    return barsData[internalBarId];
+  }, [internalBarId, barsData]);
 
   const stockSet = barStock; // Directly use the Set from context
 

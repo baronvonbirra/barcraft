@@ -2,11 +2,10 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import { BarContext } from './contexts/BarContext.jsx';
-import { CocktailContext } from './contexts/CocktailContext.jsx';
-import { FavoritesContext } from './contexts/FavoritesContext.jsx';
-import cocktails from './data/cocktails.json';
-import categories from './data/categories.json';
+import { BarContext } from '@/contexts/BarContext.jsx';
+import { FavoritesContext } from '@/contexts/FavoritesContext.jsx';
+import cocktails from '@/data/cocktails.json';
+import categories from '@/data/categories.json';
 
 const mockTheme = {
   mode: 'dark',
@@ -21,20 +20,6 @@ const mockTheme = {
 };
 
 const AllTheProviders = ({ children, providerProps = {} }) => {
-  const defaultCocktailContext = {
-    cocktails,
-    categories,
-    loading: false,
-    error: null,
-    getCocktailById: (id) => cocktails.find(c => c.id === id),
-    getCocktailsByCategory: (categoryId) => {
-        if (!categoryId) return cocktails;
-        const category = categories.find(cat => cat.id === categoryId);
-        if (!category) return [];
-        return cocktails.filter(cocktail => cocktail.base_spirit === category.name);
-      },
-  };
-
   const defaultBarContext = {
     barName: 'Bar A',
     setBarName: () => {},
@@ -51,21 +36,18 @@ const AllTheProviders = ({ children, providerProps = {} }) => {
     isFavorite: () => false,
   };
 
-  const cocktailContextValue = { ...defaultCocktailContext, ...providerProps.cocktailContext };
   const barContextValue = { ...defaultBarContext, ...providerProps.barContext };
   const favoritesContextValue = { ...defaultFavoritesContext, ...providerProps.favoritesContext };
 
   return (
     <ThemeProvider theme={mockTheme}>
-      <CocktailContext.Provider value={cocktailContextValue}>
-        <BarContext.Provider value={barContextValue}>
-          <FavoritesContext.Provider value={favoritesContextValue}>
-            <MemoryRouter>
-              {children}
-            </MemoryRouter>
-          </FavoritesContext.Provider>
-        </BarContext.Provider>
-      </CocktailContext.Provider>
+      <BarContext.Provider value={barContextValue}>
+        <FavoritesContext.Provider value={favoritesContextValue}>
+          <MemoryRouter>
+            {children}
+          </MemoryRouter>
+        </FavoritesContext.Provider>
+      </BarContext.Provider>
     </ThemeProvider>
   );
 };

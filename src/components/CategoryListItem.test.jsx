@@ -5,7 +5,7 @@ import { ThemeProvider } from 'styled-components';
 import CategoryListItem from './CategoryListItem';
 
 vi.mock('../utils/cocktailImageLoader.js', () => ({
-  getImageUrl: (path) => path, // Return the path directly
+  getImageUrl: (path) => path || 'src/assets/cocktails/placeholder.jpg',
 }));
 
 const mockTheme = {

@@ -1,6 +1,5 @@
 import { useState, useMemo, useCallback } from 'react'; // Added useCallback
 import { useBar } from '../contexts/BarContext';
-import barSpecificData from '../data/bar_specific_data.json';
 
 export const useCocktailFilter = (allCocktails) => {
   const [baseSpirit, setBaseSpirit] = useState('');
@@ -13,7 +12,7 @@ export const useCocktailFilter = (allCocktails) => {
   const [glassType, setGlassType] = useState('');
   const [searchTerm, setSearchTerm] = useState(''); // Added search term state
 
-  const { selectedBarId, viewingCuratedMenu, barStock } = useBar();
+  const { selectedBarId, viewingCuratedMenu, barStock, barsData } = useBar();
 
   // The barStock from the context is already a Set of available ingredient IDs.
   const currentBarStockSet = barStock;
@@ -110,7 +109,7 @@ export const useCocktailFilter = (allCocktails) => {
     // Apply bar-specific filtering (which cocktails are *listed*)
     if (viewingCuratedMenu) {
       const barKey = viewingCuratedMenu.startsWith('bar1') ? 'bar1' : 'bar2';
-      const curatedIds = barSpecificData[barKey]?.curatedCocktailIds || [];
+      const curatedIds = barsData[barKey]?.curatedCocktailIds || [];
       cocktails = cocktails.filter(c => curatedIds.includes(c.id));
       // After filtering for curated, we then check if they are makeable by the selected bar (which is set by viewingCuratedMenu)
       cocktails = cocktails.filter(c => isCocktailMakeable(c.ingredients));

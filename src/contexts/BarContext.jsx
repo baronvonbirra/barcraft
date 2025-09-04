@@ -10,6 +10,7 @@ const initialState = {
   barBStock: new Set(), // Stock for Bar B
   selectedBarName: null, // Name of the selected bar
   viewingCuratedMenu: null, // null, 'bar1_curated', 'bar2_curated'
+  barsData: {}, // All data about bars, including curated cocktails
   selectBar: () => {},
   viewCuratedMenu: () => {},
 };
@@ -23,6 +24,7 @@ export const BarProvider = ({ children }) => {
   const [barBStock, setBarBStock] = useState(new Set());
   const [selectedBarName, setSelectedBarName] = useState(null);
   const [viewingCuratedMenu, setViewingCuratedMenu] = useState(null);
+  const [barsData, setBarsData] = useState({});
 
   // Fetch all stock data on initial load
   useEffect(() => {
@@ -74,21 +76,42 @@ export const BarProvider = ({ children }) => {
     fetchAllStock();
   }, []);
 
+  // Fetch all bars data
+  useEffect(() => {
+    const fetchBarsData = async () => {
+      const { data: curated, error: curatedError } = await supabase.from('curated_cocktails').select('*');
+      if (curatedError) {
+        console.error('Error fetching curated cocktails:', curatedError);
+        return;
+      }
+
+      const newBarsData = {};
+      for (const barId in barSpecificDataJson) {
+        newBarsData[barId] = {
+          ...barSpecificDataJson[barId],
+          curatedCocktailIds: curated.filter(c => c.bar_id === barId).map(c => c.cocktail_id),
+        };
+      }
+      setBarsData(newBarsData);
+    };
+    fetchBarsData();
+  }, []);
+
   // Update the currently selected bar's stock when selection changes
   useEffect(() => {
     let currentBarName = null;
     if (selectedBarId === 'bar1') {
       setBarStock(barAStock);
-      currentBarName = barSpecificDataJson.bar1.barName;
+      currentBarName = barsData.bar1?.barName || null;
     } else if (selectedBarId === 'bar2') {
       setBarStock(barBStock);
-      currentBarName = barSpecificDataJson.bar2.barName;
+      currentBarName = barsData.bar2?.barName || null;
     } else {
       setBarStock(new Set());
       currentBarName = null;
     }
     setSelectedBarName(currentBarName);
-  }, [selectedBarId, barAStock, barBStock]);
+  }, [selectedBarId, barAStock, barBStock, barsData]);
 
   const selectBar = (barId) => {
     setSelectedBarId(barId);
@@ -115,6 +138,7 @@ export const BarProvider = ({ children }) => {
         barBStock,
         selectedBarName,
         viewingCuratedMenu,
+        barsData,
         selectBar,
         viewCuratedMenu: viewCuratedMenuAction,
       }}
