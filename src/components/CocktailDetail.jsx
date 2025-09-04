@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import PlaceholderImage from '@/assets/cocktails/placeholder.png'; // Ensure PlaceholderImage is imported
+import PlaceholderImage from '../assets/cocktails/placeholder.jpg'; // Ensure PlaceholderImage is imported
 
 const DetailWrapper = styled.div`
   background-color: ${({ theme }) => (theme.colors && theme.colors.surface) || '#282C34'};

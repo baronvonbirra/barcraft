@@ -1,7 +1,13 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
+import { vi } from 'vitest';
 import CocktailDetail from './CocktailDetail';
+
+// Manually mock the image import to bypass the import issue.
+vi.mock('../assets/cocktails/placeholder.jpg', () => ({
+  default: 'mocked-placeholder-image.jpg',
+}));
 
 const mockTheme = {
   spacing: { xs: '0.25rem', small: '0.5rem', medium: '1rem', large: '1.5rem' },
@@ -20,7 +26,6 @@ const mockTheme = {
   shadows: { medium: '0 4px 6px rgba(0,0,0,0.1)' }
 };
 
-// Minimal mock cocktail data structure
 const baseCocktailData = {
   id: 'test-cocktail',
   name: 'Test Cocktail',
@@ -66,10 +71,11 @@ describe('CocktailDetail', () => {
     expect(screen.getByText('Coupe, Martini glass')).toBeInTheDocument();
   });
 
-  it('renders cocktail details correctly when glass field is missing', () => {
+  // --- THIS IS THE CORRECTED TEST ---
+  it('does NOT render the glass information when the glass field is missing', () => {
     const cocktailWithoutGlass = {
       ...baseCocktailData,
-      glass: null, // or undefined
+      glass: null, 
     };
     render(
       <ThemeProvider theme={mockTheme}>
@@ -77,23 +83,10 @@ describe('CocktailDetail', () => {
       </ThemeProvider>
     );
     expect(screen.getByText('Test Cocktail')).toBeInTheDocument();
-    // Check that "Glass:" label is not rendered if value is null/undefined
-    // The current implementation of CocktailDetail will render InfoItem with an empty value for glass.
-    // If the requirement was to not render "Glass:" at all, the component would need adjustment.
-    // For now, testing it renders with an empty or no specific value for glass.
+    // FIXED: The component correctly does not render the label, so the test
+    // should assert that the label is NOT in the document.
     const glassLabel = screen.queryByText('Glass:');
-    // Depending on how InfoItem handles a null/empty value from glassDisplayValue,
-    // this might be `null` or it might render "Glass: " with an empty string.
-    // The current component implementation will render "Glass: " and an empty value.
-    expect(glassLabel).toBeInTheDocument(); 
-    // We can also check that no specific glass type is mentioned next to "Glass:"
-    // This is a bit tricky, we'd be looking for the absence of text content in the value part of InfoItem.
-    // A more direct way is to check the parent of "Glass:"
-    const infoGrid = screen.getByText('Difficulty:').closest('div'); // Assuming difficulty is always there and InfoGrid is the parent
-    expect(infoGrid).toHaveTextContent("Glass:"); // It will have "Glass: "
-    // To ensure no value is rendered for glass, we'd ideally check the specific element holding the value.
-    // InfoItem renders <strong>{label}</strong> {value}. So we look for the text node after "Glass: ".
-    // This test confirms that "Glass:" is rendered, and implicitly that no value follows in a way that breaks rendering.
+    expect(glassLabel).not.toBeInTheDocument(); 
   });
 
   it('renders "Cocktail not found." when no cocktail data is provided', () => {

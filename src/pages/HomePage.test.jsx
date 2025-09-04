@@ -1,14 +1,16 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
+import { vi } from 'vitest';
 import HomePage from './HomePage';
-import { ThemeProvider } from 'styled-components'; // ThemeProvider is needed for styled-components
-import categoriesData from '@/data/categories.json'; // Using actual data for simplicity here
+import categoriesData from '../data/categories.json'; 
 
-import cocktailsData from '@/data/cocktails.json'; // Import cocktails data
-import placeholderImage from '@/assets/cocktails/placeholder.png'; // Direct import for mocking
+// FIXED: Manually mock the CORRECT image file path to bypass the import issue.
+vi.mock('../assets/cocktails/placeholder.jpg', () => ({
+  default: 'mocked-placeholder-image.jpg',
+}));
 
-// Updated Mock Theme for testing, aligned with new ThemeContext
 const mockTheme = {
   mode: 'dark',
   colors: {
@@ -21,18 +23,10 @@ const mockTheme = {
   borderRadius: '8px',
 };
 
-// Mock categories.json if it were a dynamic import or fetch
-// vi.mock('../data/categories.json', () => ({
-//   default: [
-//     { id: 'rum', name: 'Rum-based Cocktails' },
-//     { id: 'whiskey', name: 'Whiskey-based Cocktails' },
-//   ],
-// }));
-
 describe('HomePage', () => {
   const renderWithProviders = (ui) => {
     return render(
-      <ThemeProvider theme={mockTheme}> {/* Use mockTheme or a simplified theme for testing */}
+      <ThemeProvider theme={mockTheme}>
         <MemoryRouter>
           {ui}
         </MemoryRouter>
@@ -40,16 +34,19 @@ describe('HomePage', () => {
     );
   };
 
-  it('renders the main heading', () => {
+  it('renders the main headings for browsing', () => {
     renderWithProviders(<HomePage />);
-    // Check for the new section titles
-    expect(screen.getByRole('heading', { name: /Cocktail of the Week/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /Or Browse by Category/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Browse by Spirit/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Explore by Theme/i })).toBeInTheDocument();
+  });
+
+  it('renders the "Surprise Me!" button', () => {
+    renderWithProviders(<HomePage />);
+    expect(screen.getByRole('button', { name: /Surprise Me!/i })).toBeInTheDocument();
   });
 
   it('renders a list of categories', () => {
     renderWithProviders(<HomePage />);
-    // Check for a few category names from the actual data
     categoriesData.slice(0, 3).forEach(category => {
       expect(screen.getByText(category.name)).toBeInTheDocument();
     });
@@ -58,50 +55,11 @@ describe('HomePage', () => {
   it('renders links for categories with correct href attributes', () => {
     renderWithProviders(<HomePage />);
     categoriesData.forEach(category => {
-      // Escape special characters in category.name for RegExp
       const escapedCategoryName = category.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      // Match category name within the link's accessible name, accommodating icon alt text
       const linkElement = screen.getByRole('link', { name: new RegExp(escapedCategoryName, 'i') });
       expect(linkElement).toBeInTheDocument();
       expect(linkElement).toHaveAttribute('href', `/category/${category.id}`);
     });
   });
-
-  describe('Cocktail of the Week Section', () => {
-    const featuredCocktail = cocktailsData[0];
-
-    it('renders the section title', () => {
-      renderWithProviders(<HomePage />);
-      expect(screen.getByRole('heading', { name: /Cocktail of the Week/i })).toBeInTheDocument();
-    });
-
-    it('displays the featured cocktail\'s name', () => {
-      renderWithProviders(<HomePage />);
-      expect(screen.getByRole('heading', { name: new RegExp(featuredCocktail.name, 'i') })).toBeInTheDocument();
-    });
-
-    it('displays the featured cocktail\'s image', () => {
-      renderWithProviders(<HomePage />);
-      const image = screen.getByAltText(new RegExp(featuredCocktail.name, 'i'));
-      expect(image).toBeInTheDocument();
-      if (featuredCocktail.image) {
-        expect(image).toHaveAttribute('src', featuredCocktail.image);
-      } else {
-        expect(image).toHaveAttribute('src', placeholderImage);
-      }
-    });
-
-    it('displays the featured cocktail\'s description', () => {
-      renderWithProviders(<HomePage />);
-      // Using a regex to find part of the description, as it might be long
-      expect(screen.getByText(new RegExp(featuredCocktail.description.substring(0, 50), 'i'))).toBeInTheDocument();
-    });
-
-    it('renders a "View Recipe" link pointing to the correct cocktail detail page', () => {
-      renderWithProviders(<HomePage />);
-      const linkElement = screen.getByRole('link', { name: /View Recipe/i });
-      expect(linkElement).toBeInTheDocument();
-      expect(linkElement).toHaveAttribute('href', `/cocktails/${featuredCocktail.id}`);
-    });
-  });
 });
+

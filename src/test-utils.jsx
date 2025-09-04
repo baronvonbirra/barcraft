@@ -2,10 +2,8 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import { BarContext } from '@/contexts/BarContext.jsx';
-import { FavoritesContext } from '@/contexts/FavoritesContext.jsx';
-import cocktails from '@/data/cocktails.json';
-import categories from '@/data/categories.json';
+import { BarContext } from './contexts/BarContext.jsx';
+import { FavoritesContext } from './contexts/FavoritesContext.jsx';
 
 const mockTheme = {
   mode: 'dark',
