@@ -72,11 +72,17 @@ const IngredientItem = styled.li`
   }
 `;
 
-const RadioLabel = styled.label`
-  display: flex;
-  align-items: center;
+const StarButton = styled.button`
+  background: none;
+  border: none;
   cursor: pointer;
-  gap: 0.5rem;
+  font-size: 1.5rem;
+  color: ${({ theme, isSelected }) => (isSelected ? theme.colors.primary : theme.colors.border)};
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.secondary};
+  }
 `;
 
 const IngredientName = styled.span`
@@ -189,7 +195,7 @@ const AdminPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [ingredients, setIngredients] = useState([]);
-  const [selectedBar, setSelectedBar] = useState('is_available_bar_a');
+  const [selectedBar, setSelectedBar] = useState('bar1'); // Default to first bar's ID
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('stock'); // 'stock' or 'curated'
@@ -200,32 +206,39 @@ const AdminPage = () => {
   const [loadingCurated, setLoadingCurated] = useState(false);
   const [cocktailOfTheWeek, setCocktailOfTheWeek] = useState(null);
 
+  // Mapping from bar ID to Supabase column name for stock
+  const barIdToColumn = {
+    bar1: 'is_available_bar_a',
+    bar2: 'is_available_bar_b',
+  };
 
   useEffect(() => {
     if (isLoggedIn) {
+      // Common setup for both tabs
+      const barsArray = Object.keys(barSpecificData).map(barId => ({
+        id: barId,
+        name: barSpecificData[barId].barName,
+      }));
+      setBars(barsArray);
+      setCocktails(cocktailsData);
+
       if (activeTab === 'stock') {
         fetchIngredients();
+        if (barsArray.length > 0 && !selectedBar) {
+          setSelectedBar(barsArray[0].id);
+        }
       } else if (activeTab === 'curated') {
-        // Set bars and cocktails from imported JSON
-        const barsArray = Object.keys(barSpecificData).map(barId => ({
-          id: barId,
-          name: barSpecificData[barId].barName,
-        }));
-        setBars(barsArray);
-        setCocktails(cocktailsData);
         if (barsArray.length > 0) {
-          setSelectedCuratedBar(barsArray[0].id);
+          // If selectedCuratedBar isn't set, default to the first bar
+          const currentSelectedBar = selectedCuratedBar || barsArray[0].id;
+          setSelectedCuratedBar(currentSelectedBar);
+          // Fetch data for the current selection
+          fetchCuratedCocktails(currentSelectedBar);
+          fetchCocktailOfTheWeek(currentSelectedBar);
         }
       }
     }
   }, [isLoggedIn, activeTab]);
-
-  useEffect(() => {
-    if (selectedCuratedBar) {
-      fetchCuratedCocktails(selectedCuratedBar);
-      fetchCocktailOfTheWeek(selectedCuratedBar);
-    }
-  }, [selectedCuratedBar]);
 
   const fetchIngredients = async () => {
     setLoading(true);
@@ -268,28 +281,40 @@ const AdminPage = () => {
 
   const handleToggleCurated = async (cocktailId) => {
     const isCurated = curatedCocktails.includes(cocktailId);
+    let error;
+
     if (isCurated) {
       // Remove from curated list
-      const { error } = await supabase
+      const response = await supabase
         .from('curated_cocktails')
         .delete()
         .match({ bar_id: selectedCuratedBar, cocktail_id: cocktailId });
-
-      if (error) console.error('Error removing curated cocktail:', error);
-      else setCuratedCocktails(curatedCocktails.filter(id => id !== cocktailId));
+      error = response.error;
+      if (error) {
+        console.error('Error removing curated cocktail:', error);
+        alert('Failed to remove curated cocktail. Please check permissions and try again.');
+      } else {
+        setCuratedCocktails(curatedCocktails.filter(id => id !== cocktailId));
+      }
     } else {
       // Add to curated list
-      const { error } = await supabase
+      const response = await supabase
         .from('curated_cocktails')
         .insert([{ bar_id: selectedCuratedBar, cocktail_id: cocktailId }]);
-
-      if (error) console.error('Error adding curated cocktail:', error);
-      else setCuratedCocktails([...curatedCocktails, cocktailId]);
+      error = response.error;
+      if (error) {
+        console.error('Error adding curated cocktail:', error);
+        alert('Failed to add curated cocktail. Please check permissions and try again.');
+      } else {
+        setCuratedCocktails([...curatedCocktails, cocktailId]);
+      }
     }
   };
 
   const handleSetCocktailOfTheWeek = async (cocktailId) => {
-    // First, remove any existing entry for this bar
+    const newCocktailOfTheWeek = cocktailOfTheWeek === cocktailId ? null : cocktailId;
+
+    // Always clear the existing cocktail of the week for the bar first
     const { error: deleteError } = await supabase
       .from('cocktail_of_the_week')
       .delete()
@@ -297,22 +322,27 @@ const AdminPage = () => {
 
     if (deleteError) {
       console.error('Error clearing cocktail of the week:', deleteError);
-      return; // Stop if we can't clear the old one
+      alert('Error updating cocktail of the week. Please try again.');
+      return;
     }
 
-    // If a cocktailId is provided (i.e., not 'None'), insert the new one
-    if (cocktailId) {
+    // If we are setting a new cocktail of the week (not just clearing)
+    if (newCocktailOfTheWeek) {
       const { error: insertError } = await supabase
         .from('cocktail_of_the_week')
-        .insert([{ bar_id: selectedCuratedBar, cocktail_id: cocktailId }]);
+        .insert([{ bar_id: selectedCuratedBar, cocktail_id: newCocktailOfTheWeek }]);
 
       if (insertError) {
         console.error('Error setting cocktail of the week:', insertError);
+        alert('Error setting new cocktail of the week. Please try again.');
+        // If the insert fails, revert the state back to the old value
+        setCocktailOfTheWeek(cocktailOfTheWeek);
       } else {
-        setCocktailOfTheWeek(cocktailId);
+        // On successful insert, update the state
+        setCocktailOfTheWeek(newCocktailOfTheWeek);
       }
     } else {
-      // If cocktailId is null, it means "None" was selected
+      // If we are just clearing it, update the state
       setCocktailOfTheWeek(null);
     }
   };
@@ -359,18 +389,25 @@ const AdminPage = () => {
   };
 
   const handleToggle = async (ingredientId, currentStatus) => {
+    const columnName = barIdToColumn[selectedBar];
+    if (!columnName) {
+      console.error('Invalid bar selected:', selectedBar);
+      alert('An error occurred. Invalid bar selection.');
+      return;
+    }
+
     const { error } = await supabase
       .from('ingredients')
-      .update({ [selectedBar]: !currentStatus })
+      .update({ [columnName]: !currentStatus })
       .eq('id', ingredientId);
 
     if (error) {
       console.error('Error updating ingredient:', error);
-      alert('Failed to update ingredient. Make sure you are logged in.');
+      alert('Failed to update ingredient. Check console for details.');
     } else {
       setIngredients(prevIngredients =>
         prevIngredients.map(ing =>
-          ing.id === ingredientId ? { ...ing, [selectedBar]: !currentStatus } : ing
+          ing.id === ingredientId ? { ...ing, [columnName]: !currentStatus } : ing
         )
       );
     }
@@ -384,7 +421,7 @@ const AdminPage = () => {
 
   const groupedIngredients = useMemo(() => {
     return filteredIngredients.reduce((acc, ingredient) => {
-      const category = ingredient.category || 'Uncategorized';
+      const category = ingredient.category || 'Ingredients List';
       if (!acc[category]) {
         acc[category] = [];
       }
@@ -433,8 +470,9 @@ const AdminPage = () => {
         <>
           <ControlsWrapper>
             <Select value={selectedBar} onChange={(e) => setSelectedBar(e.target.value)}>
-              <option value="is_available_bar_a">Bar A</option>
-              <option value="is_available_bar_b">Bar B</option>
+              {bars.map(bar => (
+                <option key={bar.id} value={bar.id}>{bar.name}</option>
+              ))}
             </Select>
             <SearchInput
               type="text"
@@ -448,25 +486,30 @@ const AdminPage = () => {
             Object.entries(groupedIngredients)
               .sort(([catA], [catB]) => catA.localeCompare(catB))
               .map(([category, ingredients]) => (
-              <CategoryGroup key={category}>
-                <CategoryTitle>{category}</CategoryTitle>
-                <IngredientList>
-                  {ingredients.map(ingredient => (
-                    <IngredientItem key={ingredient.id}>
-                      <IngredientName>{ingredient.name}</IngredientName>
-                      <ToggleSwitchLabel>
-                        <input
-                          type="checkbox"
-                          checked={ingredient[selectedBar]}
-                          onChange={() => handleToggle(ingredient.id, ingredient[selectedBar])}
-                        />
-                        <span className="slider"></span>
-                      </ToggleSwitchLabel>
-                    </IngredientItem>
-                  ))}
-                </IngredientList>
-              </CategoryGroup>
-            ))
+                <CategoryGroup key={category}>
+                  <CategoryTitle>{category}</CategoryTitle>
+                  <IngredientList>
+                    {ingredients.map(ingredient => {
+                      const columnName = barIdToColumn[selectedBar];
+                      const isChecked = columnName ? ingredient[columnName] : false;
+                      return (
+                        <IngredientItem key={ingredient.id}>
+                          <IngredientName>{ingredient.name}</IngredientName>
+                          <ToggleSwitchLabel>
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={() => handleToggle(ingredient.id, isChecked)}
+                              disabled={!columnName}
+                            />
+                            <span className="slider"></span>
+                          </ToggleSwitchLabel>
+                        </IngredientItem>
+                      );
+                    })}
+                  </IngredientList>
+                </CategoryGroup>
+              ))
           )}
         </>
       )}
@@ -501,34 +544,17 @@ const AdminPage = () => {
 
               <CategoryTitle style={{ marginTop: '2rem' }}>Cocktail of the Week</CategoryTitle>
               <IngredientList>
-                {/* "None" option */}
-                <IngredientItem>
-                  <RadioLabel>
-                    <input
-                      type="radio"
-                      name="cocktailOfTheWeek"
-                      checked={!cocktailOfTheWeek}
-                      onChange={() => handleSetCocktailOfTheWeek(null)}
-                    />
-                    None
-                  </RadioLabel>
-                </IngredientItem>
-                {/* Options for curated cocktails */}
                 {cocktails
-                  .filter(c => curatedCocktails.includes(c.id))
                   .sort((a, b) => a.name.localeCompare(b.name))
                   .map(cocktail => (
                     <IngredientItem key={cocktail.id}>
-                      <RadioLabel>
-                        <input
-                          type="radio"
-                          name="cocktailOfTheWeek"
-                          value={cocktail.id}
-                          checked={cocktailOfTheWeek === cocktail.id}
-                          onChange={() => handleSetCocktailOfTheWeek(cocktail.id)}
-                        />
-                        {cocktail.name}
-                      </RadioLabel>
+                      <IngredientName>{cocktail.name}</IngredientName>
+                      <StarButton
+                        isSelected={cocktailOfTheWeek === cocktail.id}
+                        onClick={() => handleSetCocktailOfTheWeek(cocktail.id)}
+                      >
+                        ★
+                      </StarButton>
                     </IngredientItem>
                   ))}
               </IngredientList>
