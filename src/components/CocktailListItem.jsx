@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import { getImageUrl } from '../utils/cocktailImageLoader.js';
 import { useFavorites } from '../hooks/useFavorites';
 import { useBar } from '../contexts/BarContext'; // Import useBar
-import barSpecificData from '../data/bar_specific_data.json';
 
 // Styled components
 const ListItemWrapper = styled.div`
@@ -81,7 +80,7 @@ const ViewLink = styled(Link)`
   }
 `;
 
-const AvailabilityIndicator = styled.div`
+const AvailabilityIndicator = styled(({ isMakeable, ...rest }) => <div {...rest} />)`
   position: absolute;
   top: ${({ theme }) => theme.spacing.small};
   right: ${({ theme }) => theme.spacing.small};
@@ -106,7 +105,7 @@ const BarAvailabilityIconWrapper = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing.small};
 `;
 
-const SingleBarAvailabilityIcon = styled.span`
+const SingleBarAvailabilityIcon = styled(({ isAvailable, ...rest }) => <span {...rest} />)`
   padding: 2px 6px;
   border-radius: ${({ theme }) => theme.borderRadiusSmall || '4px'};
   font-size: 0.75rem;
@@ -120,7 +119,7 @@ const SingleBarAvailabilityIcon = styled.span`
   }
 `;
 
-const FavoriteButton = styled.button`
+const FavoriteButton = styled(({ isFavorite, ...rest }) => <button {...rest} />)`
   position: absolute;
   top: auto;
   left: auto;
@@ -159,7 +158,7 @@ const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
 
 const CocktailListItem = ({ cocktail, isMakeable }) => {
   const { isFavorite, toggleFavorite } = useFavorites();
-  const { barAStock, barBStock } = useBar(); // Get both bar stocks from context
+  const { barAStock, barBStock, barsData } = useBar(); // Get both bar stocks and barsData from context
 
   if (!cocktail) return null;
 
@@ -170,8 +169,8 @@ const CocktailListItem = ({ cocktail, isMakeable }) => {
   const isMakeableBar1 = useMemo(() => checkMakeableForBar(cocktail.ingredients, barAStock), [cocktail.ingredients, barAStock]);
   const isMakeableBar2 = useMemo(() => checkMakeableForBar(cocktail.ingredients, barBStock), [cocktail.ingredients, barBStock]);
 
-  const bar1Name = barSpecificData.bar1.barName;
-  const bar2Name = barSpecificData.bar2.barName;
+  const bar1Name = barsData.bar1?.barName || 'Level One';
+  const bar2Name = barsData.bar2?.barName || 'The Glitch';
 
   const handleFavoriteClick = (e) => {
     e.preventDefault();

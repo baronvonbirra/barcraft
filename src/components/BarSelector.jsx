@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useBar } from '../contexts/BarContext';
-import barSpecificData from '../data/bar_specific_data.json'; // For curated menu names
 
 const SelectorWrapper = styled.div`
   margin-left: ${props => props.theme.spacing.medium}; // Add some spacing if in Navbar
@@ -23,17 +22,17 @@ const SelectorWrapper = styled.div`
 `;
 
 const BarSelector = () => {
-  const { selectedBar, viewingCuratedMenu, selectBar, viewCuratedMenu } = useBar();
+  const { selectedBar, viewingCuratedMenu, selectBar, viewCuratedMenu, barsData } = useBar();
 
   const barOptions = [
     { value: 'all', label: 'View All Cocktails (No Bar)' },
-    { value: 'bar1_stock', label: 'View Bar 1 Full Stock' },
-    { value: 'bar2_stock', label: 'View Bar 2 Full Stock' },
+    { value: 'bar1_stock', label: `View ${barsData.bar1?.barName || 'Bar 1'} Full Stock` },
+    { value: 'bar2_stock', label: `View ${barsData.bar2?.barName || 'Bar 2'} Full Stock` },
   ];
 
-  const curatedMenuOptions = Object.keys(barSpecificData).map(barKey => ({
+  const curatedMenuOptions = Object.keys(barsData).map(barKey => ({
     value: `${barKey}_curated`,
-    label: `${barSpecificData[barKey].barName}: ${barSpecificData[barKey].curatedMenuName}`,
+    label: `${barsData[barKey].barName}: ${barsData[barKey].curatedMenuName}`,
     barId: barKey // Store original barId for selection
   }));
 

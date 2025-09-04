@@ -3,10 +3,10 @@ import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import HomePage from './HomePage';
 import { ThemeProvider } from 'styled-components'; // ThemeProvider is needed for styled-components
-import categoriesData from '../data/categories.json'; // Using actual data for simplicity here
+import categoriesData from '@/data/categories.json'; // Using actual data for simplicity here
 
-import cocktailsData from '../data/cocktails.json'; // Import cocktails data
-import placeholderImage from '../assets/cocktails/placeholder.png'; // Direct import for mocking
+import cocktailsData from '@/data/cocktails.json'; // Import cocktails data
+import placeholderImage from '@/assets/cocktails/placeholder.png'; // Direct import for mocking
 
 // Updated Mock Theme for testing, aligned with new ThemeContext
 const mockTheme = {
