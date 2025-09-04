@@ -1,7 +1,8 @@
 // In HomePage.jsx (example, actual file might differ slightly)
-import React from 'react'; // Removed useState
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { supabase } from '../supabaseClient';
 import cocktailsData from '../data/cocktails.json'; // Still needed for CocktailOfTheWeek
 // import { useCocktailFilter } from '../hooks/useCocktailFilter'; // Removed
 // import { useBar } from '../contexts/BarContext'; // Removed
@@ -135,23 +136,49 @@ const SectionHeading = styled.h2`
 
 
 const HomePage = () => {
-  // Removed showFilters state and filterSidebarId
-  // Removed useCocktailFilter hook and related state (filteredCocktails, setters, etc.)
-  // Removed useBar hook and selectedBar
+  const [cocktailToDisplay, setCocktailToDisplay] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const cocktailOfTheWeek = cocktailsData.find(c => c.id === "mojito"); // This logic remains
+  useEffect(() => {
+    const fetchCocktailOfTheWeek = async () => {
+      const { data, error } = await supabase
+        .from('cocktail_of_the_week')
+        .select('cocktail_id');
 
-  // No filterHookState or filterHookSetters needed anymore
+      if (error) {
+        console.error('Error fetching cocktail of the week:', error);
+        setLoading(false);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        let selectedCocktailId;
+        if (data.length === 1) {
+          selectedCocktailId = data[0].cocktail_id;
+        } else {
+          // If more than one, pick one randomly
+          const randomIndex = Math.floor(Math.random() * data.length);
+          selectedCocktailId = data[randomIndex].cocktail_id;
+        }
+        const cocktail = cocktailsData.find(c => c.id === selectedCocktailId);
+        setCocktailToDisplay(cocktail);
+      }
+
+      setLoading(false);
+    };
+
+    fetchCocktailOfTheWeek();
+  }, []);
 
   return (
     <PageWrapper>
       <HomePageWrapper>
-        {cocktailOfTheWeek && (
+        {!loading && cocktailToDisplay && (
           <CocktailOfTheWeekWrapper>
-            <CocktailName>{cocktailOfTheWeek.name} - Cocktail of the Week!</CocktailName>
-            <CocktailImage src={getImageUrl(cocktailOfTheWeek.image)} alt={cocktailOfTheWeek.name} />
-            <CocktailDescription>{cocktailOfTheWeek.description}</CocktailDescription>
-            <ViewRecipeButton to={`/cocktails/${cocktailOfTheWeek.id}`}>View Recipe</ViewRecipeButton>
+            <CocktailName>{cocktailToDisplay.name} - Cocktail of the Week!</CocktailName>
+            <CocktailImage src={getImageUrl(cocktailToDisplay.image)} alt={cocktailToDisplay.name} />
+            <CocktailDescription>{cocktailToDisplay.description}</CocktailDescription>
+            <ViewRecipeButton to={`/cocktails/${cocktailToDisplay.id}`}>View Recipe</ViewRecipeButton>
           </CocktailOfTheWeekWrapper>
         )}
 

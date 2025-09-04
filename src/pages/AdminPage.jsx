@@ -59,8 +59,9 @@ const IngredientList = styled.ul`
 `;
 
 const IngredientItem = styled.li`
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 1rem;
   align-items: center;
   padding: 0.75rem;
   border-radius: ${({ theme }) => theme.borderRadius};
@@ -69,6 +70,13 @@ const IngredientItem = styled.li`
   &:nth-child(odd) {
     background-color: ${({ theme }) => theme.colors.surface};
   }
+`;
+
+const RadioLabel = styled.label`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 0.5rem;
 `;
 
 const IngredientName = styled.span`
@@ -190,6 +198,7 @@ const AdminPage = () => {
   const [curatedCocktails, setCuratedCocktails] = useState([]);
   const [selectedCuratedBar, setSelectedCuratedBar] = useState('');
   const [loadingCurated, setLoadingCurated] = useState(false);
+  const [cocktailOfTheWeek, setCocktailOfTheWeek] = useState(null);
 
 
   useEffect(() => {
@@ -214,6 +223,7 @@ const AdminPage = () => {
   useEffect(() => {
     if (selectedCuratedBar) {
       fetchCuratedCocktails(selectedCuratedBar);
+      fetchCocktailOfTheWeek(selectedCuratedBar);
     }
   }, [selectedCuratedBar]);
 
@@ -230,6 +240,20 @@ const AdminPage = () => {
       setIngredients(data);
     }
     setLoading(false);
+  };
+
+  const fetchCocktailOfTheWeek = async (barId) => {
+    const { data, error } = await supabase
+      .from('cocktail_of_the_week')
+      .select('cocktail_id')
+      .eq('bar_id', barId)
+      .single();
+
+    if (error && error.code !== 'PGRST116') { // Ignore 'single row not found' error
+      console.error('Error fetching cocktail of the week:', error);
+    } else {
+      setCocktailOfTheWeek(data ? data.cocktail_id : null);
+    }
   };
 
   const fetchCuratedCocktails = async (barId) => {
@@ -261,6 +285,35 @@ const AdminPage = () => {
 
       if (error) console.error('Error adding curated cocktail:', error);
       else setCuratedCocktails([...curatedCocktails, cocktailId]);
+    }
+  };
+
+  const handleSetCocktailOfTheWeek = async (cocktailId) => {
+    // First, remove any existing entry for this bar
+    const { error: deleteError } = await supabase
+      .from('cocktail_of_the_week')
+      .delete()
+      .match({ bar_id: selectedCuratedBar });
+
+    if (deleteError) {
+      console.error('Error clearing cocktail of the week:', deleteError);
+      return; // Stop if we can't clear the old one
+    }
+
+    // If a cocktailId is provided (i.e., not 'None'), insert the new one
+    if (cocktailId) {
+      const { error: insertError } = await supabase
+        .from('cocktail_of_the_week')
+        .insert([{ bar_id: selectedCuratedBar, cocktail_id: cocktailId }]);
+
+      if (insertError) {
+        console.error('Error setting cocktail of the week:', insertError);
+      } else {
+        setCocktailOfTheWeek(cocktailId);
+      }
+    } else {
+      // If cocktailId is null, it means "None" was selected
+      setCocktailOfTheWeek(null);
     }
   };
 
@@ -428,21 +481,58 @@ const AdminPage = () => {
             </Select>
           </ControlsWrapper>
           {loadingCurated ? <p>Loading...</p> : (
-            <IngredientList>
-              {cocktails.sort((a, b) => a.name.localeCompare(b.name)).map(cocktail => (
-                <IngredientItem key={cocktail.id}>
-                  <IngredientName>{cocktail.name}</IngredientName>
-                  <ToggleSwitchLabel>
+            <>
+              <CategoryTitle>Curated Cocktails</CategoryTitle>
+              <IngredientList>
+                {cocktails.sort((a, b) => a.name.localeCompare(b.name)).map(cocktail => (
+                  <IngredientItem key={cocktail.id}>
+                    <IngredientName>{cocktail.name}</IngredientName>
+                    <ToggleSwitchLabel>
+                      <input
+                        type="checkbox"
+                        checked={curatedCocktails.includes(cocktail.id)}
+                        onChange={() => handleToggleCurated(cocktail.id)}
+                      />
+                      <span className="slider"></span>
+                    </ToggleSwitchLabel>
+                  </IngredientItem>
+                ))}
+              </IngredientList>
+
+              <CategoryTitle style={{ marginTop: '2rem' }}>Cocktail of the Week</CategoryTitle>
+              <IngredientList>
+                {/* "None" option */}
+                <IngredientItem>
+                  <RadioLabel>
                     <input
-                      type="checkbox"
-                      checked={curatedCocktails.includes(cocktail.id)}
-                      onChange={() => handleToggleCurated(cocktail.id)}
+                      type="radio"
+                      name="cocktailOfTheWeek"
+                      checked={!cocktailOfTheWeek}
+                      onChange={() => handleSetCocktailOfTheWeek(null)}
                     />
-                    <span className="slider"></span>
-                  </ToggleSwitchLabel>
+                    None
+                  </RadioLabel>
                 </IngredientItem>
-              ))}
-            </IngredientList>
+                {/* Options for curated cocktails */}
+                {cocktails
+                  .filter(c => curatedCocktails.includes(c.id))
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map(cocktail => (
+                    <IngredientItem key={cocktail.id}>
+                      <RadioLabel>
+                        <input
+                          type="radio"
+                          name="cocktailOfTheWeek"
+                          value={cocktail.id}
+                          checked={cocktailOfTheWeek === cocktail.id}
+                          onChange={() => handleSetCocktailOfTheWeek(cocktail.id)}
+                        />
+                        {cocktail.name}
+                      </RadioLabel>
+                    </IngredientItem>
+                  ))}
+              </IngredientList>
+            </>
           )}
         </>
       )}
