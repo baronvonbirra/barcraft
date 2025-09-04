@@ -2,15 +2,14 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import barSpecificDataJson from '../data/bar_specific_data.json';
 
-// Initial state
 const initialState = {
-  selectedBarId: 'all', // 'all', 'bar1', 'bar2'
-  barStock: new Set(), // Set of available ingredient IDs for the selected bar
-  barAStock: new Set(), // Stock for Bar A
-  barBStock: new Set(), // Stock for Bar B
-  selectedBarName: null, // Name of the selected bar
-  viewingCuratedMenu: null, // null, 'bar1_curated', 'bar2_curated'
-  barsData: {}, // All data about bars, including curated cocktails
+  selectedBarId: 'all',
+  barStock: new Set(),
+  barAStock: new Set(),
+  barBStock: new Set(),
+  selectedBarName: null,
+  viewingCuratedMenu: null,
+  barsData: {},
   selectBar: () => {},
   viewCuratedMenu: () => {},
 };
@@ -26,14 +25,12 @@ export const BarProvider = ({ children }) => {
   const [viewingCuratedMenu, setViewingCuratedMenu] = useState(null);
   const [barsData, setBarsData] = useState({});
 
-  // Fetch all stock data on initial load
   useEffect(() => {
     const CACHE_KEY = 'ingredientCache';
     const CACHE_TIMESTAMP_KEY = 'ingredientCacheTimestamp';
-    const CACHE_DURATION_MS = 60 * 60 * 1000; // 1 hour
+    const CACHE_DURATION_MS = 60 * 60 * 1000;
 
     const fetchAllStock = async () => {
-      // Try to load from cache first
       const cachedTimestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
       const cachedData = localStorage.getItem(CACHE_KEY);
 
@@ -64,7 +61,6 @@ export const BarProvider = ({ children }) => {
         setBarAStock(barAIds);
         setBarBStock(barBIds);
 
-        // Save to cache
         const cacheData = {
           barAIds: Array.from(barAIds),
           barBIds: Array.from(barBIds)
@@ -76,7 +72,6 @@ export const BarProvider = ({ children }) => {
     fetchAllStock();
   }, []);
 
-  // Fetch all bars data
   useEffect(() => {
     const fetchBarsData = async () => {
       const { data: curated, error: curatedError } = await supabase.from('curated_cocktails').select('*');
@@ -97,7 +92,6 @@ export const BarProvider = ({ children }) => {
     fetchBarsData();
   }, []);
 
-  // Update the currently selected bar's stock when selection changes
   useEffect(() => {
     let currentBarName = null;
     if (selectedBarId === 'bar1') {
@@ -148,7 +142,6 @@ export const BarProvider = ({ children }) => {
   );
 };
 
-// Custom hook to use the BarContext
 export const useBar = () => {
   const context = useContext(BarContext);
   if (context === undefined) {

@@ -19,7 +19,6 @@ const ListWrapper = styled.div`
   }
 `;
 
-// Expects cocktails to be pre-augmented with an 'isMakeable' boolean property
 const CocktailList = ({ cocktails }) => {
   if (!cocktails) return <p>No cocktails to display.</p>;
   if (cocktails.length === 0) return <p>No cocktails match your current filters.</p>;
@@ -30,7 +29,7 @@ const CocktailList = ({ cocktails }) => {
         <CocktailListItem
           key={cocktail.id}
           cocktail={cocktail}
-          isMakeable={cocktail.isMakeable} // Pass the pre-calculated boolean from the cocktail object
+          isMakeable={cocktail.isMakeable}
         />
       ))}
     </ListWrapper>

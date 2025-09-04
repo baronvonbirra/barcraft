@@ -8,11 +8,9 @@ import cocktails from '../data/cocktails.json';
 
 // Import the one hook we need to mock
 import { useBar } from '../contexts/BarContext.jsx';
-// FIXED: Removed the non-existent useFavorites import
 
 // Mock the BarContext module to provide the useBar hook
 vi.mock('../contexts/BarContext.jsx');
-// FIXED: Removed the non-existent FavoritesContext mock
 
 const testCocktail = cocktails.find(c => c.id === 'mojito');
 const mockTheme = { mode: 'dark', colors: {}, fonts: {}, spacing: {}, borderRadius: '' };
@@ -38,12 +36,10 @@ describe('CocktailPage', () => {
       barAStock: new Set(),
       barBStock: new Set(),
     });
-    // FIXED: Removed the non-existent useFavorites mock
   });
 
   it('renders "cocktail not found" message for a non-existent cocktail', () => {
     renderComponent('/cocktails/non-existent-cocktail');
-    // FIXED: Changed the expected text from a period to an exclamation mark to match the component's output.
     expect(screen.getByText('Cocktail not found!')).toBeInTheDocument();
   });
 

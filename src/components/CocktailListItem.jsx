@@ -147,25 +147,23 @@ const FavoriteButton = styled(({ isFavorite, ...rest }) => <button {...rest} />)
   }
 `;
 
-// Helper function to check if a cocktail is makeable at a specific bar
 const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
-  if (!cocktailIngredients || cocktailIngredients.length === 0) return true; // No ingredients needed
+  if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
   return cocktailIngredients.every(ing => {
-    if (!ing.isEssential) return true; // Optional ingredients don't break makeability
+    if (!ing.isEssential) return true;
     return barStockSet.has(ing.id);
   });
 };
 
 const CocktailListItem = ({ cocktail, isMakeable }) => {
   const { isFavorite, toggleFavorite } = useFavorites();
-  const { barAStock, barBStock, barsData } = useBar(); // Get both bar stocks and barsData from context
+  const { barAStock, barBStock, barsData } = useBar();
 
   if (!cocktail) return null;
 
   const imageSrc = getImageUrl(cocktail.image);
   const currentIsFavorite = isFavorite(cocktail.id);
 
-  // Determine makeability for each bar using context data
   const isMakeableBar1 = useMemo(() => checkMakeableForBar(cocktail.ingredients, barAStock), [cocktail.ingredients, barAStock]);
   const isMakeableBar2 = useMemo(() => checkMakeableForBar(cocktail.ingredients, barBStock), [cocktail.ingredients, barBStock]);
 

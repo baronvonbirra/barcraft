@@ -92,12 +92,11 @@ const GlobalStyles = createGlobalStyle`
 
 export default GlobalStyles;
 
-// Keyframes for page fade-in animation
 export const fadeInPage = `
   @keyframes fadeInPage {
     from {
       opacity: 0;
-      transform: translateY(10px); /* Optional: slight upward movement */
+      transform: translateY(10px);
     }
     to {
       opacity: 1;

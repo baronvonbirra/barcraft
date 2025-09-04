@@ -6,7 +6,6 @@ import { vi } from 'vitest';
 import HomePage from './HomePage';
 import categoriesData from '../data/categories.json'; 
 
-// FIXED: Manually mock the CORRECT image file path to bypass the import issue.
 vi.mock('../assets/cocktails/placeholder.jpg', () => ({
   default: 'mocked-placeholder-image.jpg',
 }));

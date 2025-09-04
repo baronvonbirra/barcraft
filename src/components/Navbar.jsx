@@ -1,8 +1,7 @@
-import React, { useState, useContext } from 'react'; // Added useState
+import React, { useState, useContext } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import { ThemeContext as CustomThemeContext } from '../contexts/ThemeContext';
-// import BarSelector from './BarSelector'; // Removed
 
 const NavWrapper = styled.nav`
   background-color: ${({ theme }) => theme.colors.surface};
@@ -11,7 +10,7 @@ const NavWrapper = styled.nav`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: relative; // For positioning the mobile menu
+  position: relative;
 `;
 
 const LogoLink = styled(Link)`
@@ -22,10 +21,10 @@ const LogoLink = styled(Link)`
   font-weight: bold;
   display: flex;
   align-items: center;
-  z-index: 101; // Ensure logo is above mobile menu overlay
+  z-index: 101;
 
   @media (max-width: 768px) {
-    font-size: 1.5rem; // Slightly smaller logo on mobile
+    font-size: 1.5rem;
   }
 `;
 
@@ -35,7 +34,7 @@ const NavLinks = styled.div`
   gap: ${({ theme }) => theme.spacing.medium};
 
   @media (max-width: 768px) {
-    display: none; // Hide regular nav links on mobile
+    display: none;
   }
 `;
 
@@ -46,11 +45,11 @@ const NavLinkStyled = styled(NavLink)`
   padding: ${({ theme }) => theme.spacing.small};
   border-radius: ${({ theme }) => theme.borderRadius};
   transition: all 0.3s ease;
-  border-bottom: 2px solid transparent; // For active state indication
+  border-bottom: 2px solid transparent;
 
   &:hover {
     color: ${({ theme }) => theme.colors.primary};
-    background-color: rgba(176, 141, 87, 0.1); /* Hardcoded for dark theme primary with 0.1 opacity */
+    background-color: rgba(176, 141, 87, 0.1);
   }
 
   &.active {
@@ -60,23 +59,20 @@ const NavLinkStyled = styled(NavLink)`
   }
 `;
 
-// ToggleButton styled component removed.
-
 const HamburgerIcon = styled.button`
-  display: none; // Hidden by default
+  display: none;
   background: none;
   border: none;
   color: ${({ theme }) => theme.colors.text};
-  font-size: 1.8rem; // Adjust size as needed
+  font-size: 1.8rem;
   cursor: pointer;
   padding: ${({ theme }) => theme.spacing.small};
-  z-index: 101; // Ensure hamburger is above mobile menu overlay
+  z-index: 101;
 
   @media (max-width: 768px) {
-    display: block; // Show on mobile
+    display: block;
   }
 
-  /* Styling for the actual hamburger lines */
   span {
     display: block;
     width: 25px;
@@ -100,38 +96,38 @@ const HamburgerIcon = styled.button`
 `;
 
 const MobileMenu = styled.div`
-  display: none; // Hidden by default
+  display: none;
   flex-direction: column;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.medium};
   background-color: ${({ theme }) => theme.colors.surface};
   box-shadow: ${({ theme }) => theme.shadows.large};
-  padding: ${({ theme }) => theme.spacing.large} 0; // Generous padding for tappability
+  padding: ${({ theme }) => theme.spacing.large} 0;
   position: absolute;
-  top: 0; // Align with NavWrapper top
+  top: 0;
   left: 0;
   right: 0;
   width: 100%;
-  z-index: 100; // Below logo/hamburger but above page content
+  z-index: 100;
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 
 
   @media (max-width: 768px) {
-    display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')}; // Show/hide based on state
+    display: ${({ isOpen }) => (isOpen ? 'flex' : 'none')};
   }
 
-  ${NavLinkStyled} { // Target NavLinkStyled within MobileMenu
+  ${NavLinkStyled} {
     padding: ${({ theme }) => theme.spacing.medium};
     width: 80%;
     text-align: center;
-    border-bottom: 1px solid ${({ theme }) => theme.colors.border}; // Separator for links
+    border-bottom: 1px solid ${({ theme }) => theme.colors.border};
     
     &:last-child {
       border-bottom: none;
     }
 
     &.active {
-      border-bottom: 1px solid ${({ theme }) => theme.colors.primary}; // Keep active style consistent
+      border-bottom: 1px solid ${({ theme }) => theme.colors.primary};
     }
   }
 `;
@@ -145,13 +141,12 @@ const RightNavContent = styled.div`
 
 
 const Navbar = () => {
-  // Removed toggleTheme from context destructuring
   const { theme } = useContext(CustomThemeContext); 
   const [isOpen, setIsOpen] = useState(false);
-  const mobileMenuId = "mobile-menu"; // Define an ID for ARIA
+  const mobileMenuId = "mobile-menu";
 
   const handleLinkClick = () => {
-    setIsOpen(false); // Close mobile menu when a link is clicked
+    setIsOpen(false);
   };
 
   return (
@@ -165,11 +160,9 @@ const Navbar = () => {
         <NavLinkStyled to="/bar/level-one" onClick={handleLinkClick}>Level One</NavLinkStyled>
         <NavLinkStyled to="/bar/the-glitch" onClick={handleLinkClick}>The Glitch</NavLinkStyled>
         <NavLinkStyled to="/admin" onClick={handleLinkClick}>Admin</NavLinkStyled>
-        {/* BarSelector removed */}
       </NavLinks>
 
       <RightNavContent>
-        {/* ToggleButton instance removed */}
         <HamburgerIcon
           isOpen={isOpen}
           onClick={() => setIsOpen(!isOpen)}
@@ -190,7 +183,6 @@ const Navbar = () => {
         <NavLinkStyled to="/bar/level-one" onClick={handleLinkClick}>Level One</NavLinkStyled>
         <NavLinkStyled to="/bar/the-glitch" onClick={handleLinkClick}>The Glitch</NavLinkStyled>
         <NavLinkStyled to="/admin" onClick={handleLinkClick}>Admin</NavLinkStyled>
-        {/* BarSelector removed from MobileMenu */}
       </MobileMenu>
     </NavWrapper>
   );

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'; // Removed useState
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import FilterSidebar from '../components/FilterSidebar';
 import CocktailList from '../components/CocktailList';
@@ -10,10 +10,9 @@ import thematicCategoriesData from '../data/thematicCategories.json'; // For Fil
 
 const PageWrapper = styled.div`
   padding: ${({ theme }) => (theme.spacing && theme.spacing.medium) || '1rem'} 0;
-  /* gap attribute removed as flex children will manage their own gaps or PageLayout will */
   animation: fadeInPage 0.5s ease-out forwards;
-  display: flex; /* Ensure PageWrapper can host CategoriesPageLayout correctly */
-  flex-direction: column; /* Content flows downwards */
+  display: flex;
+  flex-direction: column;
 `;
 
 const CategoriesPageLayout = styled.div`
@@ -63,18 +62,15 @@ const CategoriesOverviewPage = () => {
 
   const { selectedBar, barStock } = useBar();
 
-  // isCocktailMakeable can be memoized if barStock changes often, but for now, direct use is fine.
   const isCocktailMakeable = (cocktail) => {
-    if (!selectedBar || !barStock || barStock.length === 0) return true; // Default to true if no bar is selected or stock not loaded/empty
+    if (!selectedBar || !barStock || barStock.length === 0) return true;
     return cocktail.ingredients.every(ingredient => 
       barStock.includes(ingredient.name.toLowerCase())
     );
   };
 
-  // displayedCocktails is no longer needed as filteredCocktails from the hook now includes search
-  
-  const filterHookState = { baseSpirit, includeIngredients, excludeIngredients, flavorProfile, difficulty, tags, glassType, thematic, searchTerm }; // Added searchTerm to state passed to sidebar if needed
-  const filterHookSetters = { setBaseSpirit, setIncludeIngredients, setExcludeIngredients, setFlavorProfile, setDifficulty, setTags, setGlassType, setThematic, setSearchTerm }; // Added setSearchTerm
+  const filterHookState = { baseSpirit, includeIngredients, excludeIngredients, flavorProfile, difficulty, tags, glassType, thematic, searchTerm };
+  const filterHookSetters = { setBaseSpirit, setIncludeIngredients, setExcludeIngredients, setFlavorProfile, setDifficulty, setTags, setGlassType, setThematic, setSearchTerm };
 
   return (
     <PageWrapper>
@@ -96,10 +92,9 @@ const CategoriesOverviewPage = () => {
             onChange={(e) => setSearchTerm(e.target.value)} // Use setSearchTerm from hook
           />
           <CocktailList
-            cocktails={filteredCocktails} // Use filteredCocktails from hook
+            cocktails={filteredCocktails}
             isCocktailMakeable={isCocktailMakeable}
             selectedBar={selectedBar}
-            // itemsPerPage={12} // Pagination can be handled internally by CocktailList or added later
           />
         </MainContent>
       </CategoriesPageLayout>
