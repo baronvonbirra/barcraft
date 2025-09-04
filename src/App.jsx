@@ -30,7 +30,7 @@ const AppContent = () => {
   return (
     <StyledComponentsThemeProvider theme={theme}>
       <GlobalStyles /> {/* Add GlobalStyles here */}
-      <Router basename="barcraft">
+      <Router basename="/barcraft">
         <ScrollToTop /> {/* Add the component here */}
         <AppWrapper>
           <Navbar />
