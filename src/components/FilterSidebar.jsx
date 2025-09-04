@@ -1,13 +1,6 @@
-import React, { useMemo, useState } from 'react'; // Ensure useState is imported
+import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
-// We will pass down cocktailsData and categoriesData as props later.
-// For now, let's assume they are available or mocked if needed for development.
-// import cocktailsData from '../data/cocktails.json'; // For deriving options
-// import categoriesData from '../data/categories.json'; // For category options
-import SurpriseMeButton from './SurpriseMeButton'; // Import the new button
-
-// Assume useCocktailFilter hook is correctly imported from ../hooks/useCocktailFilter
-// For the subtask, the worker can assume the hook is available and works as specified.
+import SurpriseMeButton from './SurpriseMeButton';
 
 const SidebarWrapper = styled.aside`
   padding: ${props => props.theme.spacing.medium};
@@ -19,11 +12,9 @@ const SidebarWrapper = styled.aside`
   flex-direction: column;
   gap: ${props => props.theme.spacing.medium};
   color: ${props => props.theme.colors.text};
-  /* height: 100vh; removed */
-  /* overflow-y: auto; removed */
 
   h3 {
-    color: ${props => props.theme.colors.primary}; // Changed to primary
+    color: ${props => props.theme.colors.primary};
     margin-bottom: ${props => props.theme.spacing.small};
   }
 
@@ -43,12 +34,12 @@ const SidebarWrapper = styled.aside`
     background-color: ${props => props.theme.colors.background};
     color: ${props => props.theme.colors.text};
     font-family: ${({ theme }) => theme.fonts.main};
-    margin-bottom: ${props => props.theme.spacing.medium}; /* Consistent margin */
+    margin-bottom: ${props => props.theme.spacing.medium};
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 
     &:focus {
       border-color: ${props => props.theme.colors.primary};
-      box-shadow: 0 0 0 2px rgba(${props => props.theme.colors.primary}, 0.2); // Simulating theme.fn.rgba
+      box-shadow: 0 0 0 2px rgba(${props => props.theme.colors.primary}, 0.2);
       outline: none;
     }
   }
@@ -56,8 +47,7 @@ const SidebarWrapper = styled.aside`
   .checkbox-group {
     max-height: 150px;
     overflow-y: auto;
-    position: relative; // Add this
-    /* background-color is inherited or already set, ensure it's not transparent */
+    position: relative;
   }
 
   .checkbox-item {
@@ -68,16 +58,16 @@ const SidebarWrapper = styled.aside`
 
   .checkbox-item input[type="checkbox"] {
     margin-right: ${props => props.theme.spacing.small};
-    width: auto; /* Override width: 100% for checkbox itself */
-    margin-bottom: 0; /* Override general input margin */
-    accent-color: ${props => props.theme.colors.primary}; /* Style the checkmark color */
+    width: auto;
+    margin-bottom: 0;
+    accent-color: ${props => props.theme.colors.primary};
   }
 
   .checkbox-item label {
-    font-size: 0.9rem; /* Updated from 0.85rem for better readability */
+    font-size: 0.9rem;
     color: ${props => props.theme.colors.text};
-    margin-bottom: 0; /* Labels inside checkbox items don't need bottom margin */
-    font-weight: normal; /* Ensure it's not bold if there's any global bolding */
+    margin-bottom: 0;
+    font-weight: normal;
   }
 `;
 
@@ -88,14 +78,14 @@ const FilterSection = styled.div`
 const StickySearchInput = styled.input`
   position: sticky;
   top: 0;
-  background-color: ${({ theme }) => theme.colors.surface || '#fff'}; // Match checkbox-group or sidebar bg
-  z-index: 10; // Ensure it's above checkbox items
-  width: calc(100% - 2 * ${({ theme }) => theme.spacing.small}); // Adjust width to account for parent padding
-  padding: ${({ theme }) => theme.spacing.small}; // Keep consistent padding
-  margin: 0 auto ${({ theme }) => theme.spacing.small} auto; // Center and provide bottom margin
+  background-color: ${({ theme }) => theme.colors.surface || '#fff'};
+  z-index: 10;
+  width: calc(100% - 2 * ${({ theme }) => theme.spacing.small});
+  padding: ${({ theme }) => theme.spacing.small};
+  margin: 0 auto ${({ theme }) => theme.spacing.small} auto;
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.borderRadius};
-  display: block; // Ensure it takes up its own line
+  display: block;
 
   &:focus {
     border-color: ${props => props.theme.colors.primary};
@@ -105,7 +95,6 @@ const StickySearchInput = styled.input`
 `;
 
 const Button = styled.button`
-  /* Generic Button styles - can be extracted to a common Button.jsx later */
   font-family: ${({ theme }) => theme.fonts.main};
   padding: ${({ theme }) => theme.spacing.small} ${({ theme }) => theme.spacing.medium};
   border-radius: ${({ theme }) => theme.borderRadius};
@@ -114,9 +103,8 @@ const Button = styled.button`
   width: 100%;
   margin-top: ${({ theme }) => theme.spacing.small};
   font-weight: 600;
-  text-transform: uppercase; // Optional, for more "designed" feel
+  text-transform: uppercase;
 
-  /* Primary button style (used by SurpriseMeButton if it were styled here) */
   &.primary {
     background-color: ${({ theme }) => theme.colors.primary};
     color: ${({ theme }) => theme.colors.onPrimary};
@@ -130,7 +118,6 @@ const Button = styled.button`
     }
   }
 
-  /* Ghost button style for Reset Filters */
   &.reset {
     background-color: transparent;
     color: ${({ theme }) => theme.colors.primary};
@@ -145,59 +132,43 @@ const Button = styled.button`
   }
 `;
 
-// Helper to get unique values for select options
 const getUniqueValues = (items, key, subKey = null) => {
   if (!items) return [];
-  const valueMap = new Map(); // Use a Map to store unique objects by ID
+  const valueMap = new Map();
 
   items.forEach(item => {
-    if (subKey && item[key]) { // e.g., ingredients: item.ingredients (array)
+    if (subKey && item[key]) {
       item[key].forEach(subItem => {
-        // If subKey is 'name', we assume subItem is an object like { id: '...', name: '...' }
-        // and we want to store the whole object, ensuring uniqueness by id.
         if (subKey === 'name' && subItem && subItem.id && subItem.name) {
           if (!valueMap.has(subItem.id)) {
             valueMap.set(subItem.id, { id: subItem.id, name: subItem.name });
           }
-        } else if (subItem && subItem[subKey]) { // Original logic for other subKey extractions
-          // This branch might need to be revisited if other subKey extractions are needed.
-          // For now, the primary concern is ingredient objects.
-          // To keep original behavior for non-ingredient cases (though not explicitly used in current problem):
-           if (!valueMap.has(subItem[subKey])) { // Fallback to value itself as key if not object with id
+        } else if (subItem && subItem[subKey]) {
+           if (!valueMap.has(subItem[subKey])) {
             valueMap.set(subItem[subKey], subItem[subKey]);
            }
         }
       });
-    } else if (item[key]) { // e.g., tags: item.tags (array of strings) or item.glass (string)
+    } else if (item[key]) {
       if (Array.isArray(item[key])) {
         item[key].forEach(val => {
           if (!valueMap.has(val)) valueMap.set(val, val);
         });
-      } else { // e.g., glass: item.glass (string)
+      } else {
         if (!valueMap.has(item[key])) valueMap.set(item[key], item[key]);
       }
     }
   });
 
-  // For ingredients (identified by subKey === 'name'), we sort by name.
-  // For others, we sort by the value itself.
   const sortedValues = Array.from(valueMap.values());
   if (subKey === 'name') {
-    // Ensure all elements are objects with a name property before sorting
     if (sortedValues.every(val => typeof val === 'object' && val !== null && 'name' in val)) {
       sortedValues.sort((a, b) => a.name.localeCompare(b.name));
     }
-    // If not all are objects with 'name', implies mixed types or different structure,
-    // potentially log a warning or handle as per broader application needs.
-    // For this specific task, we expect objects with 'name'.
   } else {
-    // Attempt to sort, works best if values are consistently strings or numbers.
-    // If mixed types that can't be compared, sort might be unpredictable.
     try {
       sortedValues.sort((a, b) => String(a).localeCompare(String(b)));
     } catch (e) {
-      // console.error("Could not sort values:", e);
-      // Fallback or no sort if complex types are mixed without a clear sorting strategy
     }
   }
   return sortedValues;
@@ -211,8 +182,8 @@ const FilterSidebar = ({
   filters, // { baseSpirit, includeIngredients, ... } from useCocktailFilter
   setters, // { setBaseSpirit, setIncludeIngredients, ... } from useCocktailFilter
   resetFilters, // from useCocktailFilter
-  filteredCocktailsForSurprise, // Pass the filtered list for the button
-  id // Destructure the id prop
+  filteredCocktailsForSurprise,
+  id
 }) => {
   const [includeIngredientSearchTerm, setIncludeIngredientSearchTerm] = useState('');
   const [excludeIngredientSearchTerm, setExcludeIngredientSearchTerm] = useState('');
@@ -221,9 +192,8 @@ const FilterSidebar = ({
   const uniqueFlavorProfiles = useMemo(() => getUniqueValues(allCocktails, 'flavorProfile'), [allCocktails]);
   const uniqueTags = useMemo(() => getUniqueValues(allCocktails, 'tags'), [allCocktails]);
   const uniqueGlassTypes = useMemo(() => getUniqueValues(allCocktails, 'glass'), [allCocktails]);
-  const difficulties = ['Easy', 'Medium', 'Hard']; // Static list
+  const difficulties = ['Easy', 'Medium', 'Hard'];
 
-  // Handler for multi-select checkboxes
   const handleMultiSelectChange = (setter, currentValues, value) => {
     const newValues = currentValues.includes(value)
       ? currentValues.filter(v => v !== value)
@@ -232,18 +202,13 @@ const FilterSidebar = ({
   };
   
   if (!filters || !setters || !resetFilters) {
-    // This component expects filter state and setters to be passed as props
-    // This can happen if the parent component hasn't initialized useCocktailFilter yet
-    // Or if they are not passed down correctly.
-    // Render nothing or a loading state, or an error.
-    // For now, let's return null to avoid runtime errors if props are missing.
     console.warn("FilterSidebar: filters, setters, or resetFilters prop is missing.");
     return null; 
   }
 
 
   return (
-    <SidebarWrapper id={id}> {/* Apply the id to the SidebarWrapper */}
+    <SidebarWrapper id={id}>
       <h3>Filter Cocktails</h3>
 
       <FilterSection>
@@ -261,11 +226,11 @@ const FilterSidebar = ({
       </FilterSection>
 
       <FilterSection>
-        <label htmlFor="includeIngredients">Include Ingredients:</label> {/* This label is for the whole group */}
+        <label htmlFor="includeIngredients">Include Ingredients:</label>
         <div className="checkbox-group">
           <StickySearchInput
             type="text"
-            id="includeIngredientSearch" // Keep ID for potential label association if needed
+            id="includeIngredientSearch"
             placeholder="Search to include..."
             value={includeIngredientSearchTerm}
             onChange={(e) => setIncludeIngredientSearchTerm(e.target.value)}
@@ -277,11 +242,11 @@ const FilterSidebar = ({
               <input
                 type="checkbox"
                 id={`include-${ingObj.id}`}
-                value={ingObj.id} // Use ID for the value
-                checked={filters.includeIngredients.includes(ingObj.id)} // Check against ID
-                onChange={() => handleMultiSelectChange(setters.setIncludeIngredients, filters.includeIngredients, ingObj.id)} // Pass ID to handler
+                value={ingObj.id}
+                checked={filters.includeIngredients.includes(ingObj.id)}
+                onChange={() => handleMultiSelectChange(setters.setIncludeIngredients, filters.includeIngredients, ingObj.id)}
               />
-              <label htmlFor={`include-${ingObj.id}`}>{ingObj.name}</label> {/* Display name */}
+              <label htmlFor={`include-${ingObj.id}`}>{ingObj.name}</label>
             </div>
           ))}
         </div>
@@ -304,11 +269,11 @@ const FilterSidebar = ({
               <input
                 type="checkbox"
                 id={`exclude-${ingObj.id}`}
-                value={ingObj.id} // Use ID for the value
-                checked={filters.excludeIngredients.includes(ingObj.id)} // Check against ID
-                onChange={() => handleMultiSelectChange(setters.setExcludeIngredients, filters.excludeIngredients, ingObj.id)} // Pass ID to handler
+                value={ingObj.id}
+                checked={filters.excludeIngredients.includes(ingObj.id)}
+                onChange={() => handleMultiSelectChange(setters.setExcludeIngredients, filters.excludeIngredients, ingObj.id)}
               />
-              <label htmlFor={`exclude-${ingObj.id}`}>{ingObj.name}</label> {/* Display name */}
+              <label htmlFor={`exclude-${ingObj.id}`}>{ingObj.name}</label>
             </div>
           ))}
         </div>
@@ -364,10 +329,8 @@ const FilterSidebar = ({
         </div>
       </FilterSection>
 
-      {/* New Thematic Categories Filter Section START */}
       <FilterSection>
         <label>Thematic Categories:</label>
-        {/* Ensure thematicCategories prop is checked for existence before mapping */}
         {thematicCategories && thematicCategories.length > 0 && (
           <div className="checkbox-group">
             {thematicCategories.map(theme => (
@@ -376,7 +339,6 @@ const FilterSidebar = ({
                   type="checkbox"
                   id={`theme-${theme.id}`}
                   value={theme.id}
-                  // Assuming filters.thematic exists and is an array
                   checked={filters.thematic && filters.thematic.includes(theme.id)}
                   onChange={() => handleMultiSelectChange(setters.setThematic, filters.thematic || [], theme.id)}
                 />
@@ -386,7 +348,6 @@ const FilterSidebar = ({
           </div>
         )}
       </FilterSection>
-      {/* New Thematic Categories Filter Section END */}
 
       <FilterSection>
         <label htmlFor="glassType">Glass Type:</label>
@@ -407,9 +368,7 @@ const FilterSidebar = ({
       </Button>
       <SurpriseMeButton 
         filteredCocktails={filteredCocktailsForSurprise} 
-        // currentFiltersActive can be derived or passed if needed by SurpriseMeButton
       />
-      {/* "Apply Filters" button can be added here if instant updates are not desired */}
     </SidebarWrapper>
   );
 };

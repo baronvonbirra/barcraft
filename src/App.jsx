@@ -3,18 +3,18 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider as CustomThemeProvider, ThemeContext } from './contexts/ThemeContext';
 import { ThemeProvider as StyledComponentsThemeProvider } from 'styled-components';
 import styled from 'styled-components';
-import GlobalStyles from './styles/GlobalStyles'; // Import GlobalStyles
+import GlobalStyles from './styles/GlobalStyles';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import CategoryPage from './pages/CategoryPage';
-import CategoriesOverviewPage from './pages/CategoriesOverviewPage'; // Import the CategoriesOverviewPage component
+import CategoriesOverviewPage from './pages/CategoriesOverviewPage';
 import CocktailPage from './pages/CocktailPage';
-import FavoritesPage from './pages/FavoritesPage'; // Add this import
-import BarSpecificPage from './pages/BarSpecificPage'; // Added
-import FilteredCocktailListPage from './pages/FilteredCocktailListPage'; // Added
-import BackToTopButton from './components/BackToTopButton'; // Added
-import ScrollToTop from './components/ScrollToTop'; // Import ScrollToTop
-import AdminPage from './pages/AdminPage'; // Import AdminPage
+import FavoritesPage from './pages/FavoritesPage';
+import BarSpecificPage from './pages/BarSpecificPage';
+import FilteredCocktailListPage from './pages/FilteredCocktailListPage';
+import BackToTopButton from './components/BackToTopButton';
+import ScrollToTop from './components/ScrollToTop';
+import AdminPage from './pages/AdminPage';
 
 // Basic App layout styling
 const AppWrapper = styled.div`
@@ -25,30 +25,30 @@ const AppWrapper = styled.div`
 `;
 
 const AppContent = () => {
-  const { theme } = useContext(ThemeContext); // Get the theme object
+  const { theme } = useContext(ThemeContext);
 
   return (
     <StyledComponentsThemeProvider theme={theme}>
-      <GlobalStyles /> {/* Add GlobalStyles here */}
+      <GlobalStyles />
       <Router basename="/barcraft">
-        <ScrollToTop /> {/* Add the component here */}
+        <ScrollToTop />
         <AppWrapper>
           <Navbar />
-          <main> {/* Added a main tag for semantic HTML and content separation */}
+          <main>
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/categories" element={<CategoriesOverviewPage />} /> {/* Add the route for CategoriesOverviewPage */}
+              <Route path="/categories" element={<CategoriesOverviewPage />} />
               <Route path="/category/:categoryId" element={<CategoryPage />} />
-              <Route path="/favorites" element={<FavoritesPage />} /> {/* Add this route */}
+              <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/cocktails/:cocktailId" element={<CocktailPage />} />
-              <Route path="/bar/:barId" element={<BarSpecificPage />} /> {/* Added */}
-              <Route path="/cocktails/filter/:filterType/:filterValue" element={<FilteredCocktailListPage />} /> {/* Added */}
+              <Route path="/bar/:barId" element={<BarSpecificPage />} />
+              <Route path="/cocktails/filter/:filterType/:filterValue" element={<FilteredCocktailListPage />} />
               <Route path="/admin" element={<AdminPage />} />
             </Routes>
           </main>
         </AppWrapper>
       </Router>
-      <BackToTopButton /> {/* Added BackToTopButton here */}
+      <BackToTopButton />
     </StyledComponentsThemeProvider>
   );
 };

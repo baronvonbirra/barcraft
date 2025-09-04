@@ -4,7 +4,6 @@ import { ThemeProvider } from 'styled-components';
 import { vi } from 'vitest';
 import CocktailDetail from './CocktailDetail';
 
-// Manually mock the image import to bypass the import issue.
 vi.mock('../assets/cocktails/placeholder.jpg', () => ({
   default: 'mocked-placeholder-image.jpg',
 }));
@@ -71,7 +70,6 @@ describe('CocktailDetail', () => {
     expect(screen.getByText('Coupe, Martini glass')).toBeInTheDocument();
   });
 
-  // --- THIS IS THE CORRECTED TEST ---
   it('does NOT render the glass information when the glass field is missing', () => {
     const cocktailWithoutGlass = {
       ...baseCocktailData,
@@ -83,8 +81,6 @@ describe('CocktailDetail', () => {
       </ThemeProvider>
     );
     expect(screen.getByText('Test Cocktail')).toBeInTheDocument();
-    // FIXED: The component correctly does not render the label, so the test
-    // should assert that the label is NOT in the document.
     const glassLabel = screen.queryByText('Glass:');
     expect(glassLabel).not.toBeInTheDocument(); 
   });

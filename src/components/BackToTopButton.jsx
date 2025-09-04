@@ -1,7 +1,6 @@
-// src/components/BackToTopButton.jsx
 import React, { useState, useEffect, useContext } from 'react';
-import styled from 'styled-components'; // Removed { css } as it's not used
-import { ThemeContext } from '../contexts/ThemeContext'; // For theme access
+import styled from 'styled-components';
+import { ThemeContext } from '../contexts/ThemeContext';
 
 const ButtonWrapper = styled.button`
   position: fixed;
@@ -10,10 +9,10 @@ const ButtonWrapper = styled.button`
   background-color: ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.onPrimary};
   border: none;
-  border-radius: 50%; // For a circular button
-  width: 50px;       // Adjust size
-  height: 50px;      // Adjust size
-  font-size: 1.5rem; // Adjust icon size
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,12 +20,12 @@ const ButtonWrapper = styled.button`
   box-shadow: ${({ theme }) => theme.shadows.medium};
   opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
   transform: ${({ isVisible }) => (isVisible ? 'scale(1)' : 'scale(0.5)')};
-  visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')}; // Added for better accessibility and performance
-  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease; // Added visibility to transition
-  z-index: 1000; // Ensure it's above other content
+  visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+  z-index: 1000;
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.secondary}; // Or a darker primary
+    background-color: ${({ theme }) => theme.colors.secondary};
   }
 `;
 
@@ -56,19 +55,17 @@ const BackToTopButton = () => {
     };
   }, []);
 
-  // Only render the button if the theme is available to avoid errors during initial context setup
-  // (though with the current setup, theme should always be available)
   if (!theme) return null; 
 
   return (
     <ButtonWrapper
-      theme={theme} // Pass theme explicitly if styled-components < v5 or outside ThemeProvider
+      theme={theme}
       onClick={scrollToTop}
       isVisible={isVisible}
       aria-label="Scroll to top"
-      title="Scroll to top" // Tooltip for mouse users
+      title="Scroll to top"
     >
-      ↑ {/* Replace with a proper icon if available */}
+      ↑
     </ButtonWrapper>
   );
 };

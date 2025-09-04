@@ -36,8 +36,6 @@ const SurpriseMeButton = ({ filteredCocktails, currentFiltersActive }) => {
 
   const handleSurpriseMe = () => {
     if (!filteredCocktails || filteredCocktails.length === 0) {
-      // User feedback for no cocktails matching filters
-      // In a real app, this might be a toast notification or a more integrated message.
       alert("No cocktails match your current mood! Try adjusting your filters.");
       return;
     }
@@ -47,8 +45,6 @@ const SurpriseMeButton = ({ filteredCocktails, currentFiltersActive }) => {
     navigate(`/cocktails/${randomCocktail.id}`);
   };
   
-  // Disable button if no cocktails and no filters are active (i.e. initial state, all cocktails available)
-  // Or if filters are active and result is empty
   const isDisabled = (!filteredCocktails || filteredCocktails.length === 0);
 
   return (

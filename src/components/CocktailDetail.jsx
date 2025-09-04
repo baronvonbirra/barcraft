@@ -132,28 +132,21 @@ const Pill = styled.span`
 
 const CocktailDetail = ({ cocktail }) => {
   if (!cocktail) {
-    // Updated message to align with test expectation
     return <LoadingMessage>Cocktail not found.</LoadingMessage>;
   }
 
-  // Ensure instructions are treated as a single string if they are an array
   const instructionsText = Array.isArray(cocktail.instructions) 
     ? cocktail.instructions.join('\n') 
     : cocktail.instructions;
   
-  // Ensure ingredients are displayed correctly, assuming they are objects
-  // This part depends on how you want to display ingredients.
-  // For simplicity, joining name and quantity.
-  // Updated to include "(optional)" for non-essential ingredients
   const ingredientsList = cocktail.ingredients.map((ing, index) => {
     let displayText = `${ing.name}: ${ing.quantity}${ing.notes ? ` (${ing.notes})` : ''}`;
-    if (ing.isEssential === false) { // Check for explicitly false
+    if (ing.isEssential === false) {
       displayText += " (optional)";
     }
     return displayText;
   });
 
-  // Determine the glass display value
   let glassDisplayValue = '';
   if (cocktail.glass) {
     if (Array.isArray(cocktail.glass)) {

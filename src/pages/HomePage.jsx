@@ -1,18 +1,13 @@
-// In HomePage.jsx (example, actual file might differ slightly)
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import cocktailsData from '../data/cocktails.json'; // Still needed for CocktailOfTheWeek
-// import { useCocktailFilter } from '../hooks/useCocktailFilter'; // Removed
-// import { useBar } from '../contexts/BarContext'; // Removed
-// import CocktailList from '../components/CocktailList'; // Removed
-// import FilterSidebar from '../components/FilterSidebar'; // Removed
-import categoriesData from '../data/categories.json'; // Still needed for CategoryList
-import thematicCategoriesData from '../data/thematicCategories.json'; // Added for thematic categories
-import CategoryList from '../components/CategoryList'; // Added
-import SurpriseMeButton from '../components/SurpriseMeButton'; // Added
-import { getImageUrl } from '../utils/cocktailImageLoader.js'; // Corrected path with .js
+import cocktailsData from '../data/cocktails.json';
+import categoriesData from '../data/categories.json';
+import thematicCategoriesData from '../data/thematicCategories.json';
+import CategoryList from '../components/CategoryList';
+import SurpriseMeButton from '../components/SurpriseMeButton';
+import { getImageUrl } from '../utils/cocktailImageLoader.js';
 
 // Styled components for HomePage
 const PageWrapper = styled.div`
@@ -96,11 +91,9 @@ const FilterToggleButton = styled.button`
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: none;
-  /* margin, display, width properties are specific to FilterToggleButton, removed here */
-  /* This component (ViewRecipeButton) is kept for CocktailOfTheWeek */
 
   &:hover, &:focus {
-    background-color: ${({ theme }) => theme.colors.secondary}; // Example: darken primary or use secondary
+    background-color: ${({ theme }) => theme.colors.secondary};
     color: ${({ theme }) => theme.colors.onSecondary};
     box-shadow: ${({ theme }) => theme.shadows.small};
     outline: 2px solid ${({ theme }) => theme.colors.secondary};
@@ -108,11 +101,9 @@ const FilterToggleButton = styled.button`
   }
 `;
 
-// FilterToggleButton styled component removed.
-
 const HomePageWrapper = styled.div`
   display: flex;
-  flex-direction: column; // Stack sections vertically
+  flex-direction: column;
   gap: ${({ theme }) => theme.spacing.large};
   padding: 0 ${({ theme }) => theme.spacing.medium};
 `;
@@ -194,7 +185,6 @@ const HomePage = () => {
           {/* Heading for thematic categories */}
           <SectionHeading>Explore by Theme</SectionHeading>
           <CategoryList categories={thematicCategoriesData} />
-          {/* CocktailList removed */}
         </MainContent>
       </HomePageWrapper>
     </PageWrapper>

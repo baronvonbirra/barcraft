@@ -90,17 +90,9 @@ const FilteredCocktailListPage = () => {
     });
   }, [filterType, decodedFilterValue]);
 
-  // Note: The CocktailList component expects 'isCocktailMakeable' and 'selectedBar' props
-  // if we want to show availability. For this generic filter page, we might not show
-  // bar-specific availability, or we'd need a more complex setup.
-  // For now, this will render the list without bar-specific availability indicators
-  // unless CocktailList has defaults or handles missing props gracefully.
-  // The original task for CocktailList was to make it accept these, not require.
-  // Let's assume CocktailList can handle these props being undefined for now.
-
   return (
     <PageWrapper theme={theme}>
-      <BreadcrumbLink to="/categories">← Back to Categories</BreadcrumbLink> {/* Or back to previous page potentially */}
+      <BreadcrumbLink to="/categories">← Back to Categories</BreadcrumbLink>
       <Header>Cocktails: {filterType} - "{decodedFilterValue}"</Header>
       {filteredCocktails.length > 0 ? (
         <CocktailList cocktails={filteredCocktails} />
