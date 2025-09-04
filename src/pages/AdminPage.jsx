@@ -231,14 +231,16 @@ const AdminPage = () => {
         if (barsArray.length > 0) {
           // If selectedCuratedBar isn't set, default to the first bar
           const currentSelectedBar = selectedCuratedBar || barsArray[0].id;
-          setSelectedCuratedBar(currentSelectedBar);
+          if (!selectedCuratedBar) {
+            setSelectedCuratedBar(currentSelectedBar);
+          }
           // Fetch data for the current selection
           fetchCuratedCocktails(currentSelectedBar);
           fetchCocktailOfTheWeek(currentSelectedBar);
         }
       }
     }
-  }, [isLoggedIn, activeTab]);
+  }, [isLoggedIn, activeTab, selectedCuratedBar]);
 
   const fetchIngredients = async () => {
     setLoading(true);
@@ -525,7 +527,7 @@ const AdminPage = () => {
           </ControlsWrapper>
           {loadingCurated ? <p>Loading...</p> : (
             <>
-              <CategoryTitle>Curated Cocktails</CategoryTitle>
+              <CategoryTitle>Curated Cocktails & Cocktail of the Week</CategoryTitle>
               <IngredientList>
                 {cocktails.sort((a, b) => a.name.localeCompare(b.name)).map(cocktail => (
                   <IngredientItem key={cocktail.id}>
@@ -538,25 +540,14 @@ const AdminPage = () => {
                       />
                       <span className="slider"></span>
                     </ToggleSwitchLabel>
+                    <StarButton
+                      isSelected={cocktailOfTheWeek === cocktail.id}
+                      onClick={() => handleSetCocktailOfTheWeek(cocktail.id)}
+                    >
+                      ★
+                    </StarButton>
                   </IngredientItem>
                 ))}
-              </IngredientList>
-
-              <CategoryTitle style={{ marginTop: '2rem' }}>Cocktail of the Week</CategoryTitle>
-              <IngredientList>
-                {cocktails
-                  .sort((a, b) => a.name.localeCompare(b.name))
-                  .map(cocktail => (
-                    <IngredientItem key={cocktail.id}>
-                      <IngredientName>{cocktail.name}</IngredientName>
-                      <StarButton
-                        isSelected={cocktailOfTheWeek === cocktail.id}
-                        onClick={() => handleSetCocktailOfTheWeek(cocktail.id)}
-                      >
-                        ★
-                      </StarButton>
-                    </IngredientItem>
-                  ))}
               </IngredientList>
             </>
           )}
