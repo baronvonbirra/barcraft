@@ -3,7 +3,8 @@ import { render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { BarContext } from './contexts/BarContext.jsx';
-import { FavoritesContext } from './contexts/FavoritesContext.jsx';
+import { I18nextProvider } from 'react-i18next';
+import i18n from 'i18next';
 
 const mockTheme = {
   mode: 'dark',
@@ -25,28 +26,24 @@ const AllTheProviders = ({ children, providerProps = {} }) => {
     barBStock: new Set(),
     loading: false,
     error: null,
-  };
-
-  const defaultFavoritesContext = {
-    favorites: new Set(),
-    addFavorite: () => {},
-    removeFavorite: () => {},
-    isFavorite: () => false,
+    barsData: {
+      bar1: { barName: 'Level One' },
+      bar2: { barName: 'The Glitch' },
+    },
   };
 
   const barContextValue = { ...defaultBarContext, ...providerProps.barContext };
-  const favoritesContextValue = { ...defaultFavoritesContext, ...providerProps.favoritesContext };
 
   return (
-    <ThemeProvider theme={mockTheme}>
-      <BarContext.Provider value={barContextValue}>
-        <FavoritesContext.Provider value={favoritesContextValue}>
+    <I18nextProvider i18n={i18n}>
+      <ThemeProvider theme={mockTheme}>
+        <BarContext.Provider value={barContextValue}>
           <MemoryRouter>
             {children}
           </MemoryRouter>
-        </FavoritesContext.Provider>
-      </BarContext.Provider>
-    </ThemeProvider>
+        </BarContext.Provider>
+      </ThemeProvider>
+    </I18nextProvider>
   );
 };
 

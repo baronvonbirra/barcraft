@@ -1,61 +1,81 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import { ThemeProvider } from 'styled-components';
+import { screen, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 import HomePage from './HomePage';
-import categoriesData from '../data/categories.json'; 
+import { renderWithProviders } from '../test-utils';
+import { supabase } from '../supabaseClient';
 
-vi.mock('../assets/cocktails/placeholder.jpg', () => ({
-  default: 'mocked-placeholder-image.jpg',
-}));
+vi.mock('../supabaseClient');
 
-const mockTheme = {
-  mode: 'dark',
-  colors: {
-    background: '#1A1D24', surface: '#282C34', primary: '#3498DB', secondary: '#1ABC9C',
-    text: '#EAEAEA', textOffset: '#A0A0A0', onPrimary: '#FFFFFF', onSurface: '#EAEAEA', border: '#3A3F4B',
-  },
-  fonts: { main: "'Inter', sans-serif", headings: "'Poppins', sans-serif" },
-  spacing: { xs: '4px', small: '8px', medium: '16px', large: '24px', xl: '32px', xxl: '48px' },
-  shadows: { small: '0 2px 4px rgba(0,0,0,0.2)', medium: '0 4px 8px rgba(0,0,0,0.3)' },
-  borderRadius: '8px',
+const mockCocktail = {
+  id: 'mojito',
+  name_en: 'Mojito',
+  description_en: 'A refreshing Cuban classic.',
+  image: 'mojito.jpg',
 };
 
+const mockCategories = [
+  { id: 'rum', name_en: 'Rum', image: 'rum.jpg' },
+  { id: 'gin', name_en: 'Gin', image: 'gin.jpg' },
+];
+
+const mockThematicCategories = [
+  { id: 'classic', name_en: 'Classic', image: 'classic.jpg' },
+];
+
 describe('HomePage', () => {
-  const renderWithProviders = (ui) => {
-    return render(
-      <ThemeProvider theme={mockTheme}>
-        <MemoryRouter>
-          {ui}
-        </MemoryRouter>
-      </ThemeProvider>
-    );
-  };
+  beforeEach(() => {
+    const from = supabase.from;
+    from.mockImplementation((tableName) => {
+      const select = vi.fn();
+      const eq = vi.fn();
+      const single = vi.fn();
 
-  it('renders the main headings for browsing', () => {
-    renderWithProviders(<HomePage />);
-    expect(screen.getByRole('heading', { name: /Browse by Spirit/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /Explore by Theme/i })).toBeInTheDocument();
-  });
+      if (tableName === 'cocktail_of_the_week') {
+        single.mockResolvedValue({ data: { cocktail_id: 'mojito' }, error: null });
+        select.mockReturnValue({ single });
+      } else if (tableName === 'cocktails') {
+        single.mockResolvedValue({ data: mockCocktail, error: null });
+        eq.mockReturnValue({ single });
+        select.mockReturnValue({ eq });
+      } else if (tableName === 'categories') {
+        select.mockResolvedValue({ data: mockCategories, error: null });
+      } else if (tableName === 'thematic_categories') {
+        select.mockResolvedValue({ data: mockThematicCategories, error: null });
+      } else {
+        select.mockResolvedValue({ data: [], error: null });
+      }
 
-  it('renders the "Surprise Me!" button', () => {
-    renderWithProviders(<HomePage />);
-    expect(screen.getByRole('button', { name: /Surprise Me!/i })).toBeInTheDocument();
-  });
-
-  it('renders a list of categories', () => {
-    renderWithProviders(<HomePage />);
-    categoriesData.slice(0, 3).forEach(category => {
-      expect(screen.getByText(category.name)).toBeInTheDocument();
+      return { select };
     });
   });
 
-  it('renders links for categories with correct href attributes', () => {
+  it('renders the main headings for browsing', async () => {
     renderWithProviders(<HomePage />);
-    categoriesData.forEach(category => {
-      const escapedCategoryName = category.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const linkElement = screen.getByRole('link', { name: new RegExp(escapedCategoryName, 'i') });
+    expect(await screen.findByRole('heading', { name: /Browse by Spirit/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /Explore by Theme/i })).toBeInTheDocument();
+  });
+
+  it('renders the cocktail of the week', async () => {
+    renderWithProviders(<HomePage />);
+    expect(await screen.findByText(/Mojito - Cocktail of the Week!/i)).toBeInTheDocument();
+    expect(screen.getByText('A refreshing Cuban classic.')).toBeInTheDocument();
+  });
+
+  it('renders a list of categories', async () => {
+    renderWithProviders(<HomePage />);
+    await waitFor(() => {
+      mockCategories.forEach(category => {
+        expect(screen.getByText(category.name_en)).toBeInTheDocument();
+      });
+    });
+  });
+
+  it('renders links for categories with correct href attributes', async () => {
+    renderWithProviders(<HomePage />);
+    const links = await screen.findAllByRole('link');
+    mockCategories.forEach(category => {
+      const linkElement = links.find(link => link.textContent.includes(category.name_en));
       expect(linkElement).toBeInTheDocument();
       expect(linkElement).toHaveAttribute('href', `/category/${category.id}`);
     });

@@ -2,6 +2,8 @@ import React, { useState, useContext } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import { ThemeContext as CustomThemeContext } from '../contexts/ThemeContext';
+import LanguageSelector from './LanguageSelector';
+import { useTranslation } from 'react-i18next';
 
 const NavWrapper = styled.nav`
   background-color: ${({ theme }) => theme.colors.surface};
@@ -141,7 +143,8 @@ const RightNavContent = styled.div`
 
 
 const Navbar = () => {
-  const { theme } = useContext(CustomThemeContext); 
+  const { theme } = useContext(CustomThemeContext);
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const mobileMenuId = "mobile-menu";
 
@@ -154,15 +157,16 @@ const Navbar = () => {
       <LogoLink to="/" onClick={handleLinkClick}>BarCraft</LogoLink>
       
       <NavLinks>
-        <NavLinkStyled to="/" end onClick={handleLinkClick}>Home</NavLinkStyled>
-        <NavLinkStyled to="/categories" onClick={handleLinkClick}>Cocktails</NavLinkStyled>
-        <NavLinkStyled to="/favorites" onClick={handleLinkClick}>My Favorites</NavLinkStyled>
-        <NavLinkStyled to="/bar/level-one" onClick={handleLinkClick}>Level One</NavLinkStyled>
-        <NavLinkStyled to="/bar/the-glitch" onClick={handleLinkClick}>The Glitch</NavLinkStyled>
+        <NavLinkStyled to="/" end onClick={handleLinkClick}>{t('navigation.home')}</NavLinkStyled>
+        <NavLinkStyled to="/categories" onClick={handleLinkClick}>{t('navigation.categories')}</NavLinkStyled>
+        <NavLinkStyled to="/favorites" onClick={handleLinkClick}>{t('navigation.favorites')}</NavLinkStyled>
+        <NavLinkStyled to="/bar/level-one" onClick={handleLinkClick}>{t('navigation.levelOne')}</NavLinkStyled>
+        <NavLinkStyled to="/bar/the-glitch" onClick={handleLinkClick}>{t('navigation.theGlitch')}</NavLinkStyled>
         <NavLinkStyled to="/admin" onClick={handleLinkClick}>Admin</NavLinkStyled>
       </NavLinks>
 
       <RightNavContent>
+        <LanguageSelector />
         <HamburgerIcon
           isOpen={isOpen}
           onClick={() => setIsOpen(!isOpen)}
@@ -177,12 +181,13 @@ const Navbar = () => {
       </RightNavContent>
 
       <MobileMenu isOpen={isOpen} id={mobileMenuId}>
-        <NavLinkStyled to="/" end onClick={handleLinkClick}>Home</NavLinkStyled>
-        <NavLinkStyled to="/categories" onClick={handleLinkClick}>Cocktails</NavLinkStyled>
-        <NavLinkStyled to="/favorites" onClick={handleLinkClick}>My Favorites</NavLinkStyled>
-        <NavLinkStyled to="/bar/level-one" onClick={handleLinkClick}>Level One</NavLinkStyled>
-        <NavLinkStyled to="/bar/the-glitch" onClick={handleLinkClick}>The Glitch</NavLinkStyled>
+        <NavLinkStyled to="/" end onClick={handleLinkClick}>{t('navigation.home')}</NavLinkStyled>
+        <NavLinkStyled to="/categories" onClick={handleLinkClick}>{t('navigation.categories')}</NavLinkStyled>
+        <NavLinkStyled to="/favorites" onClick={handleLinkClick}>{t('navigation.favorites')}</NavLinkStyled>
+        <NavLinkStyled to="/bar/level-one" onClick={handleLinkClick}>{t('navigation.levelOne')}</NavLinkStyled>
+        <NavLinkStyled to="/bar/the-glitch" onClick={handleLinkClick}>{t('navigation.theGlitch')}</NavLinkStyled>
         <NavLinkStyled to="/admin" onClick={handleLinkClick}>Admin</NavLinkStyled>
+        <LanguageSelector />
       </MobileMenu>
     </NavWrapper>
   );

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 
 const StyledButton = styled.button`
   background-color: ${({ theme }) => theme.colors.secondary};
@@ -33,10 +34,11 @@ const StyledButton = styled.button`
 
 const SurpriseMeButton = ({ filteredCocktails, currentFiltersActive }) => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleSurpriseMe = () => {
     if (!filteredCocktails || filteredCocktails.length === 0) {
-      alert("No cocktails match your current mood! Try adjusting your filters.");
+      alert(t('noCocktailsMatch'));
       return;
     }
 
@@ -49,7 +51,7 @@ const SurpriseMeButton = ({ filteredCocktails, currentFiltersActive }) => {
 
   return (
     <StyledButton onClick={handleSurpriseMe} disabled={isDisabled}>
-      ✨ Surprise Me! ✨
+      {t('buttons.surpriseMe')}
     </StyledButton>
   );
 };

@@ -1,12 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import FilterSidebar from '../components/FilterSidebar';
 import CocktailList from '../components/CocktailList';
 import { useCocktailFilter } from '../hooks/useCocktailFilter';
 import { useBar } from '../contexts/BarContext';
-import cocktailsData from '../data/cocktails.json';
-import categoriesData from '../data/categories.json'; // For FilterSidebar general categories
-import thematicCategoriesData from '../data/thematicCategories.json'; // For FilterSidebar thematic categories
+import { supabase } from '../supabaseClient';
+import { useTranslation } from 'react-i18next';
 
 const PageWrapper = styled.div`
   padding: ${({ theme }) => (theme.spacing && theme.spacing.medium) || '1rem'} 0;
@@ -46,6 +45,52 @@ const SearchInput = styled.input`
 `;
 
 const CategoriesOverviewPage = () => {
+  const { i18n, t } = useTranslation();
+  const [allCocktails, setAllCocktails] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [thematicCategories, setThematicCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      setLoading(true);
+      const lang = i18n.language;
+
+      const { data: cocktails, error: cocktailsError } = await supabase
+        .from('cocktails')
+        .select(`*, ingredients:ingredients(id, name_${lang})`);
+
+      if (cocktailsError) console.error('Error fetching cocktails:', cocktailsError);
+
+      const { data: categoriesData, error: categoriesError } = await supabase
+        .from('categories')
+        .select(`id, name_${lang}, image, type`);
+
+      if (categoriesError) console.error('Error fetching categories:', categoriesError);
+
+      if (cocktails) {
+        setAllCocktails(cocktails.map(c => ({
+          ...c,
+          name: c[`name_${lang}`],
+          description: c[`description_${lang}`],
+          instructions: c[`instructions_${lang}`],
+          history: c[`history_${lang}`],
+          ingredients: c.ingredients.map(i => ({ ...i, name: i[`name_${lang}`] }))
+        })));
+      }
+      if (categoriesData) {
+        const spiritCategories = categoriesData.filter(c => c.type === 'spirit').map(c => ({ ...c, name: c[`name_${lang}`] }));
+        const themeCategories = categoriesData.filter(c => c.type === 'theme').map(c => ({ ...c, name: c[`name_${lang}`] }));
+        setCategories(spiritCategories);
+        setThematicCategories(themeCategories);
+      }
+
+      setLoading(false);
+    };
+
+    fetchAllData();
+  }, [i18n.language]);
+
   const {
     filteredCocktails,
     baseSpirit, setBaseSpirit,
@@ -58,7 +103,7 @@ const CategoriesOverviewPage = () => {
     glassType, setGlassType,
     searchTerm, setSearchTerm, // Destructure searchTerm and setSearchTerm from the hook
     resetFilters
-  } = useCocktailFilter(cocktailsData);
+  } = useCocktailFilter(allCocktails);
 
   const { selectedBar, barStock } = useBar();
 
@@ -76,9 +121,9 @@ const CategoriesOverviewPage = () => {
     <PageWrapper>
       <CategoriesPageLayout>
         <FilterSidebar
-          allCocktails={cocktailsData}
-          categories={categoriesData}
-          thematicCategories={thematicCategoriesData}
+          allCocktails={allCocktails}
+          categories={categories}
+          thematicCategories={thematicCategories}
           filters={filterHookState} // Pass searchTerm if FilterSidebar needs to display it (e.g. for a clear search button inside it)
           setters={filterHookSetters} // Pass setSearchTerm if FilterSidebar has its own search input/clear button
           resetFilters={resetFilters}
@@ -87,7 +132,7 @@ const CategoriesOverviewPage = () => {
         <MainContent>
           <SearchInput
             type="text"
-            placeholder="Search cocktails by name, ingredient, or tag..."
+            placeholder={t('header.searchPlaceholder')}
             value={searchTerm} // Use searchTerm from hook
             onChange={(e) => setSearchTerm(e.target.value)} // Use setSearchTerm from hook
           />

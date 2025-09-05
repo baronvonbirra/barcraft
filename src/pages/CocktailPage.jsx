@@ -1,9 +1,10 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
-import cocktailsData from '../data/cocktails.json';
+import { supabase } from '../supabaseClient';
 import { useBar } from '../contexts/BarContext';
 import { useFavorites } from '../hooks/useFavorites';
+import { useTranslation } from 'react-i18next';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { getImageUrl } from '../utils/cocktailImageLoader.js';
 import barSpecificData from '../data/bar_specific_data.json';
@@ -158,14 +159,43 @@ const CocktailPage = () => {
   const { theme } = useContext(ThemeContext);
   const { barAStock, barBStock } = useBar();
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { i18n, t } = useTranslation();
+  const [cocktail, setCocktail] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const cocktail = cocktailsData.find(c => c.id === cocktailId);
+  useEffect(() => {
+    const fetchCocktail = async () => {
+      setLoading(true);
+      const lang = i18n.language;
+      const { data, error } = await supabase
+        .from('cocktails')
+        .select(`*, ingredients:ingredients(id, name_${lang})`)
+        .eq('id', cocktailId)
+        .single();
 
-  const isMakeableBar1 = useMemo(() => 
+      if (error) {
+        console.error('Error fetching cocktail:', error);
+      } else {
+        setCocktail({
+          ...data,
+          name: data[`name_${lang}`],
+          description: data[`description_${lang}`],
+          instructions: data[`instructions_${lang}`],
+          history: data[`history_${lang}`],
+          ingredients: data.ingredients.map(i => ({ ...i, name: i[`name_${lang}`] }))
+        });
+      }
+      setLoading(false);
+    };
+
+    fetchCocktail();
+  }, [cocktailId, i18n.language]);
+
+  const isMakeableBar1 = useMemo(() =>
     checkMakeableForBar(cocktail?.ingredients, barAStock),
     [cocktail?.ingredients, barAStock]
   );
-  const isMakeableBar2 = useMemo(() => 
+  const isMakeableBar2 = useMemo(() =>
     checkMakeableForBar(cocktail?.ingredients, barBStock),
     [cocktail?.ingredients, barBStock]
   );
@@ -173,8 +203,12 @@ const CocktailPage = () => {
   const bar1Name = barSpecificData.bar1.barName;
   const bar2Name = barSpecificData.bar2.barName;
 
+  if (loading) {
+    return <PageWrapper theme={theme}><p>{t('loading')}</p></PageWrapper>;
+  }
+
   if (!cocktail) {
-    return <PageWrapper theme={theme}><p>Cocktail not found!</p></PageWrapper>;
+    return <PageWrapper theme={theme}><p>{t('cocktailNotFound')}</p></PageWrapper>;
   }
 
   const currentIsFavorite = isFavorite(cocktail.id);
@@ -187,7 +221,7 @@ const CocktailPage = () => {
           <FavoriteButtonDetail
             isFavorite={currentIsFavorite}
             onClick={() => toggleFavorite(cocktail.id)}
-            title={currentIsFavorite ? "Remove from Favorites" : "Add to Favorites"}
+            title={currentIsFavorite ? t('removeFromFavorites') : t('addToFavorites')}
             theme={theme}
           >
             {currentIsFavorite ? '♥' : '♡'}
@@ -197,17 +231,17 @@ const CocktailPage = () => {
         
         <AllBarsAvailabilityWrapper theme={theme}>
           <IndividualBarStatus theme={theme} isAvailable={isMakeableBar1}>
-            {bar1Name}: {isMakeableBar1 ? "Available" : "Unavailable"}
+            {bar1Name}: {isMakeableBar1 ? t('available') : t('unavailable')}
           </IndividualBarStatus>
           <IndividualBarStatus theme={theme} isAvailable={isMakeableBar2}>
-            {bar2Name}: {isMakeableBar2 ? "Available" : "Unavailable"}
+            {bar2Name}: {isMakeableBar2 ? t('available') : t('unavailable')}
           </IndividualBarStatus>
         </AllBarsAvailabilityWrapper>
       </CocktailHeader>
 
       <CocktailDetailsGrid>
         <DetailSection theme={theme}>
-          <h2>Ingredients</h2>
+          <h2>{t('ingredients')}</h2>
           <IngredientList>
             {cocktail.ingredients.map((ing, index) => (
               <IngredientListItem key={index} theme={theme}>
@@ -218,7 +252,7 @@ const CocktailPage = () => {
         </DetailSection>
 
         <DetailSection theme={theme}>
-          <h2>Instructions</h2>
+          <h2>{t('instructions')}</h2>
           <ol>
             {cocktail.instructions.map((step, index) => (
               <li key={index} style={{ marginBottom: theme.spacing.small }}>{step}</li>
@@ -227,9 +261,9 @@ const CocktailPage = () => {
         </DetailSection>
 
         <DetailSection theme={theme}>
-          <h2>Details</h2>
+          <h2>{t('details')}</h2>
           <p>
-            <strong>Glass:</strong>{' '}
+            <strong>{t('glass')}:</strong>{' '}
             {(() => {
               if (Array.isArray(cocktail.glass)) {
                 return cocktail.glass.map(glassName => (
@@ -254,7 +288,7 @@ const CocktailPage = () => {
             })()}
           </p>
           <p>
-            <strong>Difficulty:</strong>{' '}
+            <strong>{t('difficulty')}:</strong>{' '}
             {cocktail.difficulty ? (
               <FilterLinkTag 
                 to={`/cocktails/filter/difficulty/${encodeURIComponent(cocktail.difficulty.toLowerCase())}`}
@@ -267,7 +301,7 @@ const CocktailPage = () => {
           </p>
           {cocktail.tags && cocktail.tags.length > 0 && (
             <p>
-              <strong>Tags:</strong>{' '}
+              <strong>{t('tags')}:</strong>{' '}
               {cocktail.tags.map(tag => (
                 <FilterLinkTag key={tag} to={`/cocktails/filter/tag/${encodeURIComponent(tag)}`}>
                   {tag}
@@ -277,7 +311,7 @@ const CocktailPage = () => {
           )}
           {cocktail.flavorProfile && cocktail.flavorProfile.length > 0 && (
             <p>
-              <strong>Flavor Profile:</strong>{' '}
+              <strong>{t('flavorProfile')}:</strong>{' '}
               {cocktail.flavorProfile.map(flavor => (
                 <FilterLinkTag key={flavor} to={`/cocktails/filter/flavor/${encodeURIComponent(flavor)}`}>
                   {flavor}
@@ -289,7 +323,7 @@ const CocktailPage = () => {
         
         {cocktail.history && (
           <DetailSection theme={theme}>
-            <h2>History</h2>
+            <h2>{t('history')}</h2>
             <p>{cocktail.history}</p>
           </DetailSection>
         )}

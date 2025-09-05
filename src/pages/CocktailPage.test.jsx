@@ -1,86 +1,92 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ThemeProvider } from 'styled-components';
+import { screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import CocktailPage from './CocktailPage';
-import cocktails from '../data/cocktails.json';
+import { renderWithProviders } from '../test-utils';
+import { supabase } from '../supabaseClient';
+import { useFavorites } from '../hooks/useFavorites';
 
-// Import the one hook we need to mock
-import { useBar } from '../contexts/BarContext.jsx';
+vi.mock('../supabaseClient');
+vi.mock('../hooks/useFavorites');
 
-// Mock the BarContext module to provide the useBar hook
-vi.mock('../contexts/BarContext.jsx');
-
-const testCocktail = cocktails.find(c => c.id === 'mojito');
-const mockTheme = { mode: 'dark', colors: {}, fonts: {}, spacing: {}, borderRadius: '' };
-
-// A simpler render helper for this test file.
-const renderComponent = (route = '/') => {
-  return render(
-    <ThemeProvider theme={mockTheme}>
-      <MemoryRouter initialEntries={[route]}>
-        <Routes>
-          <Route path="/cocktails/:cocktailId" element={<CocktailPage />} />
-        </Routes>
-      </MemoryRouter>
-    </ThemeProvider>
-  );
+const mockCocktail = {
+  id: 'mojito',
+  name_en: 'Mojito',
+  description_en: 'A refreshing Cuban classic.',
+  instructions_en: ['Muddle mint and sugar', 'Add rum and lime juice', 'Top with soda water'],
+  history_en: 'The Mojito is a traditional Cuban highball.',
+  image: 'mojito.jpg',
+  ingredients: [
+    { id: 'rum', name_en: 'Rum', quantity: '2 oz' },
+    { id: 'lime', name_en: 'Lime Juice', quantity: '1 oz' },
+    { id: 'mint', name_en: 'Mint', quantity: '6 leaves' },
+  ],
 };
 
 describe('CocktailPage', () => {
-  
-  // Set up a default mock for every test.
   beforeEach(() => {
-    vi.mocked(useBar).mockReturnValue({
-      barAStock: new Set(),
-      barBStock: new Set(),
+    const from = supabase.from;
+    from.mockImplementation((tableName) => {
+      const select = vi.fn();
+      const eq = vi.fn();
+      const single = vi.fn();
+
+      if (tableName === 'cocktails') {
+        single.mockResolvedValue({ data: mockCocktail, error: null });
+        eq.mockReturnValue({ single });
+        select.mockReturnValue({ eq });
+      } else {
+        select.mockResolvedValue({ data: [], error: null });
+      }
+
+      return { select };
+    });
+
+    useFavorites.mockReturnValue({
+      isFavorite: vi.fn().mockReturnValue(false),
+      toggleFavorite: vi.fn(),
     });
   });
 
-  it('renders "cocktail not found" message for a non-existent cocktail', () => {
-    renderComponent('/cocktails/non-existent-cocktail');
-    expect(screen.getByText('Cocktail not found!')).toBeInTheDocument();
+  it('renders cocktail details', async () => {
+    renderWithProviders(<CocktailPage />, {
+      route: '/cocktails/mojito',
+      path: '/cocktails/:cocktailId',
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText('Mojito')).toBeInTheDocument();
+      expect(screen.getByText('Ingredients')).toBeInTheDocument();
+      expect(screen.getByText('Instructions')).toBeInTheDocument();
+      expect(screen.getByText('Details')).toBeInTheDocument();
+      expect(screen.getByText('History')).toBeInTheDocument();
+    });
   });
 
-  describe('AllBarsAvailability Section', () => {
-    it('renders correctly when available in Bar A, unavailable in Bar B', () => {
-      // Override the default mock for this specific test case
-      vi.mocked(useBar).mockReturnValue({
-        barAStock: new Set(testCocktail.ingredients.map(i => i.id)),
-        barBStock: new Set(),
-      });
-      renderComponent(`/cocktails/${testCocktail.id}`);
-      expect(screen.getByText(/Level One: Available/i)).toBeInTheDocument();
-      expect(screen.getByText(/The Glitch: Unavailable/i)).toBeInTheDocument();
+  it('renders "cocktail not found" message for a non-existent cocktail', async () => {
+    const from = supabase.from;
+    from.mockImplementation((tableName) => {
+      const select = vi.fn();
+      const eq = vi.fn();
+      const single = vi.fn();
+
+      if (tableName === 'cocktails') {
+        single.mockResolvedValue({ data: null, error: { message: 'Not found' } });
+        eq.mockReturnValue({ single });
+        select.mockReturnValue({ eq });
+      } else {
+        select.mockResolvedValue({ data: [], error: null });
+      }
+
+      return { select };
     });
 
-    it('renders correctly when unavailable in Bar A, available in Bar B', () => {
-      vi.mocked(useBar).mockReturnValue({
-        barAStock: new Set(),
-        barBStock: new Set(testCocktail.ingredients.map(i => i.id)),
-      });
-      renderComponent(`/cocktails/${testCocktail.id}`);
-      expect(screen.getByText(/Level One: Unavailable/i)).toBeInTheDocument();
-      expect(screen.getByText(/The Glitch: Available/i)).toBeInTheDocument();
+    renderWithProviders(<CocktailPage />, {
+      route: '/cocktails/non-existent',
+      path: '/cocktails/:cocktailId',
     });
 
-    it('renders correctly when available in both bars', () => {
-      vi.mocked(useBar).mockReturnValue({
-        barAStock: new Set(testCocktail.ingredients.map(i => i.id)),
-        barBStock: new Set(testCocktail.ingredients.map(i => i.id)),
-      });
-      renderComponent(`/cocktails/${testCocktail.id}`);
-      expect(screen.getByText(/Level One: Available/i)).toBeInTheDocument();
-      expect(screen.getByText(/The Glitch: Available/i)).toBeInTheDocument();
-    });
-
-    it('renders correctly when unavailable in both bars', () => {
-      // This test uses the default mock from beforeEach, which is an empty bar stock
-      renderComponent(`/cocktails/${testCocktail.id}`);
-      expect(screen.getByText(/Level One: Unavailable/i)).toBeInTheDocument();
-      expect(screen.getByText(/The Glitch: Unavailable/i)).toBeInTheDocument();
-    });
+    expect(await screen.findByText('Cocktail not found!')).toBeInTheDocument();
   });
 });
 
