@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { supabase } from '../supabaseClient';
 import bcrypt from 'bcryptjs';
+import { useTranslation } from 'react-i18next';
 
 const PageWrapper = styled.div`
   padding: 1rem;
@@ -203,6 +204,7 @@ const AdminPage = () => {
   const [selectedCuratedBar, setSelectedCuratedBar] = useState('');
   const [loadingCurated, setLoadingCurated] = useState(false);
   const [cocktailOfTheWeek, setCocktailOfTheWeek] = useState(null);
+  const { t } = useTranslation();
 
   // Mapping from bar ID to Supabase column name for stock
   const barIdToColumn = {
@@ -212,20 +214,17 @@ const AdminPage = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      const fetchBars = async () => {
-        const { data, error } = await supabase.from('bars').select('id, name');
-        if (error) console.error('Error fetching bars:', error);
-        else {
-          setBars(data);
-          if (data.length > 0) {
-            if (!selectedBar) setSelectedBar(data[0].id);
-            if (!selectedCuratedBar) setSelectedCuratedBar(data[0].id);
-          }
-        }
-      };
-      fetchBars();
+      const staticBars = [
+        { id: 'bar1', name: t('navigation.levelOne') },
+        { id: 'bar2', name: t('navigation.theGlitch') },
+      ];
+      setBars(staticBars);
+      if (staticBars.length > 0) {
+        if (!selectedBar) setSelectedBar(staticBars[0].id);
+        if (!selectedCuratedBar) setSelectedCuratedBar(staticBars[0].id);
+      }
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn, t]);
 
   useEffect(() => {
     if (isLoggedIn && activeTab === 'stock') {

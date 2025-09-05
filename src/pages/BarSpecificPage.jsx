@@ -23,20 +23,6 @@ const BarFiltersWrapper = styled.div`
   color: ${({ theme }) => theme.colors.textOffset};
 `;
 
-const CuratedSectionWrapper = styled.section`
-  margin-bottom: ${({ theme }) => theme.spacing.large};
-  padding: ${({ theme }) => theme.spacing.medium};
-  background-color: ${({ theme }) => theme.colors.surface};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  box-shadow: ${({ theme }) => theme.shadows.small};
-`;
-
-const CuratedSectionHeader = styled.h2`
-  color: ${({ theme }) => theme.colors.secondary};
-  text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing.medium};
-`;
-
 const AvailableCocktailsHeader = styled.h2`
   color: ${({ theme }) => theme.colors.primary};
   text-align: center;
@@ -77,7 +63,7 @@ const EmptyStateSuggestion = styled.p`
 const BarSpecificPage = () => {
   const { barId } = useParams(); // 'level-one' or 'the-glitch'
   const { theme } = useContext(ThemeContext);
-  const { barStock, selectBar, selectedBarName, barsData } = useBar();
+  const { barStock, selectBar, selectedBarName } = useBar();
   const [cocktails, setCocktails] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -86,25 +72,14 @@ const BarSpecificPage = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('cocktails')
-        .select(`
-          *,
-          cocktail_ingredients(
-            quantity,
-            notes,
-            ingredients (id, name)
-          )
-        `);
+        .select(`*`);
 
       if (error) {
         console.error('Error fetching cocktails:', error);
       } else {
         const processedCocktails = data.map(cocktail => ({
           ...cocktail,
-          ingredients: cocktail.cocktail_ingredients?.map(ci => ({
-            ...ci.ingredients,
-            quantity: ci.quantity,
-            notes: ci.notes,
-          })) || [],
+          ingredients: Array.isArray(cocktail.ingredients) ? cocktail.ingredients : [],
         }));
         setCocktails(processedCocktails);
       }
@@ -126,37 +101,7 @@ const BarSpecificPage = () => {
     }
   }, [internalBarId, selectBar]);
 
-  const currentBarSpecifics = useMemo(() => {
-    if (!internalBarId || !barsData[internalBarId]) {
-      return { curatedMenuName: '', curatedCocktailIds: [] };
-    }
-    return barsData[internalBarId];
-  }, [internalBarId, barsData]);
-
   const stockSet = barStock;
-
-  const isCocktailMakeableAtCurrentBar = useMemo(() => {
-    return (cocktailIngredients) => {
-      if (stockSet.size === 0) {
-        return !cocktailIngredients.some(ing => ing.isEssential);
-      }
-      if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
-      return cocktailIngredients.every(ing => {
-        if (!ing.isEssential) return true;
-        return stockSet.has(ing.id);
-      });
-    };
-  }, [stockSet]);
-
-  const curatedCocktailsList = useMemo(() => {
-    if (!currentBarSpecifics.curatedCocktailIds.length) return [];
-    return cocktails
-      .filter(cocktail => currentBarSpecifics.curatedCocktailIds.includes(cocktail.id))
-      .map(cocktail => ({
-        ...cocktail,
-        isMakeable: isCocktailMakeableAtCurrentBar(cocktail.ingredients),
-      }));
-  }, [cocktails, currentBarSpecifics.curatedCocktailIds, isCocktailMakeableAtCurrentBar]);
 
   const availableCocktails = useMemo(() => {
     if (stockSet.size === 0) return [];
@@ -185,13 +130,6 @@ const BarSpecificPage = () => {
       <BarFiltersWrapper>
         {/* Future filter components can be placed here */}
       </BarFiltersWrapper>
-
-      {curatedCocktailsList.length > 0 && (
-        <CuratedSectionWrapper theme={theme}>
-          <CuratedSectionHeader theme={theme}>{currentBarSpecifics.curatedMenuName}</CuratedSectionHeader>
-          <CocktailList cocktails={curatedCocktailsList} />
-        </CuratedSectionWrapper>
-      )}
 
       {availableCocktails.length > 0 ? (
         <>
