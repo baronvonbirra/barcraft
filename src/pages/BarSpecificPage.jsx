@@ -87,7 +87,18 @@ const BarSpecificPage = () => {
       const { data, error } = await supabase
         .from('cocktails')
         .select(`
-          *,
+          id,
+          name_en,
+          name_es,
+          description_en,
+          description_es,
+          image,
+          base_spirit,
+          difficulty,
+          glass,
+          flavor_profile,
+          tags,
+          thematic_categories,
           cocktail_ingredients(
             quantity,
             notes,
