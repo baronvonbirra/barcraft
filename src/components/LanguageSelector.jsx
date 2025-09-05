@@ -1,6 +1,8 @@
-import React from 'react';
-import { useTranslation } from 'react-i18next';
-import styled from 'styled-components';
+import React from "react";
+import { useTranslation } from "react-i18next";
+import styled from "styled-components";
+import ukFlag from "../assets/uk-flag.png";
+import esFlag from "../assets/spain-flag.png";
 
 const Button = styled.button`
   background: none;
@@ -21,16 +23,21 @@ const LanguageSelector = () => {
   const { i18n } = useTranslation();
 
   const toggleLanguage = () => {
-    const newLang = i18n.language === 'en' ? 'es' : 'en';
+    const newLang = i18n.language === "en" ? "es" : "en";
     i18n.changeLanguage(newLang);
   };
 
   return (
-    <div>
-      <Button onClick={toggleLanguage} title={i18n.language === 'en' ? 'Switch to Spanish' : 'Switch to English'}>
-        {i18n.language === 'en' ? '🇪🇸' : '🇬🇧'}
-      </Button>
-    </div>
+    <Button
+      onClick={toggleLanguage}
+      title={i18n.language === "en" ? "Switch to Spanish" : "Switch to English"}
+    >
+      {i18n.language === "en" ? (
+        <img src={esFlag} alt="Spanish Flag" style={{ height: "1.5rem" }} />
+      ) : (
+        <img src={ukFlag} alt="UK Flag" style={{ height: "1.5rem" }} />
+      )}
+    </Button>
   );
 };
 

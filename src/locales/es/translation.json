@@ -9,12 +9,12 @@
     "home": "Inicio",
     "categories": "Categorías",
     "favorites": "Favoritos",
-    "levelOne": "Nivel Uno",
-    "theGlitch": "El Glitch"
+    "levelOne": "Level One",
+    "theGlitch": "The Glitch"
   },
   "cocktailOfTheWeek": "¡Cóctel de la Semana!",
   "viewRecipe": "Ver Receta",
-  "browseBySpirit": "Buscar por Espíritu",
+  "browseBySpirit": "Buscar por bebida",
   "exploreByTheme": "Explorar por Tema",
   "loading": "Cargando...",
   "cocktailNotFound": "¡Cóctel no encontrado!",
