@@ -88,7 +88,7 @@ const BarSpecificPage = () => {
         .from('cocktails')
         .select(`
           *,
-          cocktail_ingredients!cocktail_id(
+          cocktail_ingredients(
             quantity,
             notes,
             ingredients (id, name)
