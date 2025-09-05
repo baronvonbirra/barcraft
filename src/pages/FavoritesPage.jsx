@@ -45,7 +45,7 @@ const FavoritesPage = () => {
           cocktail_ingredients(
             quantity,
             notes,
-            ingredients (*)
+            ingredients (id, name)
           )
         `)
         .in('id', favoriteIds);

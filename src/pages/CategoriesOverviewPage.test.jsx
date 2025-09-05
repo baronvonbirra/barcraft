@@ -19,8 +19,8 @@ vi.mock('../components/CocktailList', () => ({
 
 
 const mockCocktails = [
-  { id: 'mojito', name_en: 'Mojito', cocktail_ingredients: [{ ingredients: {id: 'rum', name_en: 'Rum'}, quantity: '2 oz'}] },
-  { id: 'daiquiri', name_en: 'Daiquiri', cocktail_ingredients: [{ ingredients: {id: 'rum', name_en: 'Rum'}, quantity: '2 oz'}] },
+  { id: 'mojito', name_en: 'Mojito', cocktail_ingredients: [{ ingredients: {id: 'rum', name: 'Rum'}, quantity: '2 oz'}] },
+  { id: 'daiquiri', name_en: 'Daiquiri', cocktail_ingredients: [{ ingredients: {id: 'rum', name: 'Rum'}, quantity: '2 oz'}] },
 ];
 
 const mockCategories = [

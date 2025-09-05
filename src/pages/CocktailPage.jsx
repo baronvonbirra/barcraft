@@ -176,8 +176,7 @@ const CocktailPage = () => {
             notes,
             ingredients (
               id,
-              name_en,
-              name_es
+              name
             )
           )
         `)
@@ -195,7 +194,6 @@ const CocktailPage = () => {
             ...ingredient,
             quantity: ci.quantity,
             notes: ci.notes,
-            name: ingredient[`name_${lang}`] || ingredient['name_en'],
           };
         });
 

@@ -17,9 +17,9 @@ const mockCocktail = {
   history_en: 'The Mojito is a traditional Cuban highball.',
   image: 'mojito.jpg',
   cocktail_ingredients: [
-    { ingredients: { id: 'rum', name_en: 'Rum' }, quantity: '2 oz' },
-    { ingredients: { id: 'lime', name_en: 'Lime Juice' }, quantity: '1 oz' },
-    { ingredients: { id: 'mint', name_en: 'Mint' }, quantity: '6 leaves' },
+    { ingredients: { id: 'rum', name: 'Rum' }, quantity: '2 oz' },
+    { ingredients: { id: 'lime', name: 'Lime Juice' }, quantity: '1 oz' },
+    { ingredients: { id: 'mint', name: 'Mint' }, quantity: '6 leaves' },
   ],
 };
 
