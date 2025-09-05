@@ -99,10 +99,10 @@ const BarSpecificPage = () => {
           flavor_profile,
           tags,
           thematic_categories,
-          cocktail_ingredients(
+          ingredients:cocktail_ingredients(
             quantity,
             notes,
-            ingredients (id, name)
+            details:ingredients (id, name)
           )
         `);
 
@@ -111,8 +111,8 @@ const BarSpecificPage = () => {
       } else {
         const processedCocktails = data.map(cocktail => ({
           ...cocktail,
-          ingredients: cocktail.cocktail_ingredients?.map(ci => ({
-            ...ci.ingredients,
+          ingredients: cocktail.ingredients?.map(ci => ({
+            ...ci.details,
             quantity: ci.quantity,
             notes: ci.notes,
           })) || [],
