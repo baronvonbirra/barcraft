@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
 import { getCachedData, setCachedData } from '../utils/cache';
+import { useTranslation } from 'react-i18next';
 
 const initialState = {
   selectedBarId: 'all',
@@ -17,6 +18,7 @@ const initialState = {
 export const BarContext = createContext(initialState);
 
 export const BarProvider = ({ children }) => {
+  const { t } = useTranslation();
   const [selectedBarId, setSelectedBarId] = useState('all');
   const [barStock, setBarStock] = useState(new Set());
   const [barAStock, setBarAStock] = useState(new Set());
@@ -56,56 +58,23 @@ export const BarProvider = ({ children }) => {
       }
     };
 
-    const fetchBarsData = async () => {
-      const cacheKey = 'bars_data';
-      const cached = getCachedData(cacheKey, cacheDuration);
-      if (cached) {
-        setBarsData(cached);
-        return;
-      }
-
-      const { data: bars, error: barsError } = await supabase.from('bars').select('*');
-      if (barsError) {
-        console.error('Error fetching bars:', barsError);
-        return;
-      }
-
-      const { data: curated, error: curatedError } = await supabase.from('curated_cocktails').select('*');
-      if (curatedError) {
-        console.error('Error fetching curated cocktails:', curatedError);
-        return;
-      }
-
-      const newBarsData = {};
-      for (const bar of bars) {
-        newBarsData[bar.id] = {
-          barName: bar.name,
-          curatedMenuName: bar.curated_menu_name,
-          curatedCocktailIds: curated.filter(c => c.bar_id === bar.id).map(c => c.cocktail_id),
-        };
-      }
-      setBarsData(newBarsData);
-      setCachedData(cacheKey, newBarsData);
-    };
-
     fetchAllStock();
-    fetchBarsData();
   }, []);
 
   useEffect(() => {
     let currentBarName = null;
     if (selectedBarId === 'bar1') {
       setBarStock(barAStock);
-      currentBarName = barsData.bar1?.barName || null;
+      currentBarName = t('navigation.levelOne');
     } else if (selectedBarId === 'bar2') {
       setBarStock(barBStock);
-      currentBarName = barsData.bar2?.barName || null;
+      currentBarName = t('navigation.theGlitch');
     } else {
       setBarStock(new Set());
       currentBarName = null;
     }
     setSelectedBarName(currentBarName);
-  }, [selectedBarId, barAStock, barBStock, barsData]);
+  }, [selectedBarId, barAStock, barBStock, t]);
 
   const selectBar = (barId) => {
     setSelectedBarId(barId);

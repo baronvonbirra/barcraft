@@ -169,17 +169,7 @@ const CocktailPage = () => {
 
       const { data, error } = await supabase
         .from('cocktails')
-        .select(`
-          *,
-          cocktail_ingredients(
-            quantity,
-            notes,
-            ingredients (
-              id,
-              name
-            )
-          )
-        `)
+        .select(`*`)
         .eq('id', cocktailId)
         .single();
 
@@ -188,22 +178,13 @@ const CocktailPage = () => {
       } else if (data) {
         const getLangValue = (field) => data[`${field}_${lang}`] || data[`${field}_en`];
 
-        const processedIngredients = data.cocktail_ingredients.map(ci => {
-          const ingredient = ci.ingredients;
-          return {
-            ...ingredient,
-            quantity: ci.quantity,
-            notes: ci.notes,
-          };
-        });
-
         setCocktail({
           ...data,
           name: getLangValue('name'),
           description: getLangValue('description'),
           instructions: getLangValue('instructions'),
           history: getLangValue('history'),
-          ingredients: processedIngredients,
+          ingredients: Array.isArray(data.ingredients) ? data.ingredients : [],
         });
       }
       setLoading(false);
