@@ -317,6 +317,8 @@ const AdminPage = () => {
         alert('Failed to remove curated cocktail. Please check permissions and try again.');
       } else {
         setCuratedCocktails(curatedCocktails.filter(id => id !== cocktailId));
+        localStorage.removeItem('bars_data');
+        localStorage.removeItem('bars_data_timestamp');
       }
     } else {
       // Add to curated list
@@ -329,6 +331,8 @@ const AdminPage = () => {
         alert('Failed to add curated cocktail. Please check permissions and try again.');
       } else {
         setCuratedCocktails([...curatedCocktails, cocktailId]);
+        localStorage.removeItem('bars_data');
+        localStorage.removeItem('bars_data_timestamp');
       }
     }
   };
@@ -362,10 +366,14 @@ const AdminPage = () => {
       } else {
         // On successful insert, update the state
         setCocktailOfTheWeek(newCocktailOfTheWeek);
+        localStorage.removeItem('bars_data');
+        localStorage.removeItem('bars_data_timestamp');
       }
     } else {
       // If we are just clearing it, update the state
       setCocktailOfTheWeek(null);
+      localStorage.removeItem('bars_data');
+      localStorage.removeItem('bars_data_timestamp');
     }
   };
 
@@ -432,6 +440,9 @@ const AdminPage = () => {
           ing.id === ingredientId ? { ...ing, [columnName]: !currentStatus } : ing
         )
       );
+      // Invalidate cache
+      localStorage.removeItem('ingredientCache');
+      localStorage.removeItem('ingredientCacheTimestamp');
     }
   };
 
