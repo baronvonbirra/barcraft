@@ -169,15 +169,7 @@ const CocktailPage = () => {
 
       const { data, error } = await supabase
         .from('cocktails')
-        .select(`
-          *,
-          ingredients:cocktail_ingredients(
-            quantity,
-            unit,
-            notes,
-            details:ingredients(*)
-          )
-        `)
+        .select('*, ingredients:cocktail_ingredients(*, details:ingredients(*))')
         .eq('id', cocktailId)
         .single();
 
@@ -194,9 +186,7 @@ const CocktailPage = () => {
           history: getLangValue('history'),
           ingredients: data.ingredients?.map(ci => ({
             ...ci.details,
-            quantity: ci.quantity,
-            unit: ci.unit,
-            notes: ci.notes,
+            ...ci,
           })) || [],
         });
       }
