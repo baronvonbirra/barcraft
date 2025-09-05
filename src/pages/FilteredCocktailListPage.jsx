@@ -1,7 +1,7 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
-import cocktailsData from '../data/cocktails.json';
+import { supabase } from '../supabaseClient';
 import CocktailList from '../components/CocktailList';
 import { ThemeContext } from '../contexts/ThemeContext';
 
@@ -62,33 +62,55 @@ const BreadcrumbLink = styled(Link)`
 const FilteredCocktailListPage = () => {
   const { filterType, filterValue } = useParams();
   const { theme } = useContext(ThemeContext);
+  const [filteredCocktails, setFilteredCocktails] = useState([]);
+  const [loading, setLoading] = useState(true);
   const decodedFilterValue = decodeURIComponent(filterValue);
 
-  const filteredCocktails = useMemo(() => {
-    return cocktailsData.filter(cocktail => {
-      if (!filterType || !decodedFilterValue) return false;
-      
+  useEffect(() => {
+    const fetchFilteredCocktails = async () => {
+      setLoading(true);
+      let query = supabase.from('cocktails');
       const lowerDecodedFilterValue = decodedFilterValue.toLowerCase();
 
       switch (filterType) {
         case 'tag':
-          return cocktail.tags && cocktail.tags.some(t => t.toLowerCase() === lowerDecodedFilterValue);
+          query = query.select('*').contains('tags', [lowerDecodedFilterValue]);
+          break;
         case 'flavor':
-          return cocktail.flavorProfile && cocktail.flavorProfile.some(fp => fp.toLowerCase() === lowerDecodedFilterValue);
+          query = query.select('*').contains('flavorProfile', [lowerDecodedFilterValue]);
+          break;
         case 'glass':
-          if (Array.isArray(cocktail.glass)) {
-            return cocktail.glass.some(g => g.toLowerCase() === lowerDecodedFilterValue);
-          } else if (typeof cocktail.glass === 'string') {
-            return cocktail.glass.toLowerCase() === lowerDecodedFilterValue;
-          }
-          return false;
+          // Assuming 'glass' is an array field and values are stored consistently.
+          query = query.select('*').contains('glass', [decodedFilterValue]);
+          break;
         case 'difficulty':
-          return cocktail.difficulty?.toLowerCase() === lowerDecodedFilterValue;
+          query = query.select('*').ilike('difficulty', lowerDecodedFilterValue);
+          break;
         default:
-          return false;
+          setFilteredCocktails([]);
+          setLoading(false);
+          return;
       }
-    });
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching filtered cocktails:', error);
+        setFilteredCocktails([]);
+      } else {
+        setFilteredCocktails(data);
+      }
+      setLoading(false);
+    };
+
+    if (filterType && decodedFilterValue) {
+      fetchFilteredCocktails();
+    }
   }, [filterType, decodedFilterValue]);
+
+  if (loading) {
+    return <PageWrapper theme={theme}><p>Loading...</p></PageWrapper>;
+  }
 
   return (
     <PageWrapper theme={theme}>

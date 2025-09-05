@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import cocktailsData from '../data/cocktails.json';
-import categoriesData from '../data/categories.json';
-import thematicCategoriesData from '../data/thematicCategories.json';
+import { supabase } from '../supabaseClient';
+import { useTranslation } from 'react-i18next';
+import { getCachedData, setCachedData } from '../utils/cache';
 import CocktailList from '../components/CocktailList';
 import FilterSidebar from '../components/FilterSidebar';
 import { useCocktailFilter } from '../hooks/useCocktailFilter';
@@ -33,8 +33,64 @@ const PageTitle = styled.h1`
 
 const CategoryPage = () => {
   const { categoryId } = useParams();
+  const [cocktails, setCocktails] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [thematicCategories, setThematicCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { i18n } = useTranslation();
 
-  const allCategories = [...categoriesData, ...thematicCategoriesData];
+  useEffect(() => {
+    const fetchCocktails = async () => {
+      const cacheKey = 'cocktails_all';
+      const cached = getCachedData(cacheKey, 3600 * 1000);
+      if (cached) {
+        setCocktails(cached);
+        return;
+      }
+      const { data, error } = await supabase.from('cocktails').select(`*, name_${i18n.language}, name_en`);
+      if (error) {
+        console.error(error);
+      } else {
+        const processed = data.map(c => ({ ...c, name: c[`name_${i18n.language}`] || c.name_en }));
+        setCocktails(processed);
+        setCachedData(cacheKey, processed);
+      }
+    };
+
+    const fetchCategories = async () => {
+      const lang = i18n.language;
+      const cacheKey = `categories_all_${lang}`;
+      const cached = getCachedData(cacheKey, 3600 * 1000);
+      if (cached) {
+        const spiritCategories = cached.filter(c => c.type === 'spirit');
+        const themeCategories = cached.filter(c => c.type === 'theme');
+        setCategories(spiritCategories);
+        setThematicCategories(themeCategories);
+        return;
+      }
+
+      const { data, error } = await supabase.from('categories').select(`id, name_${lang}, name_en, image, type`);
+      if (error) console.error(error);
+      else {
+        const processed = data.map(c => ({...c, name: c[`name_${lang}`] || c.name_en}));
+        setCachedData(cacheKey, processed);
+        const spiritCategories = processed.filter(c => c.type === 'spirit');
+        const themeCategories = processed.filter(c => c.type === 'theme');
+        setCategories(spiritCategories);
+        setThematicCategories(themeCategories);
+      }
+    };
+
+    const loadData = async () => {
+      setLoading(true);
+      await Promise.all([fetchCocktails(), fetchCategories()]);
+      setLoading(false);
+    }
+
+    loadData();
+  }, [i18n.language]);
+
+  const allCategories = [...categories, ...thematicCategories];
   const currentCategoryDetails = allCategories.find(cat => cat.id === categoryId);
 
   const {
@@ -57,13 +113,13 @@ const CategoryPage = () => {
     setGlassType,
     resetFilters,
     isCocktailMakeable,
-  } = useCocktailFilter(cocktailsData);
+  } = useCocktailFilter(cocktails);
 
   const { selectedBar } = useBar();
 
   useEffect(() => {
     if (currentCategoryDetails) {
-      const isSpirit = categoriesData.some(cat => cat.id === categoryId);
+      const isSpirit = categories.some(cat => cat.id === categoryId);
       if (isSpirit) {
         setBaseSpirit(categoryId);
         setThematic([]);
@@ -75,7 +131,11 @@ const CategoryPage = () => {
       setBaseSpirit('');
       setThematic([]);
     }
-  }, [categoryId, setBaseSpirit, setThematic, currentCategoryDetails]);
+  }, [categoryId, setBaseSpirit, setThematic, currentCategoryDetails, categories]);
+
+  if (loading) {
+    return <PageWrapper><PageTitle>Loading Cocktails...</PageTitle></PageWrapper>;
+  }
 
   if (categoryId && !currentCategoryDetails) {
     return (
@@ -120,9 +180,9 @@ const CategoryPage = () => {
       <PageTitle>{pageTitle}</PageTitle>
       <CategoryPageWrapper>
         <FilterSidebar
-          allCocktails={cocktailsData}
-          categories={categoriesData}
-          thematicCategories={thematicCategoriesData}
+          allCocktails={cocktails}
+          categories={categories}
+          thematicCategories={thematicCategories}
           filters={filterHookState}
           setters={filterHookSetters}
           resetFilters={resetFilters}

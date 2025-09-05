@@ -20,17 +20,15 @@ const Button = styled.button`
 const LanguageSelector = () => {
   const { i18n } = useTranslation();
 
-  const changeLanguage = (lng) => {
-    i18n.changeLanguage(lng);
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'en' ? 'es' : 'en';
+    i18n.changeLanguage(newLang);
   };
 
   return (
     <div>
-      <Button onClick={() => changeLanguage('en')} disabled={i18n.language === 'en'}>
-        🇬🇧
-      </Button>
-      <Button onClick={() => changeLanguage('es')} disabled={i18n.language === 'es'}>
-        🇪🇸
+      <Button onClick={toggleLanguage} title={i18n.language === 'en' ? 'Switch to Spanish' : 'Switch to English'}>
+        {i18n.language === 'en' ? '🇪🇸' : '🇬🇧'}
       </Button>
     </div>
   );

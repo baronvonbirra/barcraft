@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { useTranslation } from 'react-i18next';
+import { getCachedData, setCachedData } from '../utils/cache';
 import CategoryList from '../components/CategoryList';
 import SurpriseMeButton from '../components/SurpriseMeButton';
 import { getImageUrl } from '../utils/cocktailImageLoader.js';
@@ -133,24 +134,22 @@ const HomePage = () => {
   const [allCocktails, setAllCocktails] = useState([]);
 
   useEffect(() => {
-    const fetchCocktailOfTheWeek = async () => {
+    const fetchHomePageData = async () => {
       setLoading(true);
+      const lang = i18n.language;
+
+      // Fetch Cocktail of the Week (not cached)
       const { data: cotwData, error: cotwError } = await supabase
         .from('cocktail_of_the_week')
         .select('cocktail_id');
 
       if (cotwError) {
         console.error('Error fetching cocktail of the week:', cotwError);
-        setLoading(false);
-        return;
-      }
-
-      if (cotwData && cotwData.length > 0) {
+      } else if (cotwData && cotwData.length > 0) {
         const cocktailId = cotwData[0].cocktail_id;
-        const lang = i18n.language;
         const { data: cocktail, error: cocktailError } = await supabase
           .from('cocktails')
-          .select(`id, name_${lang}, description_${lang}, image`)
+          .select(`id, name_${lang}, name_en, description_${lang}, description_en, image`)
           .eq('id', cocktailId)
           .single();
 
@@ -159,52 +158,54 @@ const HomePage = () => {
         } else {
           setCocktailToDisplay({
             ...cocktail,
-            name: cocktail[`name_${lang}`],
-            description: cocktail[`description_${lang}`],
+            name: cocktail[`name_${lang}`] || cocktail.name_en,
+            description: cocktail[`description_${lang}`] || cocktail.description_en,
           });
         }
       }
+
+      // Fetch Categories (with cache)
+      const categoriesCacheKey = `categories_all_${lang}`;
+      const cachedCategories = getCachedData(categoriesCacheKey, 3600 * 1000);
+      if (cachedCategories) {
+        const spiritCategories = cachedCategories.filter(c => c.type === 'spirit');
+        const themeCategories = cachedCategories.filter(c => c.type === 'theme');
+        setCategories(spiritCategories);
+        setThematicCategories(themeCategories);
+      } else {
+        const { data, error } = await supabase.from('categories').select(`id, name_${lang}, name_en, image, type`);
+        if (error) {
+          console.error('Error fetching categories:', error);
+        } else if (data) {
+          const processed = data.map(c => ({ ...c, name: c[`name_${lang}`] || c.name_en }));
+          setCachedData(categoriesCacheKey, processed);
+          const spiritCategories = processed.filter(c => c.type === 'spirit');
+          const themeCategories = processed.filter(c => c.type === 'theme');
+          setCategories(spiritCategories);
+          setThematicCategories(themeCategories);
+        }
+      }
+
+      // Fetch All Cocktails (for surprise me button, with cache)
+      const cocktailsCacheKey = 'cocktails_all_simple';
+      const cachedCocktails = getCachedData(cocktailsCacheKey, 3600 * 1000);
+      if (cachedCocktails) {
+        setAllCocktails(cachedCocktails);
+      } else {
+        const { data, error } = await supabase.from('cocktails').select(`id, name_${lang}, name_en`);
+        if (error) {
+          console.error('Error fetching all cocktails:', error);
+        } else if (data) {
+          const processed = data.map(c => ({ ...c, name: c[`name_${lang}`] || c.name_en }));
+          setAllCocktails(processed);
+          setCachedData(cocktailsCacheKey, processed);
+        }
+      }
+
       setLoading(false);
     };
 
-    fetchCocktailOfTheWeek();
-  }, [i18n.language]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const lang = i18n.language;
-      const { data, error } = await supabase
-        .from('categories')
-        .select(`id, name_${lang}, image, type`);
-
-      if (error) {
-        console.error('Error fetching categories:', error);
-      } else {
-        const spiritCategories = data.filter(c => c.type === 'spirit').map(c => ({ ...c, name: c[`name_${lang}`] }));
-        const themeCategories = data.filter(c => c.type === 'theme').map(c => ({ ...c, name: c[`name_${lang}`] }));
-        setCategories(spiritCategories);
-        setThematicCategories(themeCategories);
-      }
-    };
-
-    fetchCategories();
-  }, [i18n.language]);
-
-  useEffect(() => {
-    const fetchAllCocktails = async () => {
-      const lang = i18n.language;
-      const { data, error } = await supabase
-        .from('cocktails')
-        .select(`id, name_${lang}`);
-
-      if (error) {
-        console.error('Error fetching all cocktails:', error);
-      } else {
-        setAllCocktails(data.map(c => ({ ...c, name: c[`name_${lang}`] })));
-      }
-    };
-
-    fetchAllCocktails();
+    fetchHomePageData();
   }, [i18n.language]);
 
   return (

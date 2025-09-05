@@ -7,7 +7,6 @@ import { useFavorites } from '../hooks/useFavorites';
 import { useTranslation } from 'react-i18next';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { getImageUrl } from '../utils/cocktailImageLoader.js';
-import barSpecificData from '../data/bar_specific_data.json';
 
 // Styled Components
 const PageWrapper = styled.div`
@@ -157,7 +156,7 @@ const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
 const CocktailPage = () => {
   const { cocktailId } = useParams();
   const { theme } = useContext(ThemeContext);
-  const { barAStock, barBStock } = useBar();
+  const { barAStock, barBStock, barsData } = useBar();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { i18n, t } = useTranslation();
   const [cocktail, setCocktail] = useState(null);
@@ -167,22 +166,46 @@ const CocktailPage = () => {
     const fetchCocktail = async () => {
       setLoading(true);
       const lang = i18n.language;
+
       const { data, error } = await supabase
         .from('cocktails')
-        .select(`*, ingredients:ingredients(id, name_${lang})`)
+        .select(`
+          *,
+          cocktail_ingredients(
+            quantity,
+            notes,
+            ingredients (
+              id,
+              name_en,
+              name_es
+            )
+          )
+        `)
         .eq('id', cocktailId)
         .single();
 
       if (error) {
-        console.error('Error fetching cocktail:', error);
-      } else {
+        console.error('Error fetching cocktail details:', error);
+      } else if (data) {
+        const getLangValue = (field) => data[`${field}_${lang}`] || data[`${field}_en`];
+
+        const processedIngredients = data.cocktail_ingredients.map(ci => {
+          const ingredient = ci.ingredients;
+          return {
+            ...ingredient,
+            quantity: ci.quantity,
+            notes: ci.notes,
+            name: ingredient[`name_${lang}`] || ingredient['name_en'],
+          };
+        });
+
         setCocktail({
           ...data,
-          name: data[`name_${lang}`],
-          description: data[`description_${lang}`],
-          instructions: data[`instructions_${lang}`],
-          history: data[`history_${lang}`],
-          ingredients: data.ingredients.map(i => ({ ...i, name: i[`name_${lang}`] }))
+          name: getLangValue('name'),
+          description: getLangValue('description'),
+          instructions: getLangValue('instructions'),
+          history: getLangValue('history'),
+          ingredients: processedIngredients,
         });
       }
       setLoading(false);
@@ -200,8 +223,8 @@ const CocktailPage = () => {
     [cocktail?.ingredients, barBStock]
   );
 
-  const bar1Name = barSpecificData.bar1.barName;
-  const bar2Name = barSpecificData.bar2.barName;
+  const bar1Name = barsData.bar1?.barName || 'Bar 1';
+  const bar2Name = barsData.bar2?.barName || 'Bar 2';
 
   if (loading) {
     return <PageWrapper theme={theme}><p>{t('loading')}</p></PageWrapper>;
@@ -243,8 +266,8 @@ const CocktailPage = () => {
         <DetailSection theme={theme}>
           <h2>{t('ingredients')}</h2>
           <IngredientList>
-            {cocktail.ingredients.map((ing, index) => (
-              <IngredientListItem key={index} theme={theme}>
+            {cocktail.ingredients.map(ing => (
+              <IngredientListItem key={ing.id} theme={theme}>
                 {ing.quantity} {ing.name} {ing.notes ? `(${ing.notes})` : ''}
               </IngredientListItem>
             ))}

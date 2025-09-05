@@ -16,31 +16,20 @@ const mockCocktail = {
   instructions_en: ['Muddle mint and sugar', 'Add rum and lime juice', 'Top with soda water'],
   history_en: 'The Mojito is a traditional Cuban highball.',
   image: 'mojito.jpg',
-  ingredients: [
-    { id: 'rum', name_en: 'Rum', quantity: '2 oz' },
-    { id: 'lime', name_en: 'Lime Juice', quantity: '1 oz' },
-    { id: 'mint', name_en: 'Mint', quantity: '6 leaves' },
+  cocktail_ingredients: [
+    { ingredients: { id: 'rum', name_en: 'Rum' }, quantity: '2 oz' },
+    { ingredients: { id: 'lime', name_en: 'Lime Juice' }, quantity: '1 oz' },
+    { ingredients: { id: 'mint', name_en: 'Mint' }, quantity: '6 leaves' },
   ],
 };
 
 describe('CocktailPage', () => {
   beforeEach(() => {
-    const from = supabase.from;
-    from.mockImplementation((tableName) => {
-      const select = vi.fn();
-      const eq = vi.fn();
-      const single = vi.fn();
-
-      if (tableName === 'cocktails') {
-        single.mockResolvedValue({ data: mockCocktail, error: null });
-        eq.mockReturnValue({ single });
-        select.mockReturnValue({ eq });
-      } else {
-        select.mockResolvedValue({ data: [], error: null });
-      }
-
-      return { select };
-    });
+    supabase.from.mockImplementation((tableName) => ({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: mockCocktail, error: null }),
+    }));
 
     useFavorites.mockReturnValue({
       isFavorite: vi.fn().mockReturnValue(false),
@@ -64,22 +53,11 @@ describe('CocktailPage', () => {
   });
 
   it('renders "cocktail not found" message for a non-existent cocktail', async () => {
-    const from = supabase.from;
-    from.mockImplementation((tableName) => {
-      const select = vi.fn();
-      const eq = vi.fn();
-      const single = vi.fn();
-
-      if (tableName === 'cocktails') {
-        single.mockResolvedValue({ data: null, error: { message: 'Not found' } });
-        eq.mockReturnValue({ single });
-        select.mockReturnValue({ eq });
-      } else {
-        select.mockResolvedValue({ data: [], error: null });
-      }
-
-      return { select };
-    });
+    supabase.from.mockImplementation((tableName) => ({
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({ data: null, error: { message: 'Not found' } }),
+    }));
 
     renderWithProviders(<CocktailPage />, {
       route: '/cocktails/non-existent',

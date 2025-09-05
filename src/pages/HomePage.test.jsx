@@ -15,39 +15,34 @@ const mockCocktail = {
 };
 
 const mockCategories = [
-  { id: 'rum', name_en: 'Rum', image: 'rum.jpg' },
-  { id: 'gin', name_en: 'Gin', image: 'gin.jpg' },
+  { id: 'rum', name_en: 'Rum', image: 'rum.jpg', type: 'spirit' },
+  { id: 'classic', name_en: 'Classic', image: 'classic.jpg', type: 'theme' },
 ];
 
-const mockThematicCategories = [
-  { id: 'classic', name_en: 'Classic', image: 'classic.jpg' },
-];
+const mockAllCocktails = [{ id: 'mojito', name_en: 'Mojito' }];
 
 describe('HomePage', () => {
   beforeEach(() => {
-    const from = supabase.from;
-    from.mockImplementation((tableName) => {
-      const select = vi.fn();
-      const eq = vi.fn();
-      const single = vi.fn();
-
-      if (tableName === 'cocktail_of_the_week') {
-        single.mockResolvedValue({ data: { cocktail_id: 'mojito' }, error: null });
-        select.mockReturnValue({ single });
-      } else if (tableName === 'cocktails') {
-        single.mockResolvedValue({ data: mockCocktail, error: null });
-        eq.mockReturnValue({ single });
-        select.mockReturnValue({ eq });
-      } else if (tableName === 'categories') {
-        select.mockResolvedValue({ data: mockCategories, error: null });
-      } else if (tableName === 'thematic_categories') {
-        select.mockResolvedValue({ data: mockThematicCategories, error: null });
-      } else {
-        select.mockResolvedValue({ data: [], error: null });
-      }
-
-      return { select };
-    });
+    supabase.from.mockImplementation((tableName) => ({
+      select: vi.fn().mockImplementation((query) => {
+        if (tableName === 'cocktail_of_the_week') {
+          return Promise.resolve({ data: [{ cocktail_id: 'mojito' }], error: null });
+        }
+        if (tableName === 'cocktails') {
+          if (query.includes('description')) {
+            return {
+              eq: vi.fn().mockReturnThis(),
+              single: vi.fn().mockResolvedValue({ data: mockCocktail, error: null }),
+            };
+          }
+          return Promise.resolve({ data: mockAllCocktails, error: null });
+        }
+        if (tableName === 'categories') {
+          return Promise.resolve({ data: mockCategories, error: null });
+        }
+        return Promise.resolve({ data: [], error: null });
+      }),
+    }));
   });
 
   it('renders the main headings for browsing', async () => {
