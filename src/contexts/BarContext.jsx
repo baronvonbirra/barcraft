@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
-import barSpecificDataJson from '../data/bar_specific_data.json';
+import { getCachedData, setCachedData } from '../utils/cache';
 
 const initialState = {
   selectedBarId: 'all',
@@ -26,25 +26,17 @@ export const BarProvider = ({ children }) => {
   const [barsData, setBarsData] = useState({});
 
   useEffect(() => {
-    const CACHE_KEY = 'ingredientCache';
-    const CACHE_TIMESTAMP_KEY = 'ingredientCacheTimestamp';
-    const CACHE_DURATION_MS = 60 * 60 * 1000;
+    const cacheDuration = 3600 * 1000; // 1 hour
 
     const fetchAllStock = async () => {
-      const cachedTimestamp = localStorage.getItem(CACHE_TIMESTAMP_KEY);
-      const cachedData = localStorage.getItem(CACHE_KEY);
-
-      if (cachedTimestamp && cachedData && (Date.now() - parseInt(cachedTimestamp, 10) < CACHE_DURATION_MS)) {
-        console.log("Loading ingredients from cache.");
-        const parsedData = JSON.parse(cachedData);
-        const barAIds = new Set(parsedData.barAIds);
-        const barBIds = new Set(parsedData.barBIds);
-        setBarAStock(barAIds);
-        setBarBStock(barBIds);
+      const cacheKey = 'ingredientCache';
+      const cached = getCachedData(cacheKey, cacheDuration);
+      if (cached) {
+        setBarAStock(new Set(cached.barAIds));
+        setBarBStock(new Set(cached.barBIds));
         return;
       }
 
-      console.log("Fetching ingredients from Supabase.");
       const { data, error } = await supabase
         .from('ingredients')
         .select('id, is_available_bar_a, is_available_bar_b');
@@ -60,20 +52,24 @@ export const BarProvider = ({ children }) => {
         });
         setBarAStock(barAIds);
         setBarBStock(barBIds);
-
-        const cacheData = {
-          barAIds: Array.from(barAIds),
-          barBIds: Array.from(barBIds)
-        };
-        localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-        localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
+        setCachedData(cacheKey, { barAIds: Array.from(barAIds), barBIds: Array.from(barBIds) });
       }
     };
-    fetchAllStock();
-  }, []);
 
-  useEffect(() => {
     const fetchBarsData = async () => {
+      const cacheKey = 'bars_data';
+      const cached = getCachedData(cacheKey, cacheDuration);
+      if (cached) {
+        setBarsData(cached);
+        return;
+      }
+
+      const { data: bars, error: barsError } = await supabase.from('bars').select('*');
+      if (barsError) {
+        console.error('Error fetching bars:', barsError);
+        return;
+      }
+
       const { data: curated, error: curatedError } = await supabase.from('curated_cocktails').select('*');
       if (curatedError) {
         console.error('Error fetching curated cocktails:', curatedError);
@@ -81,14 +77,18 @@ export const BarProvider = ({ children }) => {
       }
 
       const newBarsData = {};
-      for (const barId in barSpecificDataJson) {
-        newBarsData[barId] = {
-          ...barSpecificDataJson[barId],
-          curatedCocktailIds: curated.filter(c => c.bar_id === barId).map(c => c.cocktail_id),
+      for (const bar of bars) {
+        newBarsData[bar.id] = {
+          barName: bar.name,
+          curatedMenuName: bar.curated_menu_name,
+          curatedCocktailIds: curated.filter(c => c.bar_id === bar.id).map(c => c.cocktail_id),
         };
       }
       setBarsData(newBarsData);
+      setCachedData(cacheKey, newBarsData);
     };
+
+    fetchAllStock();
     fetchBarsData();
   }, []);
 

@@ -2,8 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { supabase } from '../supabaseClient';
 import bcrypt from 'bcryptjs';
-import barSpecificData from '../data/bar_specific_data.json';
-import cocktailsData from '../data/cocktails.json';
 
 const PageWrapper = styled.div`
   padding: 1rem;
@@ -214,33 +212,56 @@ const AdminPage = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      // Common setup for both tabs
-      const barsArray = Object.keys(barSpecificData).map(barId => ({
-        id: barId,
-        name: barSpecificData[barId].barName,
-      }));
-      setBars(barsArray);
-      setCocktails(cocktailsData);
-
-      if (activeTab === 'stock') {
-        fetchIngredients();
-        if (barsArray.length > 0 && !selectedBar) {
-          setSelectedBar(barsArray[0].id);
-        }
-      } else if (activeTab === 'curated') {
-        if (barsArray.length > 0) {
-          // If selectedCuratedBar isn't set, default to the first bar
-          const currentSelectedBar = selectedCuratedBar || barsArray[0].id;
-          if (!selectedCuratedBar) {
-            setSelectedCuratedBar(currentSelectedBar);
+      const fetchBars = async () => {
+        const { data, error } = await supabase.from('bars').select('id, name');
+        if (error) console.error('Error fetching bars:', error);
+        else {
+          setBars(data);
+          if (data.length > 0) {
+            if (!selectedBar) setSelectedBar(data[0].id);
+            if (!selectedCuratedBar) setSelectedCuratedBar(data[0].id);
           }
-          // Fetch data for the current selection
-          fetchCuratedCocktails(currentSelectedBar);
-          fetchCocktailOfTheWeek(currentSelectedBar);
         }
+      };
+      fetchBars();
+    }
+  }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (isLoggedIn && activeTab === 'stock') {
+      fetchIngredients();
+    }
+  }, [isLoggedIn, activeTab]);
+
+  useEffect(() => {
+    if (isLoggedIn && activeTab === 'curated') {
+      fetchCocktails();
+      if(selectedCuratedBar) {
+          fetchCuratedCocktails(selectedCuratedBar);
+          fetchCocktailOfTheWeek(selectedCuratedBar);
       }
     }
   }, [isLoggedIn, activeTab, selectedCuratedBar]);
+
+  const fetchCocktails = async () => {
+    setLoadingCurated(true);
+    const { data, error } = await supabase
+      .from('cocktails')
+      .select('id, name_en, name_es')
+      .order('name_en', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching cocktails:', error);
+      setCocktails([]);
+    } else {
+      const processedCocktails = data.map(c => ({
+        ...c,
+        name: c.name_en || c.name_es,
+      }));
+      setCocktails(processedCocktails);
+    }
+    setLoadingCurated(false);
+  };
 
   const fetchIngredients = async () => {
     setLoading(true);

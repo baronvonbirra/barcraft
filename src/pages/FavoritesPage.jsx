@@ -1,14 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { supabase } from '../supabaseClient';
 import { useFavorites } from '../hooks/useFavorites';
-import cocktailsData from '../data/cocktails.json';
 import CocktailList from '../components/CocktailList';
-import { useCocktailFilter } from '../hooks/useCocktailFilter'; // For availability consistent with HomePage
-import { useBar } from '../contexts/BarContext'; // For availability
+import { useCocktailFilter } from '../hooks/useCocktailFilter';
+import { useBar } from '../contexts/BarContext';
 
 const PageWrapper = styled.div`
   padding: ${({ theme }) => theme.spacing.medium};
-  text-align: center; // Center title and messages
+  text-align: center;
   animation: fadeInPage 0.5s ease-out forwards;
 `;
 
@@ -25,14 +25,54 @@ const NoFavoritesMessage = styled.p`
 
 const FavoritesPage = () => {
   const { favoriteIds } = useFavorites();
-  
-  // Get these for CocktailList consistency, even if not primary focus of this page
-  const { selectedBar } = useBar(); 
-  // Note: useCocktailFilter is used here mainly to get isCocktailMakeable.
-  // The primary filtering for this page is based on favoriteIds.
-  const { isCocktailMakeable } = useCocktailFilter(cocktailsData); 
+  const [favoriteCocktails, setFavoriteCocktails] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { selectedBar } = useBar();
+  const { isCocktailMakeable } = useCocktailFilter([]); // Pass empty array
 
-  const favoriteCocktails = cocktailsData.filter(cocktail => favoriteIds.includes(cocktail.id));
+  useEffect(() => {
+    const fetchFavoriteCocktails = async () => {
+      if (favoriteIds.length === 0) {
+        setFavoriteCocktails([]);
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('cocktails')
+        .select(`
+          *,
+          cocktail_ingredients(
+            quantity,
+            notes,
+            ingredients (*)
+          )
+        `)
+        .in('id', favoriteIds);
+
+      if (error) {
+        console.error('Error fetching favorite cocktails:', error);
+        setFavoriteCocktails([]);
+      } else {
+        const processedCocktails = data.map(cocktail => ({
+          ...cocktail,
+          ingredients: cocktail.cocktail_ingredients?.map(ci => ({
+            ...ci.ingredients,
+            quantity: ci.quantity,
+            notes: ci.notes,
+          })) || [],
+        }));
+        setFavoriteCocktails(processedCocktails);
+      }
+      setLoading(false);
+    };
+
+    fetchFavoriteCocktails();
+  }, [favoriteIds]);
+
+  if (loading) {
+    return <PageWrapper><PageTitle>Loading Favorites...</PageTitle></PageWrapper>;
+  }
 
   return (
     <PageWrapper>
@@ -40,8 +80,8 @@ const FavoritesPage = () => {
       {favoriteCocktails.length > 0 ? (
         <CocktailList
           cocktails={favoriteCocktails}
-          isCocktailMakeable={isCocktailMakeable} // Pass down for consistency
-          selectedBar={selectedBar}             // Pass down for consistency
+          isCocktailMakeable={isCocktailMakeable}
+          selectedBar={selectedBar}
         />
       ) : (
         <NoFavoritesMessage>
