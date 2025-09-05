@@ -28,37 +28,48 @@ export const BarProvider = ({ children }) => {
   const [barsData, setBarsData] = useState({});
 
   useEffect(() => {
-    const cacheDuration = 3600 * 1000; // 1 hour
+    const fetchInitialData = async () => {
+      // Fetch bars data
+      const { data: barsData, error: barsError } = await supabase.from('bars').select('*');
+      if (barsError) {
+        console.error('Error fetching bars data:', barsError);
+      } else {
+        const processedBarsData = barsData.reduce((acc, bar) => {
+          acc[bar.id] = bar;
+          return acc;
+        }, {});
+        setBarsData(processedBarsData);
+      }
 
-    const fetchAllStock = async () => {
+      // Fetch all stock
+      const cacheDuration = 3600 * 1000; // 1 hour
       const cacheKey = 'ingredientCache';
       const cached = getCachedData(cacheKey, cacheDuration);
       if (cached) {
         setBarAStock(new Set(cached.barAIds));
         setBarBStock(new Set(cached.barBIds));
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from('ingredients')
-        .select('id, is_available_bar_a, is_available_bar_b');
-
-      if (error) {
-        console.error('Error fetching all bar stock:', error);
       } else {
-        const barAIds = new Set();
-        const barBIds = new Set();
-        data.forEach(ingredient => {
-          if (ingredient.is_available_bar_a) barAIds.add(ingredient.id);
-          if (ingredient.is_available_bar_b) barBIds.add(ingredient.id);
-        });
-        setBarAStock(barAIds);
-        setBarBStock(barBIds);
-        setCachedData(cacheKey, { barAIds: Array.from(barAIds), barBIds: Array.from(barBIds) });
+        const { data: ingredientsData, error: ingredientsError } = await supabase
+          .from('ingredients')
+          .select('id, is_available_bar_a, is_available_bar_b');
+
+        if (ingredientsError) {
+          console.error('Error fetching all bar stock:', ingredientsError);
+        } else {
+          const barAIds = new Set();
+          const barBIds = new Set();
+          ingredientsData.forEach(ingredient => {
+            if (ingredient.is_available_bar_a) barAIds.add(ingredient.id);
+            if (ingredient.is_available_bar_b) barBIds.add(ingredient.id);
+          });
+          setBarAStock(barAIds);
+          setBarBStock(barBIds);
+          setCachedData(cacheKey, { barAIds: Array.from(barAIds), barBIds: Array.from(barBIds) });
+        }
       }
     };
 
-    fetchAllStock();
+    fetchInitialData();
   }, []);
 
   useEffect(() => {
