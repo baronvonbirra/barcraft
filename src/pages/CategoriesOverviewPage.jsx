@@ -67,7 +67,7 @@ const CategoriesOverviewPage = () => {
       } else {
         const { data, error } = await supabase
           .from('cocktails')
-          .select(`*, name_${lang}, name_en, description_${lang}, description_en, instructions_${lang}, instructions_en, history_${lang}, history_en, cocktail_ingredients(quantity, notes, ingredients(id, name_${lang}, name_en))`);
+          .select(`*, name_${lang}, name_en, description_${lang}, description_en, instructions_${lang}, instructions_en, history_${lang}, history_en, cocktail_ingredients(quantity, notes, ingredients(id, name))`);
 
         if (error) {
           console.error('Error fetching cocktails:', error);
@@ -80,7 +80,6 @@ const CategoriesOverviewPage = () => {
             history: c[`history_${lang}`] || c.history_en,
             ingredients: c.cocktail_ingredients?.map(ci => ({
               ...ci.ingredients,
-              name: ci.ingredients[`name_${lang}`] || ci.ingredients.name_en,
               quantity: ci.quantity,
               notes: ci.notes,
             })) || []

@@ -91,7 +91,7 @@ const BarSpecificPage = () => {
           cocktail_ingredients(
             quantity,
             notes,
-            ingredients (*)
+            ingredients (id, name)
           )
         `);
 
