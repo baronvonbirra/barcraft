@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import cocktailsData from '../data/cocktails.json';
-import categoriesData from '../data/categories.json';
-import thematicCategoriesData from '../data/thematicCategories.json';
+import { useTranslation } from 'react-i18next';
 import CategoryList from '../components/CategoryList';
 import SurpriseMeButton from '../components/SurpriseMeButton';
 import { getImageUrl } from '../utils/cocktailImageLoader.js';
@@ -127,64 +125,112 @@ const SectionHeading = styled.h2`
 
 
 const HomePage = () => {
+  const { i18n, t } = useTranslation();
   const [cocktailToDisplay, setCocktailToDisplay] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
+  const [thematicCategories, setThematicCategories] = useState([]);
+  const [allCocktails, setAllCocktails] = useState([]);
 
   useEffect(() => {
     const fetchCocktailOfTheWeek = async () => {
-      const { data, error } = await supabase
+      setLoading(true);
+      const { data: cotwData, error: cotwError } = await supabase
         .from('cocktail_of_the_week')
         .select('cocktail_id');
 
-      if (error) {
-        console.error('Error fetching cocktail of the week:', error);
+      if (cotwError) {
+        console.error('Error fetching cocktail of the week:', cotwError);
         setLoading(false);
         return;
       }
 
-      if (data && data.length > 0) {
-        let selectedCocktailId;
-        if (data.length === 1) {
-          selectedCocktailId = data[0].cocktail_id;
-        } else {
-          // If more than one, pick one randomly
-          const randomIndex = Math.floor(Math.random() * data.length);
-          selectedCocktailId = data[randomIndex].cocktail_id;
-        }
-        const cocktail = cocktailsData.find(c => c.id === selectedCocktailId);
-        setCocktailToDisplay(cocktail);
-      }
+      if (cotwData && cotwData.length > 0) {
+        const cocktailId = cotwData[0].cocktail_id;
+        const lang = i18n.language;
+        const { data: cocktail, error: cocktailError } = await supabase
+          .from('cocktails')
+          .select(`id, name_${lang}, description_${lang}, image`)
+          .eq('id', cocktailId)
+          .single();
 
+        if (cocktailError) {
+          console.error('Error fetching cocktail details:', cocktailError);
+        } else {
+          setCocktailToDisplay({
+            ...cocktail,
+            name: cocktail[`name_${lang}`],
+            description: cocktail[`description_${lang}`],
+          });
+        }
+      }
       setLoading(false);
     };
 
     fetchCocktailOfTheWeek();
-  }, []);
+  }, [i18n.language]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const lang = i18n.language;
+      const { data, error } = await supabase
+        .from('categories')
+        .select(`id, name_${lang}, image, type`);
+
+      if (error) {
+        console.error('Error fetching categories:', error);
+      } else {
+        const spiritCategories = data.filter(c => c.type === 'spirit').map(c => ({ ...c, name: c[`name_${lang}`] }));
+        const themeCategories = data.filter(c => c.type === 'theme').map(c => ({ ...c, name: c[`name_${lang}`] }));
+        setCategories(spiritCategories);
+        setThematicCategories(themeCategories);
+      }
+    };
+
+    fetchCategories();
+  }, [i18n.language]);
+
+  useEffect(() => {
+    const fetchAllCocktails = async () => {
+      const lang = i18n.language;
+      const { data, error } = await supabase
+        .from('cocktails')
+        .select(`id, name_${lang}`);
+
+      if (error) {
+        console.error('Error fetching all cocktails:', error);
+      } else {
+        setAllCocktails(data.map(c => ({ ...c, name: c[`name_${lang}`] })));
+      }
+    };
+
+    fetchAllCocktails();
+  }, [i18n.language]);
 
   return (
     <PageWrapper>
       <HomePageWrapper>
         {!loading && cocktailToDisplay && (
           <CocktailOfTheWeekWrapper>
-            <CocktailName>{cocktailToDisplay.name} - Cocktail of the Week!</CocktailName>
+            <CocktailName>{cocktailToDisplay.name} - {t('cocktailOfTheWeek')}</CocktailName>
             <CocktailImage src={getImageUrl(cocktailToDisplay.image)} alt={cocktailToDisplay.name} />
             <CocktailDescription>{cocktailToDisplay.description}</CocktailDescription>
-            <ViewRecipeButton to={`/cocktails/${cocktailToDisplay.id}`}>View Recipe</ViewRecipeButton>
+            <ViewRecipeButton to={`/cocktails/${cocktailToDisplay.id}`}>{t('viewRecipe')}</ViewRecipeButton>
           </CocktailOfTheWeekWrapper>
         )}
 
         <SurpriseButtonWrapper>
-          <SurpriseMeButton filteredCocktails={cocktailsData} />
+          <SurpriseMeButton filteredCocktails={allCocktails} />
         </SurpriseButtonWrapper>
-        
+
         <MainContent>
           {/* Heading for categories */}
-          <SectionHeading>Browse by Spirit</SectionHeading>
-          <CategoryList categories={categoriesData} />
+          <SectionHeading>{t('browseBySpirit')}</SectionHeading>
+          <CategoryList categories={categories} />
 
           {/* Heading for thematic categories */}
-          <SectionHeading>Explore by Theme</SectionHeading>
-          <CategoryList categories={thematicCategoriesData} />
+          <SectionHeading>{t('exploreByTheme')}</SectionHeading>
+          <CategoryList categories={thematicCategories} />
         </MainContent>
       </HomePageWrapper>
     </PageWrapper>

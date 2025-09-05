@@ -1,0 +1,34 @@
+{
+  "header": {
+    "searchPlaceholder": "Buscar por nombre o ingrediente..."
+  },
+  "buttons": {
+    "surpriseMe": "✨ ¡Sorpréndeme! ✨"
+  },
+  "navigation": {
+    "home": "Inicio",
+    "categories": "Categorías",
+    "favorites": "Favoritos",
+    "levelOne": "Nivel Uno",
+    "theGlitch": "El Glitch"
+  },
+  "cocktailOfTheWeek": "¡Cóctel de la Semana!",
+  "viewRecipe": "Ver Receta",
+  "browseBySpirit": "Buscar por Espíritu",
+  "exploreByTheme": "Explorar por Tema",
+  "loading": "Cargando...",
+  "cocktailNotFound": "¡Cóctel no encontrado!",
+  "removeFromFavorites": "Eliminar de Favoritos",
+  "addToFavorites": "Agregar a Favoritos",
+  "available": "Disponible",
+  "unavailable": "No disponible",
+  "ingredients": "Ingredientes",
+  "instructions": "Instrucciones",
+  "details": "Detalles",
+  "glass": "Vaso",
+  "difficulty": "Dificultad",
+  "tags": "Etiquetas",
+  "flavorProfile": "Perfil de Sabor",
+  "history": "Historia",
+  "noCocktailsMatch": "¡No hay cócteles que coincidan con tu estado de ánimo actual! Intenta ajustar tus filtros."
+}

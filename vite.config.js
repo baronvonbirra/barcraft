@@ -20,5 +20,8 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  optimizeDeps: {
+    include: ['i18next-http-backend'],
+  },
 });
 
