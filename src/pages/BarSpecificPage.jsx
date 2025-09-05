@@ -86,25 +86,7 @@ const BarSpecificPage = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('cocktails')
-        .select(`
-          id,
-          name_en,
-          name_es,
-          description_en,
-          description_es,
-          image,
-          base_spirit,
-          difficulty,
-          glass,
-          flavor_profile,
-          tags,
-          thematic_categories,
-          ingredients:cocktail_ingredients(
-            quantity,
-            notes,
-            details:ingredients (id, name)
-          )
-        `);
+        .select('*, ingredients:cocktail_ingredients(*, details:ingredients(*))');
 
       if (error) {
         console.error('Error fetching cocktails:', error);
@@ -113,8 +95,7 @@ const BarSpecificPage = () => {
           ...cocktail,
           ingredients: cocktail.ingredients?.map(ci => ({
             ...ci.details,
-            quantity: ci.quantity,
-            notes: ci.notes,
+            ...ci,
           })) || [],
         }));
         setCocktails(processedCocktails);
