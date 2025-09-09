@@ -86,17 +86,14 @@ const BarSpecificPage = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('cocktails')
-        .select('*, ingredients:cocktail_ingredients(*, details:ingredients(*))');
+        .select('*, ingredients:cocktail_ingredients(details:ingredients(*))');
 
       if (error) {
         console.error('Error fetching cocktails:', error);
       } else {
         const processedCocktails = data.map(cocktail => ({
           ...cocktail,
-          ingredients: cocktail.ingredients?.map(ci => ({
-            ...ci.details,
-            ...ci,
-          })) || [],
+          ingredients: cocktail.ingredients?.map(ci => ci.details) || [],
         }));
         setCocktails(processedCocktails);
       }
