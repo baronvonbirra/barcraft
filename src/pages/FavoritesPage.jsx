@@ -43,8 +43,6 @@ const FavoritesPage = () => {
         .select(`
           *,
           cocktail_ingredients(
-            quantity,
-            notes,
             ingredients (id, name)
           )
         `)
@@ -56,11 +54,7 @@ const FavoritesPage = () => {
       } else {
         const processedCocktails = data.map(cocktail => ({
           ...cocktail,
-          ingredients: cocktail.cocktail_ingredients?.map(ci => ({
-            ...ci.ingredients,
-            quantity: ci.quantity,
-            notes: ci.notes,
-          })) || [],
+          ingredients: cocktail.cocktail_ingredients?.map(ci => ci.ingredients) || [],
         }));
         setFavoriteCocktails(processedCocktails);
       }
