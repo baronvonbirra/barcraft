@@ -169,7 +169,7 @@ const CocktailPage = () => {
 
       const { data, error } = await supabase
         .from('cocktails')
-        .select('*, ingredients:cocktail_ingredients(*, details:ingredients(*))')
+        .select('*, ingredients:cocktail_ingredients!cocktail_ingredients_cocktail_id_fkey(*, details:ingredients(*))')
         .eq('id', cocktailId)
         .single();
 

@@ -67,7 +67,7 @@ const CategoriesOverviewPage = () => {
       } else {
         const { data, error } = await supabase
           .from('cocktails')
-          .select('*, ingredients:cocktail_ingredients(*, details:ingredients(*))');
+          .select('*, ingredients:cocktail_ingredients!cocktail_ingredients_cocktail_id_fkey(*, details:ingredients(*))');
 
         if (error) {
           console.error('Error fetching cocktails:', error);
@@ -129,14 +129,7 @@ const CategoriesOverviewPage = () => {
     resetFilters
   } = useCocktailFilter(allCocktails);
 
-  const { selectedBar, barStock } = useBar();
-
-  const isCocktailMakeable = (cocktail) => {
-    if (!selectedBar || !barStock || barStock.length === 0) return true;
-    return cocktail.ingredients.every(ingredient => 
-      barStock.includes(ingredient.name.toLowerCase())
-    );
-  };
+  const { selectedBar } = useBar();
 
   const filterHookState = { baseSpirit, includeIngredients, excludeIngredients, flavorProfile, difficulty, tags, glassType, thematic, searchTerm };
   const filterHookSetters = { setBaseSpirit, setIncludeIngredients, setExcludeIngredients, setFlavorProfile, setDifficulty, setTags, setGlassType, setThematic, setSearchTerm };
@@ -162,7 +155,6 @@ const CategoriesOverviewPage = () => {
           />
           <CocktailList
             cocktails={filteredCocktails}
-            isCocktailMakeable={isCocktailMakeable}
             selectedBar={selectedBar}
           />
         </MainContent>

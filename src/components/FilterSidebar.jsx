@@ -189,7 +189,7 @@ const FilterSidebar = ({
   const [excludeIngredientSearchTerm, setExcludeIngredientSearchTerm] = useState('');
 
   const uniqueIngredients = useMemo(() => getUniqueValues(allCocktails, 'ingredients', 'name'), [allCocktails]);
-  const uniqueFlavorProfiles = useMemo(() => getUniqueValues(allCocktails, 'flavorProfile'), [allCocktails]);
+  const uniqueFlavorProfiles = useMemo(() => getUniqueValues(allCocktails, 'flavor_profile'), [allCocktails]);
   const uniqueTags = useMemo(() => getUniqueValues(allCocktails, 'tags'), [allCocktails]);
   const uniqueGlassTypes = useMemo(() => getUniqueValues(allCocktails, 'glass'), [allCocktails]);
   const difficulties = ['Easy', 'Medium', 'Hard'];

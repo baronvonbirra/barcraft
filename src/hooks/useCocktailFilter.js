@@ -29,10 +29,9 @@ export const useCocktailFilter = (allCocktails) => {
     }
 
 
-    return cocktailIngredients.every(ingObj => {
-      if (!ingObj.isEssential) return true;
-      return stockToCheck.has(ingObj.id);
-    });
+    return cocktailIngredients.every(ingObj =>
+      ingObj.isEssential === false || stockToCheck.has(ingObj.id)
+    );
   }, [selectedBarId, viewingCuratedMenu, currentBarStockSet]);
 
 
@@ -59,7 +58,7 @@ export const useCocktailFilter = (allCocktails) => {
   const filteredCocktails = useMemo(() => {
     let cocktails = [...allCocktails];
 
-    if (baseSpirit) cocktails = cocktails.filter(c => c.baseSpiritCategory?.toLowerCase() === baseSpirit.toLowerCase());
+    if (baseSpirit) cocktails = cocktails.filter(c => c.base_spirit_category_id?.toLowerCase() === baseSpirit.toLowerCase());
     if (difficulty) cocktails = cocktails.filter(c => c.difficulty?.toLowerCase() === difficulty.toLowerCase());
     if (glassType) {
       cocktails = cocktails.filter(c => {
