@@ -198,17 +198,13 @@ const AdminPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('stock'); // 'stock' or 'curated'
+  const [bars, setBars] = useState([]);
   const [cocktails, setCocktails] = useState([]);
   const [curatedCocktails, setCuratedCocktails] = useState([]);
-  const [selectedCuratedBar, setSelectedCuratedBar] = useState('bar1');
+  const [selectedCuratedBar, setSelectedCuratedBar] = useState('');
   const [loadingCurated, setLoadingCurated] = useState(false);
   const [cocktailOfTheWeek, setCocktailOfTheWeek] = useState(null);
   const { t } = useTranslation();
-
-  const bars = [
-    { id: 'bar1', name: t('navigation.levelOne') },
-    { id: 'bar2', name: t('navigation.theGlitch') },
-  ];
 
   // Mapping from bar ID to Supabase column name for stock
   const barIdToColumn = {
@@ -217,10 +213,18 @@ const AdminPage = () => {
   };
 
   useEffect(() => {
-    if (isLoggedIn && !selectedCuratedBar) {
-      setSelectedCuratedBar(bars[0]?.id);
+    if (isLoggedIn) {
+      const staticBars = [
+        { id: 'bar1', name: t('navigation.levelOne') },
+        { id: 'bar2', name: t('navigation.theGlitch') },
+      ];
+      setBars(staticBars);
+      if (staticBars.length > 0) {
+        if (!selectedBar) setSelectedBar(staticBars[0].id);
+        if (!selectedCuratedBar) setSelectedCuratedBar(staticBars[0].id);
+      }
     }
-  }, [isLoggedIn, selectedCuratedBar, bars]);
+  }, [isLoggedIn, t]);
 
   useEffect(() => {
     if (isLoggedIn && activeTab === 'stock') {
@@ -313,6 +317,8 @@ const AdminPage = () => {
         alert('Failed to remove curated cocktail. Please check permissions and try again.');
       } else {
         setCuratedCocktails(curatedCocktails.filter(id => id !== cocktailId));
+        localStorage.removeItem('bars_data');
+        localStorage.removeItem('bars_data_timestamp');
       }
     } else {
       // Add to curated list
@@ -325,6 +331,8 @@ const AdminPage = () => {
         alert('Failed to add curated cocktail. Please check permissions and try again.');
       } else {
         setCuratedCocktails([...curatedCocktails, cocktailId]);
+        localStorage.removeItem('bars_data');
+        localStorage.removeItem('bars_data_timestamp');
       }
     }
   };
@@ -358,10 +366,14 @@ const AdminPage = () => {
       } else {
         // On successful insert, update the state
         setCocktailOfTheWeek(newCocktailOfTheWeek);
+        localStorage.removeItem('bars_data');
+        localStorage.removeItem('bars_data_timestamp');
       }
     } else {
       // If we are just clearing it, update the state
       setCocktailOfTheWeek(null);
+      localStorage.removeItem('bars_data');
+      localStorage.removeItem('bars_data_timestamp');
     }
   };
 
@@ -400,6 +412,12 @@ const AdminPage = () => {
     setIsLoggedIn(false);
   };
 
+  const handleClearCache = () => {
+    localStorage.removeItem('ingredientCache');
+    localStorage.removeItem('ingredientCacheTimestamp');
+    alert('Ingredient cache has been cleared.');
+  };
+
   const handleToggle = async (ingredientId, currentStatus) => {
     const columnName = barIdToColumn[selectedBar];
     if (!columnName) {
@@ -422,6 +440,9 @@ const AdminPage = () => {
           ing.id === ingredientId ? { ...ing, [columnName]: !currentStatus } : ing
         )
       );
+      // Invalidate cache
+      localStorage.removeItem('ingredientCache');
+      localStorage.removeItem('ingredientCacheTimestamp');
     }
   };
 
@@ -466,6 +487,7 @@ const AdminPage = () => {
       <Title>Admin Panel</Title>
       <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
         <Button onClick={handleLogout}>Logout</Button>
+        <Button onClick={handleClearCache}>Clear Ingredient Cache</Button>
       </div>
 
       <TabContainer>
