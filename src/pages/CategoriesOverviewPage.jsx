@@ -6,7 +6,6 @@ import { useCocktailFilter } from '../hooks/useCocktailFilter';
 import { useBar } from '../contexts/BarContext';
 import { supabase } from '../supabaseClient';
 import { useTranslation } from 'react-i18next';
-import { getCachedData, setCachedData } from '../utils/cache';
 
 const PageWrapper = styled.div`
   padding: ${({ theme }) => (theme.spacing && theme.spacing.medium) || '1rem'} 0;
@@ -56,57 +55,42 @@ const CategoriesOverviewPage = () => {
     const fetchAllData = async () => {
       setLoading(true);
       const lang = i18n.language;
-      const cocktailsCacheKey = `cocktails_all_detailed_${lang}`;
-      const categoriesCacheKey = `categories_all_${lang}`;
-      const cacheDuration = 3600 * 1000;
 
       // Fetch Cocktails
-      const cachedCocktails = getCachedData(cocktailsCacheKey, cacheDuration);
-      if (cachedCocktails) {
-        setAllCocktails(cachedCocktails);
-      } else {
-        const { data, error } = await supabase
-          .from('cocktails')
-          .select('*, ingredients:cocktail_ingredients!cocktail_ingredients_cocktail_id_fkey(*, details:ingredients(*))');
+      const { data: cocktailsData, error: cocktailsError } = await supabase
+        .from('cocktails')
+        .select('*, ingredients:cocktail_ingredients!cocktail_ingredients_cocktail_id_fkey(*, details:ingredients(*))');
 
-        if (error) {
-          console.error('Error fetching cocktails:', error);
-        } else {
-          const processedCocktails = data.map(c => ({
-            ...c,
-            name: c[`name_${lang}`] || c.name_en,
-            description: c[`description_${lang}`] || c.description_en,
-            instructions: c[`instructions_${lang}`] || c.instructions_en,
-            history: c[`history_${lang}`] || c.history_en,
-            ingredients: c.ingredients?.map(ci => ({
-              ...ci.details,
-              ...ci,
-            })) || [],
-          }));
-          setAllCocktails(processedCocktails);
-          setCachedData(cocktailsCacheKey, processedCocktails);
-        }
+      if (cocktailsError) {
+        console.error('Error fetching cocktails:', cocktailsError);
+      } else {
+        const processedCocktails = cocktailsData.map(c => ({
+          ...c,
+          name: c[`name_${lang}`] || c.name_en,
+          description: c[`description_${lang}`] || c.description_en,
+          instructions: c[`instructions_${lang}`] || c.instructions_en,
+          history: c[`history_${lang}`] || c.history_en,
+          ingredients: c.ingredients?.map(ci => ({
+            ...ci.details,
+            ...ci,
+          })) || [],
+        }));
+        setAllCocktails(processedCocktails);
       }
 
       // Fetch Categories
-      const cachedCategories = getCachedData(categoriesCacheKey, cacheDuration);
-      if (cachedCategories) {
-        const spiritCategories = cachedCategories.filter(c => c.type === 'spirit');
-        const themeCategories = cachedCategories.filter(c => c.type === 'theme');
+      const { data: categoriesData, error: categoriesError } = await supabase
+        .from('categories')
+        .select(`id, name_${lang}, name_en, image, type`);
+
+      if (categoriesError) {
+        console.error('Error fetching categories:', categoriesError);
+      } else {
+        const processed = categoriesData.map(c => ({ ...c, name: c[`name_${lang}`] || c.name_en }));
+        const spiritCategories = processed.filter(c => c.type === 'spirit');
+        const themeCategories = processed.filter(c => c.type === 'theme');
         setCategories(spiritCategories);
         setThematicCategories(themeCategories);
-      } else {
-        const { data, error } = await supabase.from('categories').select(`id, name_${lang}, name_en, image, type`);
-        if (error) {
-          console.error('Error fetching categories:', error);
-        } else {
-          const processed = data.map(c => ({ ...c, name: c[`name_${lang}`] || c.name_en }));
-          setCachedData(categoriesCacheKey, processed);
-          const spiritCategories = processed.filter(c => c.type === 'spirit');
-          const themeCategories = processed.filter(c => c.type === 'theme');
-          setCategories(spiritCategories);
-          setThematicCategories(themeCategories);
-        }
       }
 
       setLoading(false);

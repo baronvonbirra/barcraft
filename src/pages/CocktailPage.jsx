@@ -147,10 +147,9 @@ const FilterLinkTag = styled(Link)`
 
 const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
   if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
-  return cocktailIngredients.every(ing => {
-    if (!ing.isEssential) return true;
-    return barStockSet.has(ing.id);
-  });
+  return cocktailIngredients.every(ing =>
+    ing.isEssential === false || barStockSet.has(ing.id)
+  );
 };
 
 const CocktailPage = () => {

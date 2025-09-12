@@ -79,22 +79,31 @@ const BarSpecificPage = () => {
   const { barId } = useParams(); // 'level-one' or 'the-glitch'
   const { theme } = useContext(ThemeContext);
   const { i18n } = useTranslation();
-  const { barStock, selectBar, selectedBarName, barsData } = useBar();
+  const { barStock, selectBar, selectedBarName } = useBar();
   const [cocktails, setCocktails] = useState([]);
+  const [curatedCocktailIds, setCuratedCocktailIds] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const internalBarId = useMemo(() => {
+    if (barId === 'level-one') return 'bar1';
+    if (barId === 'the-glitch') return 'bar2';
+    return null;
+  }, [barId]);
+
   useEffect(() => {
-    const fetchCocktails = async () => {
+    const fetchAllData = async () => {
       setLoading(true);
-      const { data, error } = await supabase
+
+      // Fetch all cocktails
+      const { data: cocktailsData, error: cocktailsError } = await supabase
         .from('cocktails')
         .select('*, ingredients:cocktail_ingredients!cocktail_ingredients_cocktail_id_fkey(*, details:ingredients(*))');
 
-      if (error) {
-        console.error('Error fetching cocktails:', error);
+      if (cocktailsError) {
+        console.error('Error fetching cocktails:', cocktailsError);
       } else {
         const lang = i18n.language;
-        const processedCocktails = data.map(c => ({
+        const processedCocktails = cocktailsData.map(c => ({
           ...c,
           name: c[`name_${lang}`] || c.name_en,
           ingredients: c.ingredients?.map(ci => ({
@@ -104,30 +113,32 @@ const BarSpecificPage = () => {
         }));
         setCocktails(processedCocktails);
       }
+
+      // Fetch curated cocktail IDs for the current bar
+      if (internalBarId) {
+        const { data: curatedData, error: curatedError } = await supabase
+          .from('curated_cocktails')
+          .select('cocktail_id')
+          .eq('bar_id', internalBarId);
+
+        if (curatedError) {
+          console.error(`Error fetching curated cocktails for ${internalBarId}:`, curatedError);
+        } else {
+          setCuratedCocktailIds(curatedData.map(c => c.cocktail_id));
+        }
+      }
+
       setLoading(false);
     };
 
-    fetchCocktails();
-  }, [i18n.language]);
-
-  const internalBarId = useMemo(() => {
-    if (barId === 'level-one') return 'bar1';
-    if (barId === 'the-glitch') return 'bar2';
-    return null;
-  }, [barId]);
+    fetchAllData();
+  }, [i18n.language, internalBarId]);
 
   useEffect(() => {
     if (internalBarId) {
       selectBar(internalBarId);
     }
   }, [internalBarId, selectBar]);
-
-  const currentBarSpecifics = useMemo(() => {
-    if (!internalBarId || !barsData[internalBarId]) {
-      return { curatedMenuName: '', curatedCocktailIds: [] };
-    }
-    return barsData[internalBarId];
-  }, [internalBarId, barsData]);
 
   const stockSet = barStock;
 
@@ -141,14 +152,14 @@ const BarSpecificPage = () => {
   }, [stockSet]);
 
   const curatedCocktailsList = useMemo(() => {
-    if (!currentBarSpecifics.curatedCocktailIds || !currentBarSpecifics.curatedCocktailIds.length) return [];
+    if (!curatedCocktailIds || curatedCocktailIds.length === 0) return [];
     return cocktails
-      .filter(cocktail => currentBarSpecifics.curatedCocktailIds.includes(cocktail.id))
+      .filter(cocktail => curatedCocktailIds.includes(cocktail.id))
       .map(cocktail => ({
         ...cocktail,
         isMakeable: isCocktailMakeableAtCurrentBar(cocktail.ingredients),
       }));
-  }, [cocktails, currentBarSpecifics.curatedCocktailIds, isCocktailMakeableAtCurrentBar]);
+  }, [cocktails, curatedCocktailIds, isCocktailMakeableAtCurrentBar]);
 
   const availableCocktails = useMemo(() => {
     return cocktails
@@ -173,7 +184,7 @@ const BarSpecificPage = () => {
 
       {curatedCocktailsList.length > 0 && (
         <CuratedSectionWrapper theme={theme}>
-          <CuratedSectionHeader theme={theme}>{currentBarSpecifics.curatedMenuName}</CuratedSectionHeader>
+          <CuratedSectionHeader theme={theme}>Curated Cocktails</CuratedSectionHeader>
           <CocktailList cocktails={curatedCocktailsList} />
         </CuratedSectionWrapper>
       )}
