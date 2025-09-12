@@ -1,9 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useBar } from '../contexts/BarContext';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 
 const SelectorWrapper = styled.div`
-  margin-left: ${props => props.theme.spacing.medium}; // Add some spacing if in Navbar
+  margin-left: ${props => props.theme.spacing.medium};
 
   select {
     padding: ${props => props.theme.spacing.small} ${props => props.theme.spacing.medium};
@@ -22,47 +24,36 @@ const SelectorWrapper = styled.div`
 `;
 
 const BarSelector = () => {
-  const { selectedBar, viewingCuratedMenu, selectBar, viewCuratedMenu, barsData } = useBar();
+  const { selectedBarId, selectBar } = useBar();
+  const { t } = useTranslation();
+  const navigate = useNavigate();
 
-  const barOptions = [
-    { value: 'all', label: 'View All Cocktails (No Bar)' },
-    { value: 'bar1_stock', label: `View ${barsData.bar1?.barName || 'Bar 1'} Full Stock` },
-    { value: 'bar2_stock', label: `View ${barsData.bar2?.barName || 'Bar 2'} Full Stock` },
+  const options = [
+    { value: 'all', label: t('navigation.allCocktails') },
+    { value: 'bar1', label: t('navigation.levelOne') },
+    { value: 'bar2', label: t('navigation.theGlitch') },
   ];
 
-  const curatedMenuOptions = Object.keys(barsData).map(barKey => ({
-    value: `${barKey}_curated`,
-    label: `${barsData[barKey].barName}: ${barsData[barKey].curatedMenuName}`,
-    barId: barKey // Store original barId for selection
-  }));
-
-  const allOptions = [...barOptions, ...curatedMenuOptions];
+  const barIdToPath = {
+    'bar1': '/bar/level-one',
+    'bar2': '/bar/the-glitch',
+    'all': '/categories/all'
+  };
 
   const handleChange = (event) => {
-    const value = event.target.value;
-    if (value === 'all') {
-      selectBar('all'); // This also clears curated menu via context logic
-    } else if (value === 'bar1_stock') {
-      selectBar('bar1');
-    } else if (value === 'bar2_stock') {
-      selectBar('bar2');
-    } else if (value.endsWith('_curated')) {
-      viewCuratedMenu(value); // This also sets the corresponding bar via context logic
+    const newBarId = event.target.value;
+    selectBar(newBarId);
+
+    const path = barIdToPath[newBarId];
+    if (path) {
+      navigate(path);
     }
   };
 
-  // Determine current value for the select dropdown
-  let currentValue = 'all';
-  if (viewingCuratedMenu) {
-    currentValue = viewingCuratedMenu;
-  } else if (selectedBar !== 'all') {
-    currentValue = `${selectedBar}_stock`;
-  }
-
   return (
     <SelectorWrapper>
-      <select value={currentValue} onChange={handleChange}>
-        {allOptions.map(option => (
+      <select value={selectedBarId} onChange={handleChange}>
+        {options.map(option => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>

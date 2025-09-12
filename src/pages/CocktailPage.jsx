@@ -155,7 +155,7 @@ const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
 const CocktailPage = () => {
   const { cocktailId } = useParams();
   const { theme } = useContext(ThemeContext);
-  const { barAStock, barBStock, barsData } = useBar();
+  const { barAStock, barBStock } = useBar();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { i18n, t } = useTranslation();
   const [cocktail, setCocktail] = useState(null);
@@ -204,8 +204,8 @@ const CocktailPage = () => {
     [cocktail?.ingredients, barBStock]
   );
 
-  const bar1Name = barsData.bar1?.barName || 'Bar 1';
-  const bar2Name = barsData.bar2?.barName || 'Bar 2';
+  const bar1Name = t('navigation.levelOne');
+  const bar2Name = t('navigation.theGlitch');
 
   if (loading) {
     return <PageWrapper theme={theme}><p>{t('loading')}</p></PageWrapper>;

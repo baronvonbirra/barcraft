@@ -482,6 +482,7 @@ const AdminPage = () => {
 
       {activeTab === 'stock' && (
         <>
+          <h2>Selected Bar ID: {selectedBar}</h2>
           <ControlsWrapper>
             <Select value={selectedBar} onChange={(e) => setSelectedBar(e.target.value)}>
               {bars.map(bar => (
