@@ -72,19 +72,20 @@ const FilteredCocktailListPage = () => {
       let query = supabase.from('cocktails');
       const lowerDecodedFilterValue = decodedFilterValue.toLowerCase();
 
+      const selectQuery = '*, ingredients:cocktail_ingredients!cocktail_ingredients_cocktail_id_fkey(*, details:ingredients(*))';
+
       switch (filterType) {
         case 'tag':
-          query = query.select('*').contains('tags', [lowerDecodedFilterValue]);
+          query = query.select(selectQuery).contains('tags', [lowerDecodedFilterValue]);
           break;
         case 'flavor':
-          query = query.select('*').contains('flavorProfile', [lowerDecodedFilterValue]);
+          query = query.select(selectQuery).contains('flavorProfile', [lowerDecodedFilterValue]);
           break;
         case 'glass':
-          // Assuming 'glass' is an array field and values are stored consistently.
-          query = query.select('*').contains('glass', [decodedFilterValue]);
+          query = query.select(selectQuery).contains('glass', [decodedFilterValue]);
           break;
         case 'difficulty':
-          query = query.select('*').ilike('difficulty', lowerDecodedFilterValue);
+          query = query.select(selectQuery).ilike('difficulty', lowerDecodedFilterValue);
           break;
         default:
           setFilteredCocktails([]);
@@ -98,7 +99,14 @@ const FilteredCocktailListPage = () => {
         console.error('Error fetching filtered cocktails:', error);
         setFilteredCocktails([]);
       } else {
-        setFilteredCocktails(data);
+        const processedCocktails = data.map(cocktail => ({
+          ...cocktail,
+          ingredients: cocktail.ingredients?.map(ci => ({
+            ...ci,
+            ...ci.details,
+          })) || [],
+        }));
+        setFilteredCocktails(processedCocktails);
       }
       setLoading(false);
     };

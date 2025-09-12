@@ -22,7 +22,7 @@ export const useCocktailFilter = (allCocktails) => {
 
     const stockToCheck = currentBarStockSet;
     if (stockToCheck.size === 0 && (selectedBarId === 'bar1' || selectedBarId === 'bar2')) {
-        return !cocktailIngredients.some(ing => ing.isEssential);
+        return !cocktailIngredients.some(ing => ing.is_essential);
     }
      if (stockToCheck.size === 0 && selectedBarId === 'all') {
         return true;
@@ -30,7 +30,7 @@ export const useCocktailFilter = (allCocktails) => {
 
 
     // It's makeable if every ingredient is either not essential or is in stock
-    return cocktailIngredients.every(ingObj => !ingObj.isEssential || stockToCheck.has(ingObj.id));
+    return cocktailIngredients.every(ingObj => !ingObj.is_essential || stockToCheck.has(ingObj.id));
   }, [selectedBarId, viewingCuratedMenu, currentBarStockSet]);
 
 
@@ -44,7 +44,7 @@ export const useCocktailFilter = (allCocktails) => {
       if (selectedBarId === 'all') {
         availability[ingObj.id] = true; 
       } else if (stockToCheck.size === 0 && (selectedBarId === 'bar1' || selectedBarId === 'bar2')) {
-        availability[ingObj.id] = !ingObj.isEssential;
+        availability[ingObj.id] = !ingObj.is_essential;
       }
       else {
         availability[ingObj.id] = stockToCheck.has(ingObj.id);

@@ -146,7 +146,7 @@ const BarSpecificPage = () => {
     return (cocktailIngredients) => {
       if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
       // It's makeable if every ingredient is either not essential or is in stock
-      return cocktailIngredients.every(ing => !ing.isEssential || stockSet.has(ing.id));
+      return cocktailIngredients.every(ing => !ing.is_essential || stockSet.has(ing.id));
     };
   }, [stockSet]);
 
