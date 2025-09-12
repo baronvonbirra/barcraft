@@ -1,6 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { supabase } from '../supabaseClient';
-import { getCachedData, setCachedData } from '../utils/cache';
 import { useTranslation } from 'react-i18next';
 
 const initialState = {
@@ -25,37 +24,9 @@ export const BarProvider = ({ children }) => {
   const [barBStock, setBarBStock] = useState(new Set());
   const [selectedBarName, setSelectedBarName] = useState(null);
   const [viewingCuratedMenu, setViewingCuratedMenu] = useState(null);
-  const [barsData, setBarsData] = useState({});
 
   useEffect(() => {
-    const fetchBarsData = async () => {
-      const { data, error } = await supabase.from('bars').select('*');
-      if (error) {
-        console.error('Error fetching bars data:', error);
-      } else {
-        const processedBarsData = data.reduce((acc, bar) => {
-          acc[bar.id] = bar;
-          return acc;
-        }, {});
-        setBarsData(processedBarsData);
-      }
-    };
-
-    fetchBarsData();
-  }, []);
-
-  useEffect(() => {
-    const cacheDuration = 3600 * 1000; // 1 hour
-
     const fetchAllStock = async () => {
-      const cacheKey = 'ingredientCache';
-      const cached = getCachedData(cacheKey, cacheDuration);
-      if (cached) {
-        setBarAStock(new Set(cached.barAIds));
-        setBarBStock(new Set(cached.barBIds));
-        return;
-      }
-
       const { data, error } = await supabase
         .from('ingredients')
         .select('id, is_available_bar_a, is_available_bar_b');
@@ -71,7 +42,6 @@ export const BarProvider = ({ children }) => {
         });
         setBarAStock(barAIds);
         setBarBStock(barBIds);
-        setCachedData(cacheKey, { barAIds: Array.from(barAIds), barBIds: Array.from(barBIds) });
       }
     };
 
@@ -118,7 +88,6 @@ export const BarProvider = ({ children }) => {
         barBStock,
         selectedBarName,
         viewingCuratedMenu,
-        barsData,
         selectBar,
         viewCuratedMenu: viewCuratedMenuAction,
       }}

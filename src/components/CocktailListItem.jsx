@@ -1,9 +1,10 @@
-import React, { useMemo, useContext } from 'react'; // Added useContext
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { getImageUrl } from '../utils/cocktailImageLoader.js';
 import { useFavorites } from '../hooks/useFavorites';
-import { useBar } from '../contexts/BarContext'; // Import useBar
+import { useBar } from '../contexts/BarContext';
+import { useTranslation } from 'react-i18next';
 
 // Styled components
 const ListItemWrapper = styled.div`
@@ -149,15 +150,15 @@ const FavoriteButton = styled(({ isFavorite, ...rest }) => <button {...rest} />)
 
 const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
   if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
-  return cocktailIngredients.every(ing => {
-    if (!ing.isEssential) return true;
-    return barStockSet.has(ing.id);
-  });
+  return cocktailIngredients.every(ing =>
+    ing.isEssential !== true || barStockSet.has(ing.id)
+  );
 };
 
 const CocktailListItem = ({ cocktail, isMakeable }) => {
   const { isFavorite, toggleFavorite } = useFavorites();
-  const { barAStock, barBStock, barsData } = useBar();
+  const { barAStock, barBStock } = useBar();
+  const { t } = useTranslation();
 
   if (!cocktail) return null;
 
@@ -167,8 +168,8 @@ const CocktailListItem = ({ cocktail, isMakeable }) => {
   const isMakeableBar1 = useMemo(() => checkMakeableForBar(cocktail.ingredients, barAStock), [cocktail.ingredients, barAStock]);
   const isMakeableBar2 = useMemo(() => checkMakeableForBar(cocktail.ingredients, barBStock), [cocktail.ingredients, barBStock]);
 
-  const bar1Name = barsData.bar1?.barName || 'Level One';
-  const bar2Name = barsData.bar2?.barName || 'The Glitch';
+  const bar1Name = t('navigation.levelOne');
+  const bar2Name = t('navigation.theGlitch');
 
   const handleFavoriteClick = (e) => {
     e.preventDefault();

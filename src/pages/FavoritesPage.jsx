@@ -5,6 +5,7 @@ import { useFavorites } from '../hooks/useFavorites';
 import CocktailList from '../components/CocktailList';
 import { useCocktailFilter } from '../hooks/useCocktailFilter';
 import { useBar } from '../contexts/BarContext';
+import { useTranslation } from 'react-i18next';
 
 const PageWrapper = styled.div`
   padding: ${({ theme }) => theme.spacing.medium};
@@ -29,6 +30,7 @@ const FavoritesPage = () => {
   const [loading, setLoading] = useState(true);
   const { selectedBar } = useBar();
   const { isCocktailMakeable } = useCocktailFilter([]); // Pass empty array
+  const { i18n } = useTranslation();
 
   useEffect(() => {
     const fetchFavoriteCocktails = async () => {
@@ -42,7 +44,7 @@ const FavoritesPage = () => {
         .from('cocktails')
         .select(`
           *,
-          cocktail_ingredients(
+          cocktail_ingredients!cocktail_ingredients_cocktail_id_fkey(
             ingredients (id, name)
           )
         `)
@@ -54,6 +56,7 @@ const FavoritesPage = () => {
       } else {
         const processedCocktails = data.map(cocktail => ({
           ...cocktail,
+          name: cocktail[`name_${i18n.language}`] || cocktail.name_en,
           ingredients: cocktail.cocktail_ingredients?.map(ci => ci.ingredients) || [],
         }));
         setFavoriteCocktails(processedCocktails);
@@ -62,7 +65,7 @@ const FavoritesPage = () => {
     };
 
     fetchFavoriteCocktails();
-  }, [favoriteIds]);
+  }, [favoriteIds, i18n.language]);
 
   if (loading) {
     return <PageWrapper><PageTitle>Loading Favorites...</PageTitle></PageWrapper>;

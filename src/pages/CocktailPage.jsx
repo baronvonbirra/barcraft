@@ -147,16 +147,15 @@ const FilterLinkTag = styled(Link)`
 
 const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
   if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
-  return cocktailIngredients.every(ing => {
-    if (!ing.isEssential) return true;
-    return barStockSet.has(ing.id);
-  });
+  return cocktailIngredients.every(ing =>
+    ing.isEssential !== true || barStockSet.has(ing.id)
+  );
 };
 
 const CocktailPage = () => {
   const { cocktailId } = useParams();
   const { theme } = useContext(ThemeContext);
-  const { barAStock, barBStock, barsData } = useBar();
+  const { barAStock, barBStock } = useBar();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { i18n, t } = useTranslation();
   const [cocktail, setCocktail] = useState(null);
@@ -169,7 +168,7 @@ const CocktailPage = () => {
 
       const { data, error } = await supabase
         .from('cocktails')
-        .select('*, ingredients:cocktail_ingredients(*, details:ingredients(*))')
+        .select('*, ingredients:cocktail_ingredients!cocktail_ingredients_cocktail_id_fkey(*, details:ingredients(*))')
         .eq('id', cocktailId)
         .single();
 
@@ -205,8 +204,8 @@ const CocktailPage = () => {
     [cocktail?.ingredients, barBStock]
   );
 
-  const bar1Name = barsData.bar1?.barName || 'Bar 1';
-  const bar2Name = barsData.bar2?.barName || 'Bar 2';
+  const bar1Name = t('navigation.levelOne');
+  const bar2Name = t('navigation.theGlitch');
 
   if (loading) {
     return <PageWrapper theme={theme}><p>{t('loading')}</p></PageWrapper>;
