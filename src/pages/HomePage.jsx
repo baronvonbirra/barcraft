@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { useTranslation } from 'react-i18next';
-import { getCachedData, setCachedData } from '../utils/cache';
 import CategoryList from '../components/CategoryList';
 import SurpriseMeButton from '../components/SurpriseMeButton';
 import { getImageUrl } from '../utils/cocktailImageLoader.js';
@@ -138,7 +137,7 @@ const HomePage = () => {
       setLoading(true);
       const lang = i18n.language;
 
-      // Fetch Cocktail of the Week (not cached)
+      // Fetch Cocktail of the Week
       const { data: cotwData, error: cotwError } = await supabase
         .from('cocktail_of_the_week')
         .select('cocktail_id');
@@ -155,7 +154,7 @@ const HomePage = () => {
 
         if (cocktailError) {
           console.error('Error fetching cocktail details:', cocktailError);
-        } else {
+        } else if (cocktail) {
           setCocktailToDisplay({
             ...cocktail,
             name: cocktail[`name_${lang}`] || cocktail.name_en,
@@ -164,42 +163,31 @@ const HomePage = () => {
         }
       }
 
-      // Fetch Categories (with cache)
-      const categoriesCacheKey = `categories_all_${lang}`;
-      const cachedCategories = getCachedData(categoriesCacheKey, 3600 * 1000);
-      if (cachedCategories) {
-        const spiritCategories = cachedCategories.filter(c => c.type === 'spirit');
-        const themeCategories = cachedCategories.filter(c => c.type === 'theme');
+      // Fetch Categories
+      const { data: categoriesData, error: categoriesError } = await supabase
+        .from('categories')
+        .select(`id, name_${lang}, name_en, image, type`);
+
+      if (categoriesError) {
+        console.error('Error fetching categories:', categoriesError);
+      } else if (categoriesData) {
+        const processed = categoriesData.map(c => ({ ...c, name: c[`name_${lang}`] || c.name_en }));
+        const spiritCategories = processed.filter(c => c.type === 'spirit');
+        const themeCategories = processed.filter(c => c.type === 'theme');
         setCategories(spiritCategories);
         setThematicCategories(themeCategories);
-      } else {
-        const { data, error } = await supabase.from('categories').select(`id, name_${lang}, name_en, image, type`);
-        if (error) {
-          console.error('Error fetching categories:', error);
-        } else if (data) {
-          const processed = data.map(c => ({ ...c, name: c[`name_${lang}`] || c.name_en }));
-          setCachedData(categoriesCacheKey, processed);
-          const spiritCategories = processed.filter(c => c.type === 'spirit');
-          const themeCategories = processed.filter(c => c.type === 'theme');
-          setCategories(spiritCategories);
-          setThematicCategories(themeCategories);
-        }
       }
 
-      // Fetch All Cocktails (for surprise me button, with cache)
-      const cocktailsCacheKey = 'cocktails_all_simple';
-      const cachedCocktails = getCachedData(cocktailsCacheKey, 3600 * 1000);
-      if (cachedCocktails) {
-        setAllCocktails(cachedCocktails);
-      } else {
-        const { data, error } = await supabase.from('cocktails').select(`id, name_${lang}, name_en`);
-        if (error) {
-          console.error('Error fetching all cocktails:', error);
-        } else if (data) {
-          const processed = data.map(c => ({ ...c, name: c[`name_${lang}`] || c.name_en }));
-          setAllCocktails(processed);
-          setCachedData(cocktailsCacheKey, processed);
-        }
+      // Fetch All Cocktails (for surprise me button)
+      const { data: allCocktailsData, error: allCocktailsError } = await supabase
+        .from('cocktails')
+        .select(`id, name_${lang}, name_en`);
+
+      if (allCocktailsError) {
+        console.error('Error fetching all cocktails:', allCocktailsError);
+      } else if (allCocktailsData) {
+        const processed = allCocktailsData.map(c => ({ ...c, name: c[`name_${lang}`] || c.name_en }));
+        setAllCocktails(processed);
       }
 
       setLoading(false);

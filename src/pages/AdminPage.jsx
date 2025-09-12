@@ -317,8 +317,6 @@ const AdminPage = () => {
         alert('Failed to remove curated cocktail. Please check permissions and try again.');
       } else {
         setCuratedCocktails(curatedCocktails.filter(id => id !== cocktailId));
-        localStorage.removeItem('bars_data');
-        localStorage.removeItem('bars_data_timestamp');
       }
     } else {
       // Add to curated list
@@ -331,8 +329,6 @@ const AdminPage = () => {
         alert('Failed to add curated cocktail. Please check permissions and try again.');
       } else {
         setCuratedCocktails([...curatedCocktails, cocktailId]);
-        localStorage.removeItem('bars_data');
-        localStorage.removeItem('bars_data_timestamp');
       }
     }
   };
@@ -366,14 +362,10 @@ const AdminPage = () => {
       } else {
         // On successful insert, update the state
         setCocktailOfTheWeek(newCocktailOfTheWeek);
-        localStorage.removeItem('bars_data');
-        localStorage.removeItem('bars_data_timestamp');
       }
     } else {
       // If we are just clearing it, update the state
       setCocktailOfTheWeek(null);
-      localStorage.removeItem('bars_data');
-      localStorage.removeItem('bars_data_timestamp');
     }
   };
 
@@ -412,12 +404,6 @@ const AdminPage = () => {
     setIsLoggedIn(false);
   };
 
-  const handleClearCache = () => {
-    localStorage.removeItem('ingredientCache');
-    localStorage.removeItem('ingredientCacheTimestamp');
-    alert('Ingredient cache has been cleared.');
-  };
-
   const handleToggle = async (ingredientId, currentStatus) => {
     const columnName = barIdToColumn[selectedBar];
     if (!columnName) {
@@ -440,9 +426,6 @@ const AdminPage = () => {
           ing.id === ingredientId ? { ...ing, [columnName]: !currentStatus } : ing
         )
       );
-      // Invalidate cache
-      localStorage.removeItem('ingredientCache');
-      localStorage.removeItem('ingredientCacheTimestamp');
     }
   };
 
@@ -487,7 +470,6 @@ const AdminPage = () => {
       <Title>Admin Panel</Title>
       <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
         <Button onClick={handleLogout}>Logout</Button>
-        <Button onClick={handleClearCache}>Clear Ingredient Cache</Button>
       </div>
 
       <TabContainer>
