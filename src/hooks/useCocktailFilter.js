@@ -30,7 +30,7 @@ export const useCocktailFilter = (allCocktails) => {
 
 
     return cocktailIngredients.every(ingObj =>
-      ingObj.isEssential === false || stockToCheck.has(ingObj.id)
+      ingObj.isEssential !== true || stockToCheck.has(ingObj.id)
     );
   }, [selectedBarId, viewingCuratedMenu, currentBarStockSet]);
 

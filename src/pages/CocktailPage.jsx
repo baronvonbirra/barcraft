@@ -148,7 +148,7 @@ const FilterLinkTag = styled(Link)`
 const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
   if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
   return cocktailIngredients.every(ing =>
-    ing.isEssential === false || barStockSet.has(ing.id)
+    ing.isEssential !== true || barStockSet.has(ing.id)
   );
 };
 
