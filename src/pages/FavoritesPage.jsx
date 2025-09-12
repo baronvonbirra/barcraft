@@ -42,12 +42,7 @@ const FavoritesPage = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('cocktails')
-        .select(`
-          *,
-          cocktail_ingredients!cocktail_ingredients_cocktail_id_fkey(
-            ingredients (id, name)
-          )
-        `)
+        .select('*, ingredients:cocktail_ingredients!cocktail_ingredients_cocktail_id_fkey(*, details:ingredients(*))')
         .in('id', favoriteIds);
 
       if (error) {
@@ -57,7 +52,10 @@ const FavoritesPage = () => {
         const processedCocktails = data.map(cocktail => ({
           ...cocktail,
           name: cocktail[`name_${i18n.language}`] || cocktail.name_en,
-          ingredients: cocktail.cocktail_ingredients?.map(ci => ci.ingredients) || [],
+          ingredients: cocktail.ingredients?.map(ci => ({
+            ...ci,
+            ...ci.details,
+          })) || [],
         }));
         setFavoriteCocktails(processedCocktails);
       }

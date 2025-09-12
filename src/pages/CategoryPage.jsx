@@ -55,8 +55,8 @@ const CategoryPage = () => {
           ...c,
           name: c[`name_${lang}`] || c.name_en,
           ingredients: c.ingredients?.map(ci => ({
-            ...ci.details,
             ...ci,
+            ...ci.details,
           })) || [],
         }));
         setCocktails(processedCocktails);

@@ -107,8 +107,8 @@ const BarSpecificPage = () => {
           ...c,
           name: c[`name_${lang}`] || c.name_en,
           ingredients: c.ingredients?.map(ci => ({
-            ...ci.details,
             ...ci,
+            ...ci.details,
           })) || [],
         }));
         setCocktails(processedCocktails);
@@ -145,9 +145,8 @@ const BarSpecificPage = () => {
   const isCocktailMakeableAtCurrentBar = useMemo(() => {
     return (cocktailIngredients) => {
       if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
-      return cocktailIngredients.every(ing =>
-        ing.isEssential === false || stockSet.has(ing.id)
-      );
+      // It's makeable if every ingredient is either not essential or is in stock
+      return cocktailIngredients.every(ing => !ing.isEssential || stockSet.has(ing.id));
     };
   }, [stockSet]);
 

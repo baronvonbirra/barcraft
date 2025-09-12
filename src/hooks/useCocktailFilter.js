@@ -29,9 +29,8 @@ export const useCocktailFilter = (allCocktails) => {
     }
 
 
-    return cocktailIngredients.every(ingObj =>
-      ingObj.isEssential !== true || stockToCheck.has(ingObj.id)
-    );
+    // It's makeable if every ingredient is either not essential or is in stock
+    return cocktailIngredients.every(ingObj => !ingObj.isEssential || stockToCheck.has(ingObj.id));
   }, [selectedBarId, viewingCuratedMenu, currentBarStockSet]);
 
 

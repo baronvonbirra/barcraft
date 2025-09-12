@@ -147,9 +147,8 @@ const FilterLinkTag = styled(Link)`
 
 const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
   if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
-  return cocktailIngredients.every(ing =>
-    ing.isEssential !== true || barStockSet.has(ing.id)
-  );
+  // It's makeable if every ingredient is either not essential or is in stock
+  return cocktailIngredients.every(ing => !ing.isEssential || barStockSet.has(ing.id));
 };
 
 const CocktailPage = () => {
@@ -184,8 +183,8 @@ const CocktailPage = () => {
           instructions: getLangValue('instructions'),
           history: getLangValue('history'),
           ingredients: data.ingredients?.map(ci => ({
-            ...ci.details,
             ...ci,
+            ...ci.details,
           })) || [],
         });
       }
