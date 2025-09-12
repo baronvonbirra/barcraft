@@ -198,13 +198,17 @@ const AdminPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('stock'); // 'stock' or 'curated'
-  const [bars, setBars] = useState([]);
   const [cocktails, setCocktails] = useState([]);
   const [curatedCocktails, setCuratedCocktails] = useState([]);
-  const [selectedCuratedBar, setSelectedCuratedBar] = useState('');
+  const [selectedCuratedBar, setSelectedCuratedBar] = useState('bar1');
   const [loadingCurated, setLoadingCurated] = useState(false);
   const [cocktailOfTheWeek, setCocktailOfTheWeek] = useState(null);
   const { t } = useTranslation();
+
+  const bars = [
+    { id: 'bar1', name: t('navigation.levelOne') },
+    { id: 'bar2', name: t('navigation.theGlitch') },
+  ];
 
   // Mapping from bar ID to Supabase column name for stock
   const barIdToColumn = {
@@ -213,17 +217,10 @@ const AdminPage = () => {
   };
 
   useEffect(() => {
-    if (isLoggedIn) {
-      const staticBars = [
-        { id: 'bar1', name: t('navigation.levelOne') },
-        { id: 'bar2', name: t('navigation.theGlitch') },
-      ];
-      setBars(staticBars);
-      if (staticBars.length > 0 && !selectedCuratedBar) {
-        setSelectedCuratedBar(staticBars[0].id);
-      }
+    if (isLoggedIn && !selectedCuratedBar) {
+      setSelectedCuratedBar(bars[0]?.id);
     }
-  }, [isLoggedIn, t]);
+  }, [isLoggedIn, selectedCuratedBar, bars]);
 
   useEffect(() => {
     if (isLoggedIn && activeTab === 'stock') {
@@ -482,7 +479,6 @@ const AdminPage = () => {
 
       {activeTab === 'stock' && (
         <>
-          <h2>Selected Bar ID: {selectedBar}</h2>
           <ControlsWrapper>
             <Select value={selectedBar} onChange={(e) => setSelectedBar(e.target.value)}>
               {bars.map(bar => (
