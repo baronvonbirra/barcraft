@@ -219,9 +219,8 @@ const AdminPage = () => {
         { id: 'bar2', name: t('navigation.theGlitch') },
       ];
       setBars(staticBars);
-      if (staticBars.length > 0) {
-        if (!selectedBar) setSelectedBar(staticBars[0].id);
-        if (!selectedCuratedBar) setSelectedCuratedBar(staticBars[0].id);
+      if (staticBars.length > 0 && !selectedCuratedBar) {
+        setSelectedCuratedBar(staticBars[0].id);
       }
     }
   }, [isLoggedIn, t]);
