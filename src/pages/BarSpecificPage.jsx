@@ -97,19 +97,17 @@ const BarSpecificPage = () => {
       // Fetch all cocktails
       const { data: cocktailsData, error: cocktailsError } = await supabase
         .from('cocktails')
-        .select('*, ingredients:cocktail_ingredients!cocktail_ingredients_cocktail_id_fkey(*, details:ingredients(*))');
+        .select('*');
 
       if (cocktailsError) {
         console.error('Error fetching cocktails:', cocktailsError);
       } else {
+        // The 'ingredients' column is a jsonb field and can be used directly.
+        // We just need to handle the language-specific name.
         const lang = i18n.language;
         const processedCocktails = cocktailsData.map(c => ({
           ...c,
           name: c[`name_${lang}`] || c.name_en,
-          ingredients: c.ingredients?.map(ci => ({
-            ...ci,
-            ...ci.details,
-          })) || [],
         }));
         setCocktails(processedCocktails);
       }
@@ -145,8 +143,8 @@ const BarSpecificPage = () => {
   const isCocktailMakeableAtCurrentBar = useMemo(() => {
     return (cocktailIngredients) => {
       if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
-      // It's makeable if every ingredient is either not essential or is in stock
-      return cocktailIngredients.every(ing => !ing.is_essential || stockSet.has(ing.id));
+      // A cocktail is makeable if all its ingredients are in the bar's stock.
+      return cocktailIngredients.every(ing => stockSet.has(ing.id));
     };
   }, [stockSet]);
 

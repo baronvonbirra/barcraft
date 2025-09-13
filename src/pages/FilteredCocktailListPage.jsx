@@ -72,20 +72,20 @@ const FilteredCocktailListPage = () => {
       let query = supabase.from('cocktails');
       const lowerDecodedFilterValue = decodedFilterValue.toLowerCase();
 
-      const selectQuery = '*, ingredients:cocktail_ingredients!cocktail_ingredients_cocktail_id_fkey(*, details:ingredients(*))';
-
+      // We can use select() which defaults to '*' and chain the filter.
+      // This ensures we get the 'ingredients' jsonb column.
       switch (filterType) {
         case 'tag':
-          query = query.select(selectQuery).contains('tags', [lowerDecodedFilterValue]);
+          query = query.select().contains('tags', [lowerDecodedFilterValue]);
           break;
         case 'flavor':
-          query = query.select(selectQuery).contains('flavorProfile', [lowerDecodedFilterValue]);
+          query = query.select().contains('flavorProfile', [lowerDecodedFilterValue]);
           break;
         case 'glass':
-          query = query.select(selectQuery).contains('glass', [decodedFilterValue]);
+          query = query.select().contains('glass', [decodedFilterValue]);
           break;
         case 'difficulty':
-          query = query.select(selectQuery).ilike('difficulty', lowerDecodedFilterValue);
+          query = query.select().ilike('difficulty', lowerDecodedFilterValue);
           break;
         default:
           setFilteredCocktails([]);
@@ -99,14 +99,7 @@ const FilteredCocktailListPage = () => {
         console.error('Error fetching filtered cocktails:', error);
         setFilteredCocktails([]);
       } else {
-        const processedCocktails = data.map(cocktail => ({
-          ...cocktail,
-          ingredients: cocktail.ingredients?.map(ci => ({
-            ...ci,
-            ...ci.details,
-          })) || [],
-        }));
-        setFilteredCocktails(processedCocktails);
+        setFilteredCocktails(data || []);
       }
       setLoading(false);
     };
