@@ -136,6 +136,10 @@ const BarSpecificPage = () => {
     if (internalBarId) {
       selectBar(internalBarId);
     }
+    // Cleanup function to reset the bar selection when the component unmounts
+    return () => {
+      selectBar('all');
+    };
   }, [internalBarId, selectBar]);
 
   const stockSet = barStock;
