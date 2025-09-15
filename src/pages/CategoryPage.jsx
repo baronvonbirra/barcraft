@@ -46,18 +46,16 @@ const CategoryPage = () => {
       // Fetch Cocktails
       const { data: cocktailsData, error: cocktailsError } = await supabase
         .from('cocktails')
-        .select(`*, name_${lang}, name_en, ingredients:cocktail_ingredients!cocktail_ingredients_cocktail_id_fkey(*, details:ingredients(*))`);
+        .select('*');
 
       if (cocktailsError) {
         console.error('Error fetching cocktails:', cocktailsError);
       } else {
+        // The 'ingredients' column is a jsonb field and can be used directly.
+        // We just need to handle the language-specific name.
         const processedCocktails = cocktailsData.map(c => ({
           ...c,
           name: c[`name_${lang}`] || c.name_en,
-          ingredients: c.ingredients?.map(ci => ({
-            ...ci.details,
-            ...ci,
-          })) || [],
         }));
         setCocktails(processedCocktails);
       }

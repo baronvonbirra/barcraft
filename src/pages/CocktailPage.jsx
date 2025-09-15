@@ -147,9 +147,8 @@ const FilterLinkTag = styled(Link)`
 
 const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
   if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
-  return cocktailIngredients.every(ing =>
-    ing.isEssential !== true || barStockSet.has(ing.id)
-  );
+  // A cocktail is makeable if all its ingredients are in the bar's stock.
+  return cocktailIngredients.every(ing => barStockSet.has(ing.id));
 };
 
 const CocktailPage = () => {
@@ -168,13 +167,15 @@ const CocktailPage = () => {
 
       const { data, error } = await supabase
         .from('cocktails')
-        .select('*, ingredients:cocktail_ingredients!cocktail_ingredients_cocktail_id_fkey(*, details:ingredients(*))')
+        .select('*')
         .eq('id', cocktailId)
         .single();
 
       if (error) {
         console.error('Error fetching cocktail details:', error);
       } else if (data) {
+        // The 'ingredients' column is a jsonb field and can be used directly.
+        // We just need to handle the language-specific name.
         const getLangValue = (field) => data[`${field}_${lang}`] || data[`${field}_en`];
 
         setCocktail({
@@ -183,10 +184,6 @@ const CocktailPage = () => {
           description: getLangValue('description'),
           instructions: getLangValue('instructions'),
           history: getLangValue('history'),
-          ingredients: data.ingredients?.map(ci => ({
-            ...ci.details,
-            ...ci,
-          })) || [],
         });
       }
       setLoading(false);

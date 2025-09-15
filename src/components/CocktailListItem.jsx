@@ -150,9 +150,8 @@ const FavoriteButton = styled(({ isFavorite, ...rest }) => <button {...rest} />)
 
 const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
   if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
-  return cocktailIngredients.every(ing =>
-    ing.isEssential !== true || barStockSet.has(ing.id)
-  );
+  // A cocktail is makeable if all its ingredients are in the bar's stock.
+  return cocktailIngredients.every(ing => barStockSet.has(ing.id));
 };
 
 const CocktailListItem = ({ cocktail, isMakeable }) => {

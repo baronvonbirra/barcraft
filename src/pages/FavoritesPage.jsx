@@ -42,22 +42,18 @@ const FavoritesPage = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('cocktails')
-        .select(`
-          *,
-          cocktail_ingredients!cocktail_ingredients_cocktail_id_fkey(
-            ingredients (id, name)
-          )
-        `)
+        .select('*')
         .in('id', favoriteIds);
 
       if (error) {
         console.error('Error fetching favorite cocktails:', error);
         setFavoriteCocktails([]);
       } else {
+        // The 'ingredients' column is a jsonb field and can be used directly.
+        // We just need to handle the language-specific name.
         const processedCocktails = data.map(cocktail => ({
           ...cocktail,
           name: cocktail[`name_${i18n.language}`] || cocktail.name_en,
-          ingredients: cocktail.cocktail_ingredients?.map(ci => ci.ingredients) || [],
         }));
         setFavoriteCocktails(processedCocktails);
       }
