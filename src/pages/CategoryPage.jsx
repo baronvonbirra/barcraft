@@ -51,12 +51,21 @@ const CategoryPage = () => {
       if (cocktailsError) {
         console.error('Error fetching cocktails:', cocktailsError);
       } else {
-        // The 'ingredients' column is a jsonb field and can be used directly.
-        // We just need to handle the language-specific name.
-        const processedCocktails = cocktailsData.map(c => ({
-          ...c,
-          name: c[`name_${lang}`] || c.name_en,
-        }));
+        // Process cocktails to include a simplified ingredients list and handle language
+        const processedCocktails = cocktailsData.map(c => {
+          const ingredients = c.cocktail_ingredients ? c.cocktail_ingredients.map(ing => ({
+            id: ing.ingredients.id,
+            name: ing.ingredients.name,
+            quantity: ing.quantity,
+            notes: ing.notes
+          })) : [];
+
+          return {
+            ...c,
+            name: c[`name_${lang}`] || c.name_en,
+            ingredients,
+          };
+        });
         setCocktails(processedCocktails);
       }
 

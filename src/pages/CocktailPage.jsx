@@ -178,12 +178,21 @@ const CocktailPage = () => {
         // We just need to handle the language-specific name.
         const getLangValue = (field) => data[`${field}_${lang}`] || data[`${field}_en`];
 
+        // Process ingredients to a simpler format
+        const ingredients = data.cocktail_ingredients ? data.cocktail_ingredients.map(ing => ({
+          id: ing.ingredients.id,
+          name: ing.ingredients.name,
+          quantity: ing.quantity,
+          notes: ing.notes,
+        })) : [];
+
         setCocktail({
           ...data,
           name: getLangValue('name'),
           description: getLangValue('description'),
           instructions: getLangValue('instructions'),
           history: getLangValue('history'),
+          ingredients,
         });
       }
       setLoading(false);
