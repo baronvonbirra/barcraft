@@ -43,25 +43,20 @@ const CategoryPage = () => {
       setLoading(true);
       const lang = i18n.language;
 
-      // Fetch Cocktails and their associated categories
+      // Fetch Cocktails
       const { data: cocktailsData, error: cocktailsError } = await supabase
         .from('cocktails')
-        .select('*, categories!inner(*)');
+        .select('*');
 
       if (cocktailsError) {
         console.error('Error fetching cocktails:', cocktailsError);
       } else {
-        const processedCocktails = cocktailsData.map(c => {
-          const thematic_categories = c.categories
-            .filter(cat => cat.type === 'theme')
-            .map(cat => cat.id);
-
-          return {
-            ...c,
-            name: c[`name_${lang}`] || c.name_en,
-            thematic_categories,
-          };
-        });
+        // The 'ingredients' column is a jsonb field and can be used directly.
+        // We just need to handle the language-specific name.
+        const processedCocktails = cocktailsData.map(c => ({
+          ...c,
+          name: c[`name_${lang}`] || c.name_en,
+        }));
         setCocktails(processedCocktails);
       }
 
