@@ -28,7 +28,18 @@ describe('CocktailPage', () => {
     supabase.from.mockImplementation((tableName) => ({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: mockCocktail, error: null }),
+      single: vi.fn().mockResolvedValue({
+        data: {
+          ...mockCocktail,
+          ingredients: mockCocktail.cocktail_ingredients.map(ing => ({
+            id: ing.ingredients.id,
+            name: ing.ingredients.name,
+            quantity: ing.quantity,
+            notes: ing.notes,
+          })),
+        },
+        error: null,
+      }),
     }));
 
     useFavorites.mockReturnValue({

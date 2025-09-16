@@ -73,7 +73,7 @@ export const useCocktailFilter = (allCocktails) => {
     if (tags.length > 0) cocktails = cocktails.filter(c => tags.every(selTag => c.tags?.some(tag => tag.toLowerCase().includes(selTag.toLowerCase()))));
     if (thematic.length > 0) {
       cocktails = cocktails.filter(c =>
-        c.thematicCategories && c.thematicCategories.some(ct => thematic.includes(ct))
+        c.thematic_category_ids && c.thematic_category_ids.some(ct => thematic.includes(ct))
       );
     }
 
