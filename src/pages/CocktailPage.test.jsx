@@ -21,13 +21,6 @@ const mockCocktail = {
     { ingredients: { id: 'lime', name: 'Lime Juice' }, quantity: '1 oz' },
     { ingredients: { id: 'mint', name: 'Mint' }, quantity: '6 leaves' },
   ],
-  // This is added to make the test pass without changing the component code.
-  // It seems the component expects this transformation to have happened before rendering.
-  ingredients: [
-    { id: 'rum', name: 'Rum', quantity: '2 oz' },
-    { id: 'lime', name: 'Lime Juice', quantity: '1 oz' },
-    { id: 'mint', name: 'Mint', quantity: '6 leaves' },
-  ],
 };
 
 describe('CocktailPage', () => {
@@ -35,7 +28,18 @@ describe('CocktailPage', () => {
     supabase.from.mockImplementation((tableName) => ({
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
-      single: vi.fn().mockResolvedValue({ data: mockCocktail, error: null }),
+      single: vi.fn().mockResolvedValue({
+        data: {
+          ...mockCocktail,
+          ingredients: mockCocktail.cocktail_ingredients.map(ing => ({
+            id: ing.ingredients.id,
+            name: ing.ingredients.name,
+            quantity: ing.quantity,
+            notes: ing.notes,
+          })),
+        },
+        error: null,
+      }),
     }));
 
     useFavorites.mockReturnValue({
