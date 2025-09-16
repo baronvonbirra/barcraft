@@ -63,6 +63,15 @@ const CocktailImage = styled.img`
   border: 1px solid ${({ theme }) => theme.colors.border};
 `;
 
+const CocktailDescription = styled.p`
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: ${({ theme }) => theme.colors.textOffset};
+  max-width: 800px;
+  margin: 0 auto ${({ theme }) => theme.spacing.large} auto;
+  text-align: center;
+`;
+
 const CocktailDetailsGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
@@ -229,6 +238,10 @@ const CocktailPage = () => {
           </FavoriteButtonDetail>
         </CocktailNameWrapper>
         <CocktailImage src={getImageUrl(cocktail.image)} alt={cocktail.name} />
+
+        {cocktail.description && (
+          <CocktailDescription>{cocktail.description}</CocktailDescription>
+        )}
         
         <AllBarsAvailabilityWrapper theme={theme}>
           <IndividualBarStatus theme={theme} isAvailable={isMakeableBar1}>
