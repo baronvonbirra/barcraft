@@ -6,12 +6,26 @@ const SidebarWrapper = styled.aside`
   padding: ${props => props.theme.spacing.medium};
   background-color: ${props => props.theme.colors.surface};
   border-right: 1px solid ${props => props.theme.colors.border};
-  min-width: 250px; // Example width
+  min-width: 250px;
   max-width: 300px;
   display: flex;
   flex-direction: column;
   gap: ${props => props.theme.spacing.medium};
   color: ${props => props.theme.colors.text};
+  transition: transform 0.3s ease-in-out;
+
+  @media (max-width: 768px) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    transform: ${props => (props.isVisible ? 'translateX(0)' : 'translateX(-100%)')};
+    z-index: 1000;
+    overflow-y: auto;
+    width: 80%;
+    max-width: 300px;
+    border-right: 1px solid ${props => props.theme.colors.border};
+  }
 
   h3 {
     color: ${props => props.theme.colors.primary};
@@ -68,6 +82,19 @@ const SidebarWrapper = styled.aside`
     color: ${props => props.theme.colors.text};
     margin-bottom: 0;
     font-weight: normal;
+  }
+`;
+
+const CloseButton = styled.button`
+  display: none;
+  @media (max-width: 768px) {
+    display: block;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    align-self: flex-end;
+    color: ${({ theme }) => theme.colors.text};
   }
 `;
 
@@ -183,7 +210,9 @@ const FilterSidebar = ({
   setters, // { setBaseSpirit, setIncludeIngredients, ... } from useCocktailFilter
   resetFilters, // from useCocktailFilter
   filteredCocktailsForSurprise,
-  id
+  id,
+  isVisible,
+  onClose,
 }) => {
   const [includeIngredientSearchTerm, setIncludeIngredientSearchTerm] = useState('');
   const [excludeIngredientSearchTerm, setExcludeIngredientSearchTerm] = useState('');
@@ -208,7 +237,8 @@ const FilterSidebar = ({
 
 
   return (
-    <SidebarWrapper id={id}>
+    <SidebarWrapper id={id} isVisible={isVisible}>
+      <CloseButton onClick={onClose}>&times;</CloseButton>
       <h3>Filter Cocktails</h3>
 
       <FilterSection>
