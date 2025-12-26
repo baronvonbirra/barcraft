@@ -5,6 +5,7 @@ import { supabase } from '../supabaseClient';
 import { useTranslation } from 'react-i18next';
 import CocktailList from '../components/CocktailList';
 import FilterSidebar from '../components/FilterSidebar';
+import MobileFilterButtons from '../components/MobileFilterButtons';
 import { useCocktailFilter } from '../hooks/useCocktailFilter';
 import { useBar } from '../contexts/BarContext';
 
@@ -30,37 +31,6 @@ const PageTitle = styled.h1`
   text-align: center;
 `;
 
-const Overlay = styled.div`
-  display: none;
-  @media (max-width: 768px) {
-    display: ${props => (props.show ? 'block' : 'none')};
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-  }
-`;
-
-const FilterToggleButton = styled.button`
-  display: none; // Hidden by default
-  @media (max-width: 768px) {
-    display: block; // Visible on mobile
-    margin-bottom: ${({ theme }) => theme.spacing.medium};
-    padding: ${({ theme }) => theme.spacing.small} ${({ theme }) => theme.spacing.medium};
-    background-color: ${({ theme }) => theme.colors.primary};
-    color: ${({ theme }) => theme.colors.onPrimary};
-    border: none;
-    border-radius: ${({ theme }) => theme.borderRadius};
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    width: 100%;
-  }
-`;
-
 const CategoryPage = () => {
   const { categoryId } = useParams();
   const [cocktails, setCocktails] = useState([]);
@@ -68,7 +38,6 @@ const CategoryPage = () => {
   const [thematicCategories, setThematicCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const { i18n } = useTranslation();
-  const [isFilterVisible, setIsFilterVisible] = useState(false);
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -200,11 +169,14 @@ const CategoryPage = () => {
 
   return (
     <PageWrapper>
-      <Overlay show={isFilterVisible} onClick={() => setIsFilterVisible(false)} />
       <PageTitle>{pageTitle}</PageTitle>
-      <FilterToggleButton onClick={() => setIsFilterVisible(!isFilterVisible)}>
-        {isFilterVisible ? 'Hide' : 'Show'} Filters
-      </FilterToggleButton>
+      {cocktails.length > 0 && (
+        <MobileFilterButtons
+          allCocktails={cocktails}
+          filters={filterHookState}
+          setters={filterHookSetters}
+        />
+      )}
       <CategoryPageWrapper>
         <FilterSidebar
           allCocktails={cocktails}
@@ -214,8 +186,6 @@ const CategoryPage = () => {
           setters={filterHookSetters}
           resetFilters={resetFilters}
           filteredCocktailsForSurprise={filteredCocktails}
-          isVisible={isFilterVisible}
-          onClose={() => setIsFilterVisible(false)}
         />
         <MainContent>
           <CocktailList

@@ -15,16 +15,7 @@ const SidebarWrapper = styled.aside`
   transition: transform 0.3s ease-in-out;
 
   @media (max-width: 768px) {
-    position: fixed;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    transform: ${props => (props.isVisible ? 'translateX(0)' : 'translateX(-100%)')};
-    z-index: 1000;
-    overflow-y: auto;
-    width: 80%;
-    max-width: 300px;
-    border-right: 1px solid ${props => props.theme.colors.border};
+    display: none;
   }
 
   h3 {
