@@ -38,6 +38,10 @@ const Modal = styled.div`
   max-width: 600px;
   animation: ${slideUp} 0.4s ease-out;
   color: ${({ theme }) => theme.colors.text};
+
+  @media (max-width: 600px) {
+    padding: ${({ theme }) => theme.spacing.medium};
+  }
 `;
 
 const CloseButton = styled.button`
@@ -54,6 +58,10 @@ const CloseButton = styled.button`
 const Question = styled.h2`
   text-align: center;
   margin-bottom: ${({ theme }) => theme.spacing.large};
+
+  @media (max-width: 600px) {
+    font-size: 1.2rem;
+  }
 `;
 
 const Answers = styled.div`
