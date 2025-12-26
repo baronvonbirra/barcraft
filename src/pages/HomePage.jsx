@@ -145,7 +145,8 @@ const HomePage = () => {
       if (cotwError) {
         console.error('Error fetching cocktail of the week:', cotwError);
       } else if (cotwData && cotwData.length > 0) {
-        const cocktailId = cotwData[0].cocktail_id;
+        const randomIndex = Math.floor(Math.random() * cotwData.length);
+        const cocktailId = cotwData[randomIndex].cocktail_id;
         const { data: cocktail, error: cocktailError } = await supabase
           .from('cocktails')
           .select(`id, name_${lang}, name_en, description_${lang}, description_en, image`)
