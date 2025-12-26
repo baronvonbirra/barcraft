@@ -5,6 +5,7 @@ import { supabase } from '../supabaseClient';
 import { useTranslation } from 'react-i18next';
 import CategoryList from '../components/CategoryList';
 import SurpriseMeButton from '../components/SurpriseMeButton';
+import FeelingLuckyQuiz from '../components/FeelingLuckyQuiz';
 import { getImageUrl } from '../utils/cocktailImageLoader.js';
 
 // Styled components for HomePage
@@ -131,6 +132,7 @@ const HomePage = () => {
   const [categories, setCategories] = useState([]);
   const [thematicCategories, setThematicCategories] = useState([]);
   const [allCocktails, setAllCocktails] = useState([]);
+  const [isQuizOpen, setIsQuizOpen] = useState(false);
 
   useEffect(() => {
     const fetchHomePageData = async () => {
@@ -212,6 +214,9 @@ const HomePage = () => {
         <SurpriseButtonWrapper>
           <SurpriseMeButton filteredCocktails={allCocktails} />
         </SurpriseButtonWrapper>
+
+        <FilterToggleButton onClick={() => setIsQuizOpen(true)}>{t('findYourMatch')}</FilterToggleButton>
+        <FeelingLuckyQuiz isOpen={isQuizOpen} onClose={() => setIsQuizOpen(false)} />
 
         <MainContent>
           {/* Heading for categories */}

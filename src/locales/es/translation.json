@@ -30,5 +30,19 @@
   "tags": "Etiquetas",
   "flavorProfile": "Perfil de Sabor",
   "history": "Historia",
-  "noCocktailsMatch": "¡No hay cócteles que coincidan con tu estado de ánimo actual! Intenta ajustar tus filtros."
+  "noCocktailsMatch": "¡No hay cócteles que coincidan con tu estado de ánimo actual! Intenta ajustar tus filtros.",
+  "findYourMatch": "✨ ¡Encuentra tu Cóctel! ✨",
+  "quiz": {
+    "question1": "¿Cuál es tu ambiente hoy?",
+    "question2": "Elige tu perfil de sabor:",
+    "question3": "Elige tu veneno (bebida):",
+    "flavorSweet": "Dulce e Indulgente",
+    "flavorTart": "Ácido y Refrescante",
+    "flavorBold": "Audaz y Complejo",
+    "mixing": "Mezclando tu bebida perfecta...",
+    "recommendation": "¡Aquí está tu resultado!",
+    "retake": "Repetir Cuestionario",
+    "noMatch": "Ningún cóctel coincide con tu selección.",
+    "noMatchSuggestion": "Intenta repetir el cuestionario con otras opciones."
+  }
 }
