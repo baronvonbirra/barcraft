@@ -33,6 +33,7 @@
   "noCocktailsMatch": "No cocktails match your current mood! Try adjusting your filters.",
   "findYourMatch": "✨ Find Your Match ✨",
   "quiz": {
+    "questionBar": "At which bar are you?",
     "question1": "What's your vibe today?",
     "question2": "Choose your flavor profile:",
     "question3": "Pick your poison (spirit):",

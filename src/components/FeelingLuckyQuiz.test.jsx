@@ -7,7 +7,6 @@ import { vi } from 'vitest';
 
 import FeelingLuckyQuiz from './FeelingLuckyQuiz';
 import i18n from '../i18n';
-import { BarContext } from '../contexts/BarContext';
 import { supabase } from '../supabaseClient';
 
 // Mock the supabase client
@@ -40,9 +39,7 @@ const renderQuiz = () => {
     <MemoryRouter>
       <ThemeProvider theme={theme}>
         <I18nextProvider i18n={i18n}>
-          <BarContext.Provider value={{ selectedBarId: 'bar1' }}>
-            <FeelingLuckyQuiz isOpen={true} onClose={() => {}} />
-          </BarContext.Provider>
+          <FeelingLuckyQuiz isOpen={true} onClose={() => {}} />
         </I18nextProvider>
       </ThemeProvider>
     </MemoryRouter>
@@ -86,21 +83,22 @@ describe('FeelingLuckyQuiz', () => {
   it('renders the first question after loading', async () => {
     setupMocks();
     renderQuiz();
-    expect(await screen.findByText("What's your vibe today?")).toBeInTheDocument();
+    expect(await screen.findByText("At which bar are you?")).toBeInTheDocument();
   });
 
   it('moves to the next question after an answer is selected', async () => {
     setupMocks();
     renderQuiz();
-    await screen.findByText("What's your vibe today?");
-    fireEvent.click(screen.getByText('Tropical'));
-    expect(await screen.findByText('Choose your flavor profile:')).toBeInTheDocument();
+    await screen.findByText("At which bar are you?");
+    fireEvent.click(screen.getByText('Level One'));
+    expect(await screen.findByText("What's your vibe today?")).toBeInTheDocument();
   });
 
   it('displays the recommended cocktail after the quiz is completed', async () => {
     setupMocks({ data: [mockCocktail], error: null });
     renderQuiz();
 
+    fireEvent.click(await screen.findByText('Level One'));
     fireEvent.click(await screen.findByText('Tropical'));
     fireEvent.click(await screen.findByText('Sweet & Indulgent'));
     fireEvent.click(await screen.findByText('Whiskey'));
@@ -113,6 +111,7 @@ describe('FeelingLuckyQuiz', () => {
     setupMocks({ data: [], error: null });
     renderQuiz();
 
+    fireEvent.click(await screen.findByText('Level One'));
     fireEvent.click(await screen.findByText('Tropical'));
     fireEvent.click(await screen.findByText('Sweet & Indulgent'));
     fireEvent.click(await screen.findByText('Whiskey'));
@@ -124,6 +123,7 @@ describe('FeelingLuckyQuiz', () => {
     setupMocks({ data: [], error: null });
     renderQuiz();
 
+    fireEvent.click(await screen.findByText('Level One'));
     fireEvent.click(await screen.findByText('Tropical'));
     fireEvent.click(await screen.findByText('Sweet & Indulgent'));
     fireEvent.click(await screen.findByText('Whiskey'));
@@ -131,6 +131,6 @@ describe('FeelingLuckyQuiz', () => {
     const retakeButton = await screen.findByText('Retake Quiz');
     fireEvent.click(retakeButton);
 
-    expect(await screen.findByText("What's your vibe today?")).toBeInTheDocument();
+    expect(await screen.findByText("At which bar are you?")).toBeInTheDocument();
   });
 });

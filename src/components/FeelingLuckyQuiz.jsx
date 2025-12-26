@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { supabase } from '../supabaseClient';
 import { useTranslation } from 'react-i18next';
-import { BarContext } from '../contexts/BarContext';
 import { getImageUrl } from '../utils/cocktailImageLoader.js';
 import { Link } from 'react-router-dom';
 
@@ -138,7 +137,6 @@ const RetakeQuizButton = styled.button`
 
 const FeelingLuckyQuiz = ({ isOpen, onClose }) => {
   const { t, i18n } = useTranslation();
-  const { selectedBarId: bar } = useContext(BarContext);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState({});
   const [quizData, setQuizData] = useState({ themes: [], flavors: [], spirits: [] });
@@ -148,6 +146,14 @@ const FeelingLuckyQuiz = ({ isOpen, onClose }) => {
   const [isFinding, setIsFinding] = useState(false);
 
   const quizQuestions = [
+    {
+      id: 'bar',
+      question: t('quiz.questionBar'),
+      answers: [
+        { name: t('navigation.levelOne'), value: 'bar1' },
+        { name: t('navigation.theGlitch'), value: 'bar2' },
+      ],
+    },
     {
       id: 'theme',
       question: t('quiz.question1'),
@@ -170,11 +176,6 @@ const FeelingLuckyQuiz = ({ isOpen, onClose }) => {
   ];
 
   useEffect(() => {
-    if (!bar) {
-      console.error("Bar context is not available");
-      return;
-    }
-
     const fetchQuizData = async () => {
       setIsLoading(true);
       setError(null);
@@ -199,7 +200,7 @@ const FeelingLuckyQuiz = ({ isOpen, onClose }) => {
     if (isOpen) {
       fetchQuizData();
     }
-  }, [isOpen, i18n.language, bar]);
+  }, [isOpen, i18n.language]);
 
   const handleAnswerClick = (questionId, answerValue) => {
     const newUserAnswers = { ...userAnswers, [questionId]: answerValue };
@@ -222,7 +223,7 @@ const FeelingLuckyQuiz = ({ isOpen, onClose }) => {
   const findCocktail = async (answers, broadenSearch = false) => {
     setIsFinding(true);
     const lang = i18n.language;
-    const stockColumn = bar === 'bar1' ? 'bar1_stock' : 'bar2_stock';
+    const stockColumn = answers.bar === 'bar1' ? 'bar1_stock' : 'bar2_stock';
 
     let query = supabase.from('cocktails').select(`id, name_${lang}, name_en, image, description_${lang}, description_en, thematic_categories, flavor_profile, spirit_category_id`).gt(stockColumn, 0);
 

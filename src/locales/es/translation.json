@@ -33,6 +33,7 @@
   "noCocktailsMatch": "¡No hay cócteles que coincidan con tu estado de ánimo actual! Intenta ajustar tus filtros.",
   "findYourMatch": "✨ ¡Encuentra tu Cóctel! ✨",
   "quiz": {
+    "questionBar": "¿En qué bar estás?",
     "question1": "¿Cuál es tu ambiente hoy?",
     "question2": "Elige tu perfil de sabor:",
     "question3": "Elige tu veneno (bebida):",
