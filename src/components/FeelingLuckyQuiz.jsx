@@ -170,8 +170,8 @@ const FeelingLuckyQuiz = ({ isOpen, onClose }) => {
   ];
 
   useEffect(() => {
-    if (!bar) {
-      console.error("Bar context is not available");
+    if (!bar || bar === 'all') {
+      // Bar context is not ready or is 'all', do nothing.
       return;
     }
 
@@ -199,7 +199,7 @@ const FeelingLuckyQuiz = ({ isOpen, onClose }) => {
     if (isOpen) {
       fetchQuizData();
     }
-  }, [isOpen, i18n.language]);
+  }, [isOpen, i18n.language, bar]);
 
   const handleAnswerClick = (questionId, answerValue) => {
     const newUserAnswers = { ...userAnswers, [questionId]: answerValue };
