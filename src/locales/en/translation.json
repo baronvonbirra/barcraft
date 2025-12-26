@@ -30,5 +30,19 @@
   "tags": "Tags",
   "flavorProfile": "Flavor Profile",
   "history": "History",
-  "noCocktailsMatch": "No cocktails match your current mood! Try adjusting your filters."
+  "noCocktailsMatch": "No cocktails match your current mood! Try adjusting your filters.",
+  "findYourMatch": "✨ Find Your Match ✨",
+  "quiz": {
+    "question1": "What's your vibe today?",
+    "question2": "Choose your flavor profile:",
+    "question3": "Pick your poison (spirit):",
+    "flavorSweet": "Sweet & Indulgent",
+    "flavorTart": "Tart & Refreshing",
+    "flavorBold": "Bold & Complex",
+    "mixing": "Mixing your perfect drink...",
+    "recommendation": "Here's your match!",
+    "retake": "Retake Quiz",
+    "noMatch": "No cocktails match your choices.",
+    "noMatchSuggestion": "Try retaking the quiz with different selections."
+  }
 }
