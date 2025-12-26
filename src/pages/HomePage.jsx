@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { useTranslation } from 'react-i18next';
+import { useBar } from '../contexts/BarContext';
 import CategoryList from '../components/CategoryList';
 import SurpriseMeButton from '../components/SurpriseMeButton';
 import FeelingLuckyQuiz from '../components/FeelingLuckyQuiz';
@@ -127,6 +128,7 @@ const SectionHeading = styled.h2`
 
 const HomePage = () => {
   const { i18n, t } = useTranslation();
+  useBar(); // T-987: Consuming context to force re-render on bar change.
   const [cocktailToDisplay, setCocktailToDisplay] = useState(null);
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState([]);

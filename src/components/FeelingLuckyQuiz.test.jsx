@@ -40,7 +40,7 @@ const renderQuiz = () => {
     <MemoryRouter>
       <ThemeProvider theme={theme}>
         <I18nextProvider i18n={i18n}>
-          <BarContext.Provider value={{ bar: 'bar1' }}>
+          <BarContext.Provider value={{ selectedBarId: 'bar1' }}>
             <FeelingLuckyQuiz isOpen={true} onClose={() => {}} />
           </BarContext.Provider>
         </I18nextProvider>

@@ -138,7 +138,7 @@ const RetakeQuizButton = styled.button`
 
 const FeelingLuckyQuiz = ({ isOpen, onClose }) => {
   const { t, i18n } = useTranslation();
-  const { bar } = useContext(BarContext);
+  const { selectedBarId: bar } = useContext(BarContext);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState({});
   const [quizData, setQuizData] = useState({ themes: [], flavors: [], spirits: [] });
@@ -170,8 +170,8 @@ const FeelingLuckyQuiz = ({ isOpen, onClose }) => {
   ];
 
   useEffect(() => {
-    if (!bar || bar === 'all') {
-      // Bar context is not ready or is 'all', do nothing.
+    if (!bar) {
+      console.error("Bar context is not available");
       return;
     }
 
