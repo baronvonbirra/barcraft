@@ -6,8 +6,15 @@ import { BarContext } from '../contexts/BarContext';
 import CocktailListItem from './CocktailListItem';
 
 // Mock data and utilities
-vi.mock('../utils/cocktailImageLoader.js', () => ({
-  getImageUrl: vi.fn((imageName) => imageName ? `mock_path_to/${imageName}` : 'mock_path_to/placeholder.png'),
+vi.mock('./CocktailImage', () => ({
+  __esModule: true,
+  default: ({ src, alt, className }) => (
+    <img
+      src={src ? `mock_path_to/${src.substring(src.lastIndexOf('/') + 1)}` : 'mock_path_to/placeholder.jpg'}
+      alt={alt}
+      className={className}
+    />
+  ),
 }));
 
 const mockTheme = {
@@ -70,7 +77,7 @@ describe('CocktailListItem', () => {
     renderWithProviders(<CocktailListItem cocktail={cocktailWithoutImage} />, { providerProps: defaultProviderProps });
     const image = screen.getByAltText(cocktailWithoutImage.name);
     expect(image).toBeInTheDocument();
-    expect(image).toHaveAttribute('src', 'mock_path_to/placeholder.png');
+    expect(image).toHaveAttribute('src', 'mock_path_to/placeholder.jpg');
   });
 
   describe('Bar Availability Icons', () => {

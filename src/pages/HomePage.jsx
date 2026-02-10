@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import CategoryList from '../components/CategoryList';
 import SurpriseMeButton from '../components/SurpriseMeButton';
 import FeelingLuckyQuiz from '../components/FeelingLuckyQuiz';
-import { getImageUrl } from '../utils/cocktailImageLoader.js';
+import CocktailImageBase from '../components/CocktailImage';
 
 // Styled components for HomePage
 const PageWrapper = styled.div`
@@ -27,7 +27,7 @@ const CocktailOfTheWeekWrapper = styled.section`
   gap: ${({ theme }) => theme.spacing.medium};
 `;
 
-const CocktailImage = styled.img`
+const CocktailImage = styled(CocktailImageBase)`
   width: 100%;
   max-width: 300px;
   height: auto;
@@ -205,7 +205,7 @@ const HomePage = () => {
         {!loading && cocktailToDisplay && (
           <CocktailOfTheWeekWrapper>
             <CocktailName>{cocktailToDisplay.name} - {t('cocktailOfTheWeek')}</CocktailName>
-            <CocktailImage src={getImageUrl(cocktailToDisplay.image)} alt={cocktailToDisplay.name} />
+            <CocktailImage src={cocktailToDisplay.image} alt={cocktailToDisplay.name} />
             <CocktailDescription>{cocktailToDisplay.description}</CocktailDescription>
             <ViewRecipeButton to={`/cocktails/${cocktailToDisplay.id}`}>{t('viewRecipe')}</ViewRecipeButton>
           </CocktailOfTheWeekWrapper>
