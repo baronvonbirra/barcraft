@@ -3,7 +3,7 @@ import styled, { keyframes } from 'styled-components';
 import { supabase } from '../supabaseClient';
 import { useTranslation } from 'react-i18next';
 import { BarContext } from '../contexts/BarContext';
-import { getImageUrl } from '../utils/cocktailImageLoader.js';
+import CocktailImageBase from './CocktailImage';
 import { Link } from 'react-router-dom';
 
 const fadeIn = keyframes`
@@ -97,7 +97,7 @@ const ResultWrapper = styled.div`
   text-align: center;
 `;
 
-const CocktailImage = styled.img`
+const CocktailImage = styled(CocktailImageBase)`
   width: 100%;
   max-width: 300px;
   height: auto;
@@ -277,7 +277,7 @@ const FeelingLuckyQuiz = ({ isOpen, onClose }) => {
         ) : recommendedCocktail ? (
           <ResultWrapper>
             <h2>{t('quiz.recommendation')}</h2>
-            <CocktailImage src={getImageUrl(recommendedCocktail.image)} alt={recommendedCocktail.name} />
+            <CocktailImage src={recommendedCocktail.image} alt={recommendedCocktail.name} />
             <h3>{recommendedCocktail.name}</h3>
             <p>{recommendedCocktail.description}</p>
             <ViewRecipeButton to={`/cocktails/${recommendedCocktail.id}`} onClick={onClose}>{t('viewRecipe')}</ViewRecipeButton>

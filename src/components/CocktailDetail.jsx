@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import PlaceholderImage from '../assets/cocktails/placeholder.jpg'; // Ensure PlaceholderImage is imported
+import CocktailImageBase from './CocktailImage';
 
 const DetailWrapper = styled.div`
   background-color: ${({ theme }) => (theme.colors && theme.colors.surface) || '#282C34'};
@@ -15,7 +15,7 @@ const DetailWrapper = styled.div`
   margin-right: auto;
 `;
 
-const CocktailImage = styled.img`
+const CocktailImage = styled(CocktailImageBase)`
   width: 100%;
   max-width: 400px; // Control max image size
   height: auto;
@@ -159,7 +159,7 @@ const CocktailDetail = ({ cocktail }) => {
   return (
     <DetailWrapper>
       <CocktailName>{cocktail.name}</CocktailName>
-      <CocktailImage src={cocktail.image || PlaceholderImage} alt={cocktail.name} />
+      <CocktailImage src={cocktail.image} alt={cocktail.name} />
 
       {cocktail.history && (
         <>
