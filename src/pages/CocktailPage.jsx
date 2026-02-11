@@ -6,7 +6,7 @@ import { useBar } from '../contexts/BarContext';
 import { useFavorites } from '../hooks/useFavorites';
 import { useTranslation } from 'react-i18next';
 import { ThemeContext } from '../contexts/ThemeContext';
-import { getImageUrl } from '../utils/cocktailImageLoader.js';
+import CocktailImageBase from '../components/CocktailImage';
 
 // Styled Components
 const PageWrapper = styled.div`
@@ -50,7 +50,7 @@ const FavoriteButtonDetail = styled.button`
   }
 `;
 
-const CocktailImage = styled.img`
+const CocktailImage = styled(CocktailImageBase)`
   width: 100%;
   max-width: 500px;
   height: auto;
@@ -237,7 +237,7 @@ const CocktailPage = () => {
             {currentIsFavorite ? '♥' : '♡'}
           </FavoriteButtonDetail>
         </CocktailNameWrapper>
-        <CocktailImage src={getImageUrl(cocktail.image)} alt={cocktail.name} />
+        <CocktailImage src={cocktail.image} alt={cocktail.name} />
 
         {cocktail.description && (
           <CocktailDescription>{cocktail.description}</CocktailDescription>

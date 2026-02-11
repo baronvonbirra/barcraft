@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { getImageUrl } from '../utils/cocktailImageLoader.js';
 import { useFavorites } from '../hooks/useFavorites';
+import CocktailImageBase from './CocktailImage';
 import { useBar } from '../contexts/BarContext';
 import { useTranslation } from 'react-i18next';
 
@@ -32,7 +32,7 @@ const ImageContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing.medium}; 
 `;
 
-const CocktailImage = styled.img`
+const CocktailImage = styled(CocktailImageBase)`
   width: 100%;
   aspect-ratio: 3/2;
   object-fit: cover;
@@ -161,7 +161,6 @@ const CocktailListItem = ({ cocktail, isMakeable }) => {
 
   if (!cocktail) return null;
 
-  const imageSrc = getImageUrl(cocktail.image);
   const currentIsFavorite = isFavorite(cocktail.id);
 
   const isMakeableBar1 = useMemo(() => checkMakeableForBar(cocktail.ingredients, barAStock), [cocktail.ingredients, barAStock]);
@@ -181,7 +180,7 @@ const CocktailListItem = ({ cocktail, isMakeable }) => {
       <Link to={`/cocktails/${cocktail.id}`} style={{ textDecoration: 'none' }}>
         <ImageContainer>
           {typeof isMakeable === 'boolean' && <AvailabilityIndicator isMakeable={isMakeable} />}
-          <CocktailImage src={imageSrc} alt={cocktail.name} />
+          <CocktailImage src={cocktail.image} alt={cocktail.name} />
           <FavoriteButton
             isFavorite={currentIsFavorite}
             onClick={handleFavoriteClick}
