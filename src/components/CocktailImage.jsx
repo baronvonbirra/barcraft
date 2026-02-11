@@ -12,9 +12,20 @@ const CocktailImage = ({ src, alt, ...props }) => {
       };
     }
 
+    // If it's already a full URL or data URI, use it directly
+    if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) {
+      return {
+        imgSrc: path,
+        fallbackLevel: 0
+      };
+    }
+
+    // Extract filename and encode it
     const fileName = path.substring(path.lastIndexOf('/') + 1);
+    const encodedFileName = encodeURIComponent(fileName);
+
     return {
-      imgSrc: `${SUPABASE_STORAGE_URL}/${fileName}`,
+      imgSrc: `${SUPABASE_STORAGE_URL}/${encodedFileName}`,
       fallbackLevel: 0
     };
   };
