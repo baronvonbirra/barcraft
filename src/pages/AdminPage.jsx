@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import styled from 'styled-components';
+import styled, { createGlobalStyle } from 'styled-components';
 import { supabase } from '../supabaseClient';
 import bcrypt from 'bcryptjs';
 import { useTranslation } from 'react-i18next';
+import { generateShoppingList, getCocktailStockStatus } from '../utils/inventoryUtils';
 
 const PageWrapper = styled.div`
   padding: 1rem;
@@ -189,6 +190,118 @@ const TabButton = styled.button`
   }
 `;
 
+const WorkbenchContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-top: 1rem;
+
+  @media (min-width: 992px) {
+    grid-template-columns: 1fr 1fr;
+  }
+`;
+
+const Panel = styled.div`
+  background-color: ${({ theme }) => theme.colors.background};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: fit-content;
+`;
+
+const ShoppingListTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  color: ${({ theme }) => theme.colors.text};
+  background-color: #1a1a1a; /* Dark theme */
+  border: 1px solid #333;
+
+  th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #333;
+  }
+
+  th {
+    background-color: #252525;
+    color: ${({ theme }) => theme.colors.primary};
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+  }
+`;
+
+const StatusBadge = styled.span`
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  background-color: ${({ status, theme }) =>
+    status === 'Missing' ? 'rgba(211, 47, 47, 0.2)' : 'rgba(255, 193, 7, 0.2)'};
+  color: ${({ status, theme }) =>
+    status === 'Missing' ? '#ff5252' : '#ffc107'};
+`;
+
+const WarningIcon = styled.span`
+  color: #ffc107;
+  margin-left: 0.5rem;
+  font-size: 1.2rem;
+  cursor: help;
+`;
+
+const EmptyState = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  color: ${({ theme }) => theme.colors.textOffset};
+  opacity: 0.6;
+
+  svg {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+`;
+
+const GlobalPrintStyle = createGlobalStyle`
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    #printable-shopping-list, #printable-shopping-list * {
+      visibility: visible;
+    }
+    #printable-shopping-list {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      color: black !important;
+      background-color: white !important;
+    }
+    #printable-shopping-list table {
+      background-color: white !important;
+      color: black !important;
+      border: 1px solid #ccc !important;
+    }
+    #printable-shopping-list th, #printable-shopping-list td {
+      border-bottom: 1px solid #ccc !important;
+    }
+    #printable-shopping-list h2, #printable-shopping-list h3 {
+      color: black !important;
+    }
+    .no-print {
+      display: none !important;
+    }
+  }
+`;
+
 const AdminPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [password, setPassword] = useState('');
@@ -197,13 +310,15 @@ const AdminPage = () => {
   const [selectedBar, setSelectedBar] = useState('bar1'); // Default to first bar's ID
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('stock'); // 'stock' or 'curated'
+  const [activeTab, setActiveTab] = useState('stock'); // 'stock', 'curated', or 'workbench'
   const [bars, setBars] = useState([]);
   const [cocktails, setCocktails] = useState([]);
   const [curatedCocktails, setCuratedCocktails] = useState([]);
   const [selectedCuratedBar, setSelectedCuratedBar] = useState('');
   const [loadingCurated, setLoadingCurated] = useState(false);
   const [cocktailOfTheWeek, setCocktailOfTheWeek] = useState(null);
+  const [selectedWorkbenchCocktails, setSelectedWorkbenchCocktails] = useState([]);
+  const [workbenchSearchTerm, setWorkbenchSearchTerm] = useState('');
   const { t } = useTranslation();
 
   // Mapping from bar ID to Supabase column name for stock
@@ -227,13 +342,13 @@ const AdminPage = () => {
   }, [isLoggedIn, t]);
 
   useEffect(() => {
-    if (isLoggedIn && activeTab === 'stock') {
+    if (isLoggedIn && (activeTab === 'stock' || activeTab === 'workbench')) {
       fetchIngredients();
     }
   }, [isLoggedIn, activeTab]);
 
   useEffect(() => {
-    if (isLoggedIn && activeTab === 'curated') {
+    if (isLoggedIn && (activeTab === 'curated' || activeTab === 'workbench')) {
       fetchCocktails();
       if(selectedCuratedBar) {
           fetchCuratedCocktails(selectedCuratedBar);
@@ -246,7 +361,7 @@ const AdminPage = () => {
     setLoadingCurated(true);
     const { data, error } = await supabase
       .from('cocktails')
-      .select('id, name_en, name_es')
+      .select('id, name_en, name_es, ingredients')
       .order('name_en', { ascending: true });
 
     if (error) {
@@ -418,6 +533,49 @@ const AdminPage = () => {
     alert('Ingredient cache has been cleared.');
   };
 
+  const handleToggleWorkbenchSelection = (cocktailId) => {
+    setSelectedWorkbenchCocktails(prev =>
+      prev.includes(cocktailId)
+        ? prev.filter(id => id !== cocktailId)
+        : [...prev, cocktailId]
+    );
+  };
+
+  const shoppingList = useMemo(() => {
+    const selectedCocktailsData = cocktails.filter(c => selectedWorkbenchCocktails.includes(c.id));
+    return generateShoppingList(selectedCocktailsData, ingredients, selectedBar);
+  }, [selectedWorkbenchCocktails, cocktails, ingredients, selectedBar]);
+
+  const handleCopyToClipboard = () => {
+    const selectedBarData = bars.find(b => b.id === selectedBar);
+    const barName = selectedBarData ? selectedBarData.name : selectedBar;
+    let text = `Shopping List - ${barName}\n\n`;
+
+    Object.entries(shoppingList).forEach(([category, items]) => {
+      text += `[${category}]\n`;
+      items.forEach(item => {
+        text += `- ${item.name} (${item.status})\n`;
+      });
+      text += '\n';
+    });
+
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Shopping list copied to clipboard!');
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+    });
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const filteredWorkbenchCocktails = useMemo(() => {
+    return cocktails.filter(c =>
+      c.name.toLowerCase().includes(workbenchSearchTerm.toLowerCase())
+    );
+  }, [cocktails, workbenchSearchTerm]);
+
   const handleToggle = async (ingredientId, currentStatus) => {
     const columnName = barIdToColumn[selectedBar];
     if (!columnName) {
@@ -484,6 +642,7 @@ const AdminPage = () => {
 
   return (
     <PageWrapper>
+      <GlobalPrintStyle />
       <Title>Admin Panel</Title>
       <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
         <Button onClick={handleLogout}>Logout</Button>
@@ -496,6 +655,9 @@ const AdminPage = () => {
         </TabButton>
         <TabButton active={activeTab === 'curated'} onClick={() => setActiveTab('curated')}>
           Curated Cocktails
+        </TabButton>
+        <TabButton active={activeTab === 'workbench'} onClick={() => setActiveTab('workbench')}>
+          Inventory Workbench
         </TabButton>
       </TabContainer>
 
@@ -582,6 +744,115 @@ const AdminPage = () => {
               </IngredientList>
             </>
           )}
+        </>
+      )}
+      {activeTab === 'workbench' && (
+        <>
+          <ControlsWrapper>
+            <Select value={selectedBar} onChange={(e) => setSelectedBar(e.target.value)}>
+              {bars.map(bar => (
+                <option key={bar.id} value={bar.id}>{bar.name}</option>
+              ))}
+            </Select>
+            <SearchInput
+              type="text"
+              placeholder="Search cocktails..."
+              value={workbenchSearchTerm}
+              onChange={(e) => setWorkbenchSearchTerm(e.target.value)}
+            />
+          </ControlsWrapper>
+
+          <WorkbenchContainer>
+            <Panel>
+              <CategoryTitle>Select Cocktails</CategoryTitle>
+              {loadingCurated ? <p>Loading cocktails...</p> : (
+                <IngredientList style={{ maxHeight: '600px', overflowY: 'auto' }}>
+                  {filteredWorkbenchCocktails.map(cocktail => {
+                    const status = getCocktailStockStatus(cocktail, ingredients, selectedBar);
+                    return (
+                      <IngredientItem key={cocktail.id}>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <input
+                            type="checkbox"
+                            checked={selectedWorkbenchCocktails.includes(cocktail.id)}
+                            onChange={() => handleToggleWorkbenchSelection(cocktail.id)}
+                            style={{ marginRight: '1rem', width: '20px', height: '20px', cursor: 'pointer' }}
+                          />
+                          <IngredientName>{cocktail.name}</IngredientName>
+                          {!status.isMakeable && (
+                            <WarningIcon title={`${status.missingCount} missing ingredients`}>
+                              !
+                            </WarningIcon>
+                          )}
+                        </div>
+                      </IngredientItem>
+                    );
+                  })}
+                </IngredientList>
+              )}
+            </Panel>
+
+            <Panel>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <CategoryTitle style={{ marginBottom: 0 }}>Shopping List</CategoryTitle>
+                {selectedWorkbenchCocktails.length > 0 && Object.keys(shoppingList).length > 0 && (
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <Button onClick={handleCopyToClipboard} style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem' }}>Copy</Button>
+                    <Button onClick={handlePrint} style={{ padding: '0.4rem 0.8rem', fontSize: '0.9rem' }}>Print</Button>
+                  </div>
+                )}
+              </div>
+
+              {selectedWorkbenchCocktails.length === 0 ? (
+                <EmptyState>
+                  <span style={{ fontSize: '3rem', marginBottom: '1rem' }}>📋</span>
+                  <p>Select cocktails to analyze stock requirements.</p>
+                </EmptyState>
+              ) : Object.keys(shoppingList).length === 0 ? (
+                <EmptyState>
+                  <p>All ingredients for selected cocktails are in stock! 🎉</p>
+                </EmptyState>
+              ) : (
+                <div id="printable-shopping-list">
+                  <h2 className="only-print" style={{ display: 'none' }}>
+                    Shopping List - {selectedBar === 'bar1' ? t('navigation.levelOne') : t('navigation.theGlitch')}
+                  </h2>
+                  <ShoppingListTable>
+                    <thead>
+                      <tr>
+                        <th>Ingredient</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {Object.entries(shoppingList).map(([category, items]) => (
+                        <React.Fragment key={category}>
+                          {items.map(item => (
+                            <tr key={item.id}>
+                              <td>{item.name}</td>
+                              <td>{item.category}</td>
+                              <td>
+                                <StatusBadge status={item.status}>{item.status}</StatusBadge>
+                              </td>
+                            </tr>
+                          ))}
+                        </React.Fragment>
+                      ))}
+                    </tbody>
+                  </ShoppingListTable>
+                  <style>{`
+                    @media print {
+                      .only-print {
+                        display: block !important;
+                        margin-bottom: 1rem;
+                      }
+                    }
+                  `}</style>
+                </div>
+              )}
+            </Panel>
+          </WorkbenchContainer>
         </>
       )}
     </PageWrapper>
