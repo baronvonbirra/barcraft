@@ -16,11 +16,14 @@ const mockCocktail = {
   instructions_en: ['Muddle mint and sugar', 'Add rum and lime juice', 'Top with soda water'],
   history_en: 'The Mojito is a traditional Cuban highball.',
   image: 'mojito.jpg',
-  cocktail_ingredients: [
-    { ingredients: { id: 'rum', name: 'Rum' }, quantity: '2 oz' },
-    { ingredients: { id: 'lime', name: 'Lime Juice' }, quantity: '1 oz' },
-    { ingredients: { id: 'mint', name: 'Mint' }, quantity: '6 leaves' },
+  ingredients: [
+    { id: 'rum', name: 'Rum', quantity: '2 oz' },
+    { id: 'lime', name: 'Lime Juice', quantity: '1 oz' },
+    { id: 'mint', name: 'Mint', quantity: '6 leaves' },
   ],
+  glass: 'Highball',
+  difficulty: 'Easy',
+  tags: ['refreshing', 'summer'],
 };
 
 describe('CocktailPage', () => {
@@ -29,15 +32,7 @@ describe('CocktailPage', () => {
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
       single: vi.fn().mockResolvedValue({
-        data: {
-          ...mockCocktail,
-          ingredients: mockCocktail.cocktail_ingredients.map(ing => ({
-            id: ing.ingredients.id,
-            name: ing.ingredients.name,
-            quantity: ing.quantity,
-            notes: ing.notes,
-          })),
-        },
+        data: mockCocktail,
         error: null,
       }),
     }));
@@ -58,8 +53,8 @@ describe('CocktailPage', () => {
       expect(screen.getByText('Mojito')).toBeInTheDocument();
       expect(screen.getByText('Ingredients')).toBeInTheDocument();
       expect(screen.getByText('Instructions')).toBeInTheDocument();
-      expect(screen.getByText('Details')).toBeInTheDocument();
-      expect(screen.getByText('History')).toBeInTheDocument();
+      expect(screen.getByText('Glass:')).toBeInTheDocument();
+      expect(screen.getByText(mockCocktail.history_en)).toBeInTheDocument();
     });
   });
 
@@ -78,4 +73,3 @@ describe('CocktailPage', () => {
     expect(await screen.findByText('Cocktail not found!')).toBeInTheDocument();
   });
 });
-
