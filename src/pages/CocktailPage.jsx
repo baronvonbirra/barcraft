@@ -13,17 +13,61 @@ const PageWrapper = styled.div`
   padding: ${({ theme }) => theme.spacing.medium};
   color: ${({ theme }) => theme.colors.text};
   animation: fadeInPage 0.5s ease-out forwards;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  @media (max-width: 768px) {
+    padding: 0; // For edge-to-edge mobile hero
+  }
+`;
+
+const HeroSection = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: ${({ theme }) => theme.spacing.large};
+  margin-bottom: ${({ theme }) => theme.spacing.xl};
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    padding: ${({ theme }) => theme.spacing.large} 0;
+  }
+`;
+
+const ImageColumn = styled.div`
+  width: 100%;
+`;
+
+const InfoColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: ${({ theme }) => theme.spacing.medium};
+
+  @media (min-width: 768px) {
+    padding: 0;
+  }
+`;
+
+const CocktailImage = styled(CocktailImageBase)`
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+
+  @media (min-width: 768px) {
+    border-radius: ${({ theme }) => theme.borderRadius};
+    box-shadow: ${({ theme }) => theme.shadows.medium};
+  }
 `;
 
 const CocktailHeader = styled.div`
-  text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing.large};
-  position: relative;
+  margin-bottom: ${({ theme }) => theme.spacing.medium};
 `;
 
 const CocktailNameWrapper = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: ${({ theme }) => theme.spacing.small};
 `;
@@ -33,10 +77,11 @@ const CocktailName = styled.h1`
   color: ${({ theme }) => theme.colors.primary};
   font-size: 2.5rem;
   margin: 0;
-  margin-right: ${({ theme }) => theme.spacing.medium};
 `;
 
-const FavoriteButtonDetail = styled.button`
+const FavoriteButtonDetail = styled.button.withConfig({
+  shouldForwardProp: (prop) => prop !== 'isFavorite'
+})`
   background: transparent;
   border: none;
   color: ${props => props.isFavorite ? props.theme.colors.primary : props.theme.colors.textOffset};
@@ -44,57 +89,81 @@ const FavoriteButtonDetail = styled.button`
   cursor: pointer;
   padding: 0;
   line-height: 1;
+  transition: transform 0.2s ease;
 
   &:hover {
     color: ${props => props.theme.colors.secondary};
+    transform: scale(1.1);
   }
 `;
 
-const CocktailImage = styled(CocktailImageBase)`
-  width: 100%;
-  max-width: 500px;
-  height: auto;
-  object-fit: cover;
-  border-radius: ${({ theme }) => theme.borderRadius};
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+const StatusPillsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${({ theme }) => theme.spacing.small};
   margin-bottom: ${({ theme }) => theme.spacing.medium};
+`;
+
+const StatusPill = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: ${({ theme }) => theme.colors.textOffset};
+`;
+
+const StatusDot = styled.span.withConfig({
+  shouldForwardProp: (prop) => prop !== 'isAvailable'
+})`
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: ${props => props.isAvailable ? '#4CAF50' : '#F44336'};
+  margin-right: 8px;
 `;
 
 const CocktailDescription = styled.p`
   font-size: 1.1rem;
   line-height: 1.6;
   color: ${({ theme }) => theme.colors.textOffset};
-  max-width: 800px;
-  margin: 0 auto ${({ theme }) => theme.spacing.large} auto;
-  text-align: center;
+  margin-bottom: ${({ theme }) => theme.spacing.medium};
 `;
 
-const CocktailDetailsGrid = styled.div`
+const HistorySection = styled.div`
+  margin-top: ${({ theme }) => theme.spacing.small};
+  font-style: italic;
+  font-size: 0.95rem;
+  color: ${({ theme }) => theme.colors.textOffset};
+  opacity: 0.9;
+`;
+
+const BottomSectionGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: ${({ theme }) => theme.spacing.large};
-  
+  gap: ${({ theme }) => theme.spacing.xl};
+  padding: ${({ theme }) => theme.spacing.medium};
+
   @media (min-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr 1fr;
+    padding: 0;
   }
 `;
 
 const DetailSection = styled.section`
-  background-color: ${({ theme }) => theme.colors.surface};
-  padding: ${({ theme }) => theme.spacing.medium};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  box-shadow: ${({ theme }) => theme.shadows.small};
-  
   h2 {
     font-family: ${({ theme }) => theme.fonts.headings};
-    color: ${({ theme }) => theme.colors.secondary};
+    color: ${({ theme }) => theme.colors.primary};
     margin-top: 0;
     margin-bottom: ${({ theme }) => theme.spacing.medium};
-    border-bottom: 1px solid ${({ theme }) => theme.colors.border};
-    padding-bottom: ${({ theme }) => theme.spacing.small};
+    font-size: 1.75rem;
+  }
+
+  ol {
+    padding-left: 1.5rem;
+    text-align: left;
   }
 `;
 
@@ -105,58 +174,32 @@ const IngredientList = styled.ul`
 
 const IngredientListItem = styled.li`
   padding: ${({ theme }) => theme.spacing.xs} 0;
-  color: ${props => props.available === false ? props.theme.colors.textOffset : props.theme.colors.text};
-  font-style: ${props => props.available === false ? 'italic' : 'normal'};
-  
-  .unavailable-note {
-    font-size: 0.8em;
-    margin-left: ${({ theme }) => theme.spacing.small};
-    color: ${props => props.theme.colors.textOffset};
-  }
-`;
-
-const AllBarsAvailabilityWrapper = styled.div`
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spacing.medium};
-  margin-top: ${({ theme }) => theme.spacing.medium};
-  margin-bottom: ${({ theme }) => theme.spacing.large};
-`;
-
-const IndividualBarStatus = styled.div`
-  padding: ${({ theme }) => theme.spacing.small} ${({ theme }) => theme.spacing.medium};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #fff;
-  background-color: ${({ theme, isAvailable }) => 
-    isAvailable ? theme.colors.secondary : (theme.colors.error || '#D32F2F')};
-  text-align: center;
-  min-width: 120px;
+  justify-content: space-between;
 `;
 
 const FilterLinkTag = styled(Link)`
   display: inline-block;
-  background-color: ${({ theme }) => theme.colors.surface};
+  background-color: rgba(255, 255, 255, 0.05);
   color: ${({ theme }) => theme.colors.textOffset};
-  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.small};
+  padding: 4px 10px;
   border: 1px solid ${({ theme }) => theme.colors.border};
-  border-radius: ${({ theme }) => theme.borderRadius};
+  border-radius: 4px;
   text-decoration: none;
   margin-right: ${({ theme }) => theme.spacing.small};
   margin-bottom: ${({ theme }) => theme.spacing.small};
-  transition: all 0.2s ease-in-out;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.primary};
     color: ${({ theme }) => theme.colors.onPrimary};
-    border-color: ${({ theme }) => theme.colors.primary};
   }
 `;
 
 const checkMakeableForBar = (cocktailIngredients, barStockSet) => {
   if (!cocktailIngredients || cocktailIngredients.length === 0) return true;
-  // A cocktail is makeable if all its ingredients are in the bar's stock.
   return cocktailIngredients.every(ing => barStockSet.has(ing.id));
 };
 
@@ -168,6 +211,13 @@ const CocktailPage = () => {
   const { i18n, t } = useTranslation();
   const [cocktail, setCocktail] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const fetchCocktail = async () => {
@@ -183,8 +233,6 @@ const CocktailPage = () => {
       if (error) {
         console.error('Error fetching cocktail details:', error);
       } else if (data) {
-        // The 'ingredients' column is a jsonb field and can be used directly.
-        // We just need to handle the language-specific name.
         const getLangValue = (field) => data[`${field}_${lang}`] || data[`${field}_en`];
 
         setCocktail({
@@ -210,56 +258,78 @@ const CocktailPage = () => {
     [cocktail?.ingredients, barBStock]
   );
 
-  const bar1Name = t('navigation.levelOne');
-  const bar2Name = t('navigation.theGlitch');
-
-  if (loading) {
-    return <PageWrapper theme={theme}><p>{t('loading')}</p></PageWrapper>;
-  }
-
-  if (!cocktail) {
-    return <PageWrapper theme={theme}><p>{t('cocktailNotFound')}</p></PageWrapper>;
-  }
+  if (loading) return <PageWrapper theme={theme}><p>{t('loading')}</p></PageWrapper>;
+  if (!cocktail) return <PageWrapper theme={theme}><p>{t('cocktailNotFound')}</p></PageWrapper>;
 
   const currentIsFavorite = isFavorite(cocktail.id);
 
   return (
     <PageWrapper theme={theme}>
-      <CocktailHeader>
-        <CocktailNameWrapper>
-          <CocktailName>{cocktail.name}</CocktailName>
-          <FavoriteButtonDetail
-            isFavorite={currentIsFavorite}
-            onClick={() => toggleFavorite(cocktail.id)}
-            title={currentIsFavorite ? t('removeFromFavorites') : t('addToFavorites')}
-            theme={theme}
-          >
-            {currentIsFavorite ? '♥' : '♡'}
-          </FavoriteButtonDetail>
-        </CocktailNameWrapper>
-        <CocktailImage src={cocktail.image} alt={cocktail.name} />
-
-        {cocktail.description && (
-          <CocktailDescription>{cocktail.description}</CocktailDescription>
-        )}
+      <HeroSection theme={theme}>
+        <ImageColumn>
+          <CocktailImage src={cocktail.image} alt={cocktail.name} theme={theme} />
+        </ImageColumn>
         
-        <AllBarsAvailabilityWrapper theme={theme}>
-          <IndividualBarStatus theme={theme} isAvailable={isMakeableBar1}>
-            {bar1Name}: {isMakeableBar1 ? t('available') : t('unavailable')}
-          </IndividualBarStatus>
-          <IndividualBarStatus theme={theme} isAvailable={isMakeableBar2}>
-            {bar2Name}: {isMakeableBar2 ? t('available') : t('unavailable')}
-          </IndividualBarStatus>
-        </AllBarsAvailabilityWrapper>
-      </CocktailHeader>
+        <InfoColumn theme={theme}>
+          <CocktailHeader>
+            <CocktailNameWrapper>
+              <CocktailName theme={theme}>{cocktail.name}</CocktailName>
+              <FavoriteButtonDetail
+                isFavorite={currentIsFavorite}
+                onClick={() => toggleFavorite(cocktail.id)}
+                title={currentIsFavorite ? t('removeFromFavorites') : t('addToFavorites')}
+                theme={theme}
+              >
+                {currentIsFavorite ? '♥' : '♡'}
+              </FavoriteButtonDetail>
+            </CocktailNameWrapper>
 
-      <CocktailDetailsGrid>
+            <StatusPillsContainer theme={theme}>
+              <StatusPill theme={theme}>
+                <StatusDot isAvailable={isMakeableBar1} />
+                {t('navigation.levelOne')}: {isMakeableBar1 ? t('available') : t('unavailable')}
+              </StatusPill>
+              <StatusPill theme={theme}>
+                <StatusDot isAvailable={isMakeableBar2} />
+                {t('navigation.theGlitch')}: {isMakeableBar2 ? t('available') : t('unavailable')}
+              </StatusPill>
+            </StatusPillsContainer>
+          </CocktailHeader>
+
+          {cocktail.description && (
+            <CocktailDescription theme={theme}>{cocktail.description}</CocktailDescription>
+          )}
+
+          {!isMobile && cocktail.history && (
+            <HistorySection theme={theme}>{cocktail.history}</HistorySection>
+          )}
+
+          <div style={{ marginTop: theme.spacing.medium }}>
+            {cocktail.glass && (
+              <p><strong>{t('glass')}:</strong> {
+                Array.isArray(cocktail.glass)
+                  ? cocktail.glass.map(g => <FilterLinkTag key={g} to={`/cocktails/filter/glass/${encodeURIComponent(g.trim())}`} theme={theme}>{g.trim()}</FilterLinkTag>)
+                  : <FilterLinkTag to={`/cocktails/filter/glass/${encodeURIComponent(cocktail.glass.trim())}`} theme={theme}>{cocktail.glass.trim()}</FilterLinkTag>
+              }</p>
+            )}
+            {cocktail.difficulty && (
+              <p><strong>{t('difficulty')}:</strong> <FilterLinkTag to={`/cocktails/filter/difficulty/${encodeURIComponent(cocktail.difficulty.toLowerCase())}`} theme={theme}>{cocktail.difficulty}</FilterLinkTag></p>
+            )}
+            {cocktail.tags?.length > 0 && (
+              <p><strong>{t('tags')}:</strong> {cocktail.tags.map(tag => <FilterLinkTag key={tag} to={`/cocktails/filter/tag/${encodeURIComponent(tag)}`} theme={theme}>{tag}</FilterLinkTag>)}</p>
+            )}
+          </div>
+        </InfoColumn>
+      </HeroSection>
+
+      <BottomSectionGrid theme={theme}>
         <DetailSection theme={theme}>
           <h2>{t('ingredients')}</h2>
           <IngredientList>
             {cocktail.ingredients.map(ing => (
               <IngredientListItem key={ing.id} theme={theme}>
-                {ing.quantity} {ing.name} {ing.notes ? `(${ing.notes})` : ''}
+                <span>{ing.name} {ing.notes ? `(${ing.notes})` : ''}</span>
+                <span style={{ color: theme.colors.textOffset }}>{ing.quantity}</span>
               </IngredientListItem>
             ))}
           </IngredientList>
@@ -273,75 +343,14 @@ const CocktailPage = () => {
             ))}
           </ol>
         </DetailSection>
+      </BottomSectionGrid>
 
-        <DetailSection theme={theme}>
-          <h2>{t('details')}</h2>
-          <p>
-            <strong>{t('glass')}:</strong>{' '}
-            {(() => {
-              if (Array.isArray(cocktail.glass)) {
-                return cocktail.glass.map(glassName => (
-                  <FilterLinkTag 
-                    key={glassName.trim()} 
-                    to={`/cocktails/filter/glass/${encodeURIComponent(glassName.trim())}`}
-                  >
-                    {glassName.trim()}
-                  </FilterLinkTag>
-                ));
-              } else if (typeof cocktail.glass === 'string') {
-                return (
-                  <FilterLinkTag 
-                    to={`/cocktails/filter/glass/${encodeURIComponent(cocktail.glass.trim())}`}
-                  >
-                    {cocktail.glass.trim()}
-                  </FilterLinkTag>
-                );
-              } else {
-                return 'N/A';
-              }
-            })()}
-          </p>
-          <p>
-            <strong>{t('difficulty')}:</strong>{' '}
-            {cocktail.difficulty ? (
-              <FilterLinkTag 
-                to={`/cocktails/filter/difficulty/${encodeURIComponent(cocktail.difficulty.toLowerCase())}`}
-              >
-                {cocktail.difficulty}
-              </FilterLinkTag>
-            ) : (
-              'N/A' 
-            )}
-          </p>
-          {cocktail.tags && cocktail.tags.length > 0 && (
-            <p>
-              <strong>{t('tags')}:</strong>{' '}
-              {cocktail.tags.map(tag => (
-                <FilterLinkTag key={tag} to={`/cocktails/filter/tag/${encodeURIComponent(tag)}`}>
-                  {tag}
-                </FilterLinkTag>
-              ))}
-            </p>
-          )}
-          {cocktail.flavorProfile && cocktail.flavorProfile.length > 0 && (
-            <p>
-              <strong>{t('flavorProfile')}:</strong>{' '}
-              {cocktail.flavorProfile.map(flavor => (
-                <FilterLinkTag key={flavor} to={`/cocktails/filter/flavor/${encodeURIComponent(flavor)}`}>
-                  {flavor}
-                </FilterLinkTag>
-              ))}
-            </p>
-          )}
+      {isMobile && cocktail.history && (
+        <DetailSection theme={theme} style={{ padding: theme.spacing.medium }}>
+          <h2>{t('history')}</h2>
+          <p>{cocktail.history}</p>
         </DetailSection>
-        
-        {cocktail.history && (
-          <DetailSection theme={theme}>
-            <h2>{t('history')}</h2>
-            <p>{cocktail.history}</p>
-          </DetailSection>
-        )}
-      </CocktailDetailsGrid>
+      )}
     </PageWrapper>
   );
 };
